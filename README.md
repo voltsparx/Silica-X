@@ -4,6 +4,10 @@
 It can scan multiple platforms, gather public info (bios, links), correlate results, generate HTML reports, and supports proxy/Tor anonymization.
 I'm still making it more powerful so you might receive constant updates for now.
 
+<p align="center">
+ <img src="https://github.com/Voltsparx/Silica-X/blob/main/docs/images/silica-x-help-menu.png" alt="silica-x" width="500" height="400">
+</p>
+
 ---
 
 ## Disclaimer
