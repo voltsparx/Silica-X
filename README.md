@@ -253,3 +253,7 @@ CI workflow:
 ## Author
 
 - voltsparx
+
+## Contact
+
+- voltsparx@gmail.com
