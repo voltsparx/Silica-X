@@ -250,10 +250,8 @@ CI workflow:
 
 - `.github/workflows/ci.yml`
 
-## Author
+## Author/Contact
 
 - voltsparx
-
-## Contact
-
+  
 - voltsparx@gmail.com
