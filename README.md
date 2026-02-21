@@ -1,6 +1,9 @@
 # 🛰️ Silica-X v7.0
 
-**Silica-X** is an OSINT framework for **profile intelligence**, **domain-surface reconnaissance**, and **fused correlation reporting**.
+**Silica-X** is an OSINT framework for **profile intelligence**, **domain-surface reconnaissance**, and **fused correlation reporting**.<br><br>
+<p align="center">
+This tool is built by stitching together the digital bones of open-source intelligence—reverse-engineering how information flows through public APIs while standing on the shoulders of established OSINT frameworks.
+</p>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docs/images/silica-x-help-menu.png" alt="Silica-X Help Menu" width="600">
