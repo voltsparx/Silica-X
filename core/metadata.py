@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 
 PROJECT_NAME = "Silica-X"
-VERSION = "7.0"
+VERSION = "7.2"
 AUTHOR = "voltsparx"
 AUTHOR_HANDLE = "voltsparx"
 CONTACT_EMAIL = "voltsparx@gmail.com"
