@@ -65,7 +65,7 @@ This tool is built by stitching together the digital bones of open-source intell
   * root commands = 23
   * prompt commands = 22
   * keyword/flag parity verified
-* Platform manifests loaded: **47**
+* Platform manifests loaded: **50**
 * Runtime plugin/filter discovery: **10 plugins, 10 filters**
 
 ### Scope Compatibility Inventory
@@ -175,9 +175,9 @@ Running without flags starts **prompt mode**.
 
 ## 🌍 Platform Coverage
 
-Silica-X currently ships with **47 platform manifests** in `platforms/`:
+Silica-X currently ships with **50 platform manifests** in `platforms/`:
 
-Behance • Bitbucket • Blogger • BuyMeACoffee • Codeforces • CodePen • Dev.to • Discord • DockerHub • Dribbble • Facebook • Flickr • GitHub • GitLab • HackerOne • HackerRank • Instagram • Kaggle • Keybase • LeetCode • LinkedIn • Medium • NPM • Pastebin • Patreon • Pinterest • ProductHunt • PyPI • Quora • Reddit • Replit • Roblox • Snapchat • SoundCloud • SourceForge • Spotify • StackOverflow • SteamCommunity • Telegram • TikTok • TryHackMe • Twitch • Twitter/X • Unsplash • Vimeo • WordPress • YouTube
+Behance • Bitbucket • Blogger • BuyMeACoffee • Codeforces • CodePen • Dev.to • DeviantArt • Discord • DockerHub • Dribbble • Facebook • Flickr • GitHub • GitLab • HackerOne • HackerRank • Instagram • Kaggle • Keybase • LeetCode • LinkedIn • Mastodon • Medium • NPM • Pastebin • Patreon • Pinterest • ProductHunt • PyPI • Quora • Reddit • Replit • Roblox • Snapchat • SoundCloud • SourceForge • Spotify • StackOverflow • SteamCommunity • Telegram • Threads • TikTok • TryHackMe • Twitch • Twitter/X • Unsplash • Vimeo • WordPress • YouTube
 
 ---
 
