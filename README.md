@@ -47,6 +47,7 @@ This tool is built by stitching together public OSINT workflows and studying how
 * [Release Checklist v9.0 Lattice](docs/release-checklist-v9.0-lattice.md)
 * [Release Notes v9.0 Lattice](docs/release-notes-v9.0-lattice.md)
 * [Release Commit Plan v9.0 Lattice](docs/release-commit-plan-v9.0-lattice.md)
+* [Code of Conduct](CODE_OF_CONDUCT.md)
 
 ---
 
