@@ -32,7 +32,7 @@ class TestDomainEntities(unittest.TestCase):
             status="FOUND",
         )
         with self.assertRaises(TypeError):
-            entity.attributes["new"] = "value"  # type: ignore[index]
+            entity.attributes["new"] = "value"
         self.assertEqual(entity.type, "profile")
         self.assertEqual(entity.confidence_score, 0.8)
         self.assertEqual(entity.metadata["status"], "FOUND")

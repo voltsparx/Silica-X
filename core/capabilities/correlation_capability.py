@@ -30,7 +30,7 @@ class CorrelationCapability(Capability):
             return []
 
         timestamp = datetime.now(tz=timezone.utc)
-        generated: list[AssetEntity] = []
+        generated: list[BaseEntity] = []
         for profile in profiles:
             for email in emails:
                 if profile.value.strip().lower() != target.strip().lower():

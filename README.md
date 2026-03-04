@@ -75,7 +75,7 @@ This tool is built by stitching together public OSINT workflows and studying how
 * File audit checks (readability + parser/compile validation) reported **0 errors**
 * Unit tests: **152/152 passing**
 * Ruff lint: passing
-* mypy (full repository scope): **currently failing** (30 errors across 13 files; pre-existing baseline)
+* mypy (full repository scope): passing (no issues found)
 * Bytecode compile check (`compileall`): passing
 * Wiring compatibility matrix: **PASS**
 
@@ -224,7 +224,7 @@ Running without flags starts **prompt mode**.
   <tbody>
     <tr><td><code>python -m pytest -q</code></td><td>PASS</td><td>152 tests passed.</td></tr>
     <tr><td><code>python -m ruff check .</code></td><td>PASS</td><td>No lint errors.</td></tr>
-    <tr><td><code>python -m mypy</code></td><td>FAIL</td><td>30 errors across 13 files (baseline typing debt outside this change scope).</td></tr>
+    <tr><td><code>python -m mypy</code></td><td>PASS</td><td>No type errors found (repository scope).</td></tr>
     <tr><td><code>python -m compileall -q core filters plugins tests silica-x.py</code></td><td>PASS</td><td>Bytecode compile smoke passed.</td></tr>
     <tr><td>CLI matrix (about/explain/help/keywords/plugins/filters/modules/history)</td><td>PASS</td><td>All returned exit code 0.</td></tr>
     <tr><td>Command-path matrix (profile/surface/fusion/orchestrate via <code>--list-plugins/--list-filters</code>, plus <code>anonymity --check</code>)</td><td>PASS</td><td>All returned exit code 0 without external collection.</td></tr>

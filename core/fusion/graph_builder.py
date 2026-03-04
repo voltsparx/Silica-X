@@ -33,7 +33,7 @@ def build_relationship_graph(
         for target_id in target_ids:
             if source_id == target_id:
                 continue
-            edge_key = tuple(sorted((source_id, target_id)))
+            edge_key = (source_id, target_id) if source_id <= target_id else (target_id, source_id)
             if edge_key in seen_edges:
                 continue
             seen_edges.add(edge_key)

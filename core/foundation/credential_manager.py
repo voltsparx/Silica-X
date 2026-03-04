@@ -5,17 +5,23 @@ from __future__ import annotations
 from base64 import urlsafe_b64decode, urlsafe_b64encode
 from dataclasses import dataclass, field
 import hashlib
+import importlib
 import os
-from typing import Callable
+from types import ModuleType
+from typing import Callable, Protocol
 
 try:  # pragma: no cover - optional dependency
-    from cryptography.fernet import Fernet, InvalidToken
-
-    _HAS_FERNET = True
+    _fernet: ModuleType | None = importlib.import_module("cryptography.fernet")
 except Exception:  # pragma: no cover - optional dependency
-    Fernet = None  # type: ignore[assignment]
-    InvalidToken = Exception  # type: ignore[assignment]
-    _HAS_FERNET = False
+    _fernet = None
+
+_HAS_FERNET = _fernet is not None
+_INVALID_TOKEN_EXC: type[Exception] = _fernet.InvalidToken if _fernet is not None else ValueError
+
+
+class _Cipher(Protocol):
+    def encrypt(self, value: bytes) -> bytes: ...
+    def decrypt(self, token: bytes) -> bytes: ...
 
 
 def _normalize_key_material(key: bytes) -> bytes:
@@ -56,15 +62,15 @@ class CredentialManager:
     tokens: dict[str, bytes] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        if _HAS_FERNET:
-            self._cipher = Fernet(self.key)
+        if _fernet is not None:
+            self._cipher: _Cipher = _fernet.Fernet(self.key)
         else:
             self._cipher = _FallbackCipher(self.key)
 
     @staticmethod
     def generate_key() -> bytes:
-        if _HAS_FERNET:
-            return Fernet.generate_key()
+        if _fernet is not None:
+            return _fernet.Fernet.generate_key()
         return urlsafe_b64encode(os.urandom(32))
 
     def store_token(self, service: str, token: str) -> None:
@@ -82,7 +88,7 @@ class CredentialManager:
             return None
         try:
             return self._cipher.decrypt(encrypted).decode("utf-8")
-        except (InvalidToken, UnicodeDecodeError):  # pragma: no cover - defensive guard
+        except (_INVALID_TOKEN_EXC, UnicodeDecodeError):  # pragma: no cover - defensive guard
             return None
 
     def validate_token(

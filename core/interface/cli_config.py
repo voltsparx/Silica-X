@@ -2,10 +2,24 @@
 
 from __future__ import annotations
 
+from typing import TypedDict
+
 from core.collect.scanner import DEFAULT_MAX_CONCURRENCY, DEFAULT_TIMEOUT_SECONDS
 
 
-PROFILE_PRESETS = {
+class ProfilePreset(TypedDict):
+    timeout: int
+    max_concurrency: int
+    source_profile: str
+    max_platforms: int
+
+
+class SurfacePreset(TypedDict):
+    timeout: int
+    max_subdomains: int
+
+
+PROFILE_PRESETS: dict[str, ProfilePreset] = {
     "fast": {"timeout": 10, "max_concurrency": 8, "source_profile": "fast", "max_platforms": 25},
     "quick": {"timeout": 12, "max_concurrency": 10, "source_profile": "fast", "max_platforms": 25},
     "balanced": {
@@ -18,7 +32,7 @@ PROFILE_PRESETS = {
     "max": {"timeout": 50, "max_concurrency": 50, "source_profile": "max", "max_platforms": 70},
 }
 
-SURFACE_PRESETS = {
+SURFACE_PRESETS: dict[str, SurfacePreset] = {
     "quick": {"timeout": 10, "max_subdomains": 60},
     "balanced": {"timeout": 20, "max_subdomains": 250},
     "deep": {"timeout": 30, "max_subdomains": 700},

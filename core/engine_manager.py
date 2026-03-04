@@ -35,6 +35,10 @@ async def _run_with_timeout(task_factory: AsyncTaskFactory, timeout: int | None)
     return await coroutine
 
 
+async def _await_awaitable(awaitable: Awaitable[Any]) -> Any:
+    return await awaitable
+
+
 def _resolve_timeout(runtime: Mapping[str, Any]) -> int | None:
     raw_timeout = runtime.get("timeout")
     if not isinstance(raw_timeout, (int, float)):
@@ -72,7 +76,7 @@ class ThreadEngine:
             coroutine = task_factory()
             if timeout and timeout > 0:
                 return asyncio.run(asyncio.wait_for(coroutine, timeout=float(timeout)))
-            return asyncio.run(coroutine)
+            return asyncio.run(_await_awaitable(coroutine))
 
         return await run_blocking(_runner)
 

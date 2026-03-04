@@ -9,7 +9,7 @@ from core.domain import BaseEntity
 from core.filters.base_filter import BaseFilter
 
 
-DEFAULT_BLOCKED_TERMS = ("password", "secret", "token", "apikey", "api_key")
+DEFAULT_BLOCKED_TERMS: tuple[str, ...] = ("password", "secret", "token", "apikey", "api_key")
 
 
 class RiskFilter(BaseFilter):

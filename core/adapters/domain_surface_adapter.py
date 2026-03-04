@@ -36,8 +36,10 @@ class DomainSurfaceAdapter:
         timestamp = datetime.now(tz=timezone.utc)
         entities: list[DomainEntity | AssetEntity | IpEntity] = []
 
-        https_data = payload.get("https") if isinstance(payload.get("https"), dict) else {}
-        http_data = payload.get("http") if isinstance(payload.get("http"), dict) else {}
+        https_raw = payload.get("https")
+        https_data = https_raw if isinstance(https_raw, dict) else {}
+        http_raw = payload.get("http")
+        http_data = http_raw if isinstance(http_raw, dict) else {}
         domain_confidence = 0.85 if https_data.get("status") else 0.55
         domain_entity_id = make_entity_id("domain", "surface", normalized_domain)
 

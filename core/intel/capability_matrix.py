@@ -420,8 +420,10 @@ def render_capability_markdown(profiles: Sequence[FrameworkCapabilityProfile]) -
 
     gap = build_capability_gap_report(profiles)
     lines.extend(["", "## Recommendations", ""])
-    for item in gap.get("recommendations", []):
-        lines.append(f"- {item}")
+    recommendations = gap.get("recommendations")
+    if isinstance(recommendations, list):
+        for item in recommendations:
+            lines.append(f"- {item}")
     lines.append("")
     return "\n".join(lines)
 
@@ -744,14 +746,21 @@ def recommend_capability_priorities(
     selected = workflows.get(workflow.strip().lower())
     if not isinstance(selected, dict):
         return []
+    features_payload = payload.get("features")
+    if not isinstance(features_payload, dict):
+        return []
+    selected_features = selected.get("features")
+    if not isinstance(selected_features, list):
+        return []
 
     hints: list[str] = []
-    for feature in selected.get("features", []) or []:
-        feature_data = (payload.get("features") or {}).get(feature, {})
+    for feature in selected_features:
+        feature_key = str(feature)
+        feature_data = features_payload.get(feature_key, {})
         if not isinstance(feature_data, dict):
             continue
         priority = str(feature_data.get("priority") or "optimize")
-        action = str(feature_data.get("action") or _feature_action(str(feature)))
-        hints.append(f"Capability priority ({feature}, {priority}): {action}")
+        action = str(feature_data.get("action") or _feature_action(feature_key))
+        hints.append(f"Capability priority ({feature_key}, {priority}): {action}")
     return hints[:3]
 

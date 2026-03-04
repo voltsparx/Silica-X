@@ -117,7 +117,7 @@ Prompt-mode startup shows loaded inventory:
   <tbody>
     <tr><td><code>python -m pytest -q</code></td><td>PASS</td><td>152 tests passed.</td></tr>
     <tr><td><code>python -m ruff check .</code></td><td>PASS</td><td>No lint failures.</td></tr>
-    <tr><td><code>python -m mypy</code></td><td>FAIL</td><td>30 errors across 13 files (existing typing debt).</td></tr>
+    <tr><td><code>python -m mypy</code></td><td>PASS</td><td>No type errors found (repository scope).</td></tr>
     <tr><td><code>python -m compileall -q core filters plugins tests silica-x.py</code></td><td>PASS</td><td>Compile smoke passed.</td></tr>
     <tr><td>CLI command matrix + quicktest aliases + prompt scripted smoke</td><td>PASS</td><td>All tested commands returned exit code 0.</td></tr>
     <tr><td>Profile/surface/fusion/orchestrate command-path checks via <code>--list-plugins/--list-filters</code> + <code>anonymity --check</code></td><td>PASS</td><td>All returned exit code 0 without network collection.</td></tr>
@@ -414,4 +414,4 @@ python -m compileall -q core filters plugins tests silica-x.py
 Current verified snapshot:
 - tests: 152 passed
 - ruff: passing
-- mypy: failing (30 errors / 13 files)
+- mypy: passing (no issues found)

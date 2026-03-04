@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 import importlib
 import importlib.util
@@ -146,7 +147,7 @@ class PluginManager:
         base_context.setdefault("mode", scope)
         base_context.setdefault("target", target_data.get("target") if isinstance(target_data, dict) else None)
 
-        prepared: list[tuple[PluginDescriptor, Any]] = []
+        prepared: list[tuple[PluginDescriptor, Callable[..., Any]]] = []
         for plugin in selected:
             try:
                 module = importlib.import_module(f"plugins.{plugin.module_name}")
@@ -165,7 +166,7 @@ class PluginManager:
         previous_plugin_data: dict[str, Any] = {}
 
         if not chain:
-            calls = [
+            calls: list[tuple[Callable[..., Any], tuple[object, ...], dict[str, object]]] = [
                 (run_fn, (dict(base_context),), {})
                 for _, run_fn in prepared
             ]

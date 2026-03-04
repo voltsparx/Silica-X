@@ -9,10 +9,21 @@ from typing import Any
 
 
 def _safe_int(value: object, default: int = 0) -> int:
-    try:
-        return int(value)  # type: ignore[arg-type]
-    except (TypeError, ValueError):
-        return default
+    if isinstance(value, bool):
+        return int(value)
+    if isinstance(value, int):
+        return value
+    if isinstance(value, float):
+        return int(value)
+    if isinstance(value, str):
+        with_value = value.strip()
+        if not with_value:
+            return default
+        try:
+            return int(with_value)
+        except ValueError:
+            return default
+    return default
 
 
 @dataclass

@@ -5,17 +5,18 @@ from __future__ import annotations
 from base64 import urlsafe_b64decode, urlsafe_b64encode
 from dataclasses import dataclass
 import hashlib
+import importlib
 import os
 from pathlib import Path
+from types import ModuleType
 from typing import Any
 
 try:  # pragma: no cover - optional dependency
-    from cryptography.fernet import Fernet
-
-    _HAS_FERNET = True
+    _fernet: ModuleType | None = importlib.import_module("cryptography.fernet")
 except Exception:  # pragma: no cover - optional dependency
-    Fernet = None  # type: ignore[assignment]
-    _HAS_FERNET = False
+    _fernet = None
+
+_HAS_FERNET = _fernet is not None
 
 
 def _fallback_encrypt_bytes(data: bytes, key: bytes) -> bytes:
@@ -42,8 +43,8 @@ class SecurityManager:
         return {"enabled": True, "hops": hop_count, "chain": chain}
 
     def generate_key(self) -> bytes:
-        if _HAS_FERNET:
-            return Fernet.generate_key()
+        if _fernet is not None:
+            return _fernet.Fernet.generate_key()
         return urlsafe_b64encode(os.urandom(32))
 
     def encrypt_output(self, file_path: str, key: bytes | None = None) -> str:
@@ -55,8 +56,8 @@ class SecurityManager:
         key_material = key or self.generate_key()
         encrypted_path = source.with_suffix(source.suffix + ".enc")
 
-        if _HAS_FERNET:
-            encrypted = Fernet(key_material).encrypt(payload)
+        if _fernet is not None:
+            encrypted = _fernet.Fernet(key_material).encrypt(payload)
         else:
             hashed = hashlib.sha256(key_material).digest()
             encrypted = urlsafe_b64encode(_fallback_encrypt_bytes(payload, hashed))
@@ -67,8 +68,8 @@ class SecurityManager:
     def decrypt_output(self, file_path: str, key: bytes) -> bytes:
         encrypted_path = Path(file_path)
         encrypted = encrypted_path.read_bytes()
-        if _HAS_FERNET:
-            return Fernet(key).decrypt(encrypted)
+        if _fernet is not None:
+            return _fernet.Fernet(key).decrypt(encrypted)
         hashed = hashlib.sha256(key).digest()
         return _fallback_decrypt_bytes(urlsafe_b64decode(encrypted), hashed)
 

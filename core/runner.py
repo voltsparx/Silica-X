@@ -125,6 +125,36 @@ def _validate_username(username: str) -> bool:
     return bool(value) and " " not in value
 
 
+def _int_from_value(value: object, default: int) -> int:
+    if isinstance(value, bool):
+        return int(value)
+    if isinstance(value, int):
+        return value
+    if isinstance(value, float):
+        return int(value)
+    if isinstance(value, str):
+        text = value.strip()
+        if text:
+            try:
+                return int(text)
+            except ValueError:
+                return default
+    return default
+
+
+def _float_from_value(value: object, default: float) -> float:
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return float(value)
+    if isinstance(value, str):
+        text = value.strip()
+        if text:
+            try:
+                return float(text)
+            except ValueError:
+                return default
+    return default
+
+
 def _can_prompt_user() -> bool:
     return bool(getattr(sys.stdin, "isatty", lambda: False)())
 
@@ -817,12 +847,8 @@ def launch_live_dashboard(
 
 def _resolve_profile_runtime(args: argparse.Namespace) -> tuple[int, int, str, int | None]:
     preset = PROFILE_PRESETS[args.preset]
-    timeout_seconds = args.timeout if args.timeout is not None else preset["timeout"]
-    max_concurrency = (
-        args.max_concurrency
-        if args.max_concurrency is not None
-        else preset["max_concurrency"]
-    )
+    timeout_seconds = _int_from_value(args.timeout, preset["timeout"])
+    max_concurrency = _int_from_value(args.max_concurrency, preset["max_concurrency"])
     source_profile = str(preset.get("source_profile", "balanced"))
     max_platforms = preset.get("max_platforms")
     max_platform_limit = int(max_platforms) if isinstance(max_platforms, int) and max_platforms > 0 else None
@@ -831,12 +857,8 @@ def _resolve_profile_runtime(args: argparse.Namespace) -> tuple[int, int, str, i
 
 def _resolve_surface_runtime(args: argparse.Namespace) -> tuple[int, int]:
     preset = SURFACE_PRESETS[args.preset]
-    timeout_seconds = args.timeout if args.timeout is not None else preset["timeout"]
-    max_subdomains = (
-        args.max_subdomains
-        if args.max_subdomains is not None
-        else preset["max_subdomains"]
-    )
+    timeout_seconds = _int_from_value(args.timeout, preset["timeout"])
+    max_subdomains = _int_from_value(args.max_subdomains, preset["max_subdomains"])
     return timeout_seconds, max_subdomains
 
 
@@ -1668,8 +1690,8 @@ async def _handle_fusion_command(
         mode="fusion",
         target=f"{username} + {normalize_domain(args.domain)}",
         state=effective_state,
-        timeout_seconds=max(int(profile_preset["timeout"]), int(surface_preset["timeout"])),
-        worker_budget=max(int(profile_preset["max_concurrency"]), int(surface_preset["max_subdomains"])),
+        timeout_seconds=max(profile_preset["timeout"], surface_preset["timeout"]),
+        worker_budget=max(profile_preset["max_concurrency"], surface_preset["max_subdomains"]),
         plugin_names=list(plugin_ids),
         filter_names=list(filter_ids),
     )
@@ -1681,8 +1703,8 @@ async def _handle_fusion_command(
         max_concurrency=profile_preset["max_concurrency"],
         source_profile=str(profile_preset.get("source_profile", "balanced")),
         max_platforms=(
-            int(profile_preset["max_platforms"])
-            if isinstance(profile_preset.get("max_platforms"), int) and int(profile_preset["max_platforms"]) > 0
+            profile_preset["max_platforms"]
+            if isinstance(profile_preset.get("max_platforms"), int) and profile_preset["max_platforms"] > 0
             else None
         ),
         write_csv=args.csv,
@@ -1908,8 +1930,8 @@ async def _handle_orchestrate_command(args: argparse.Namespace, state: RunnerSta
         return EXIT_USAGE
 
     profile_preset = PROFILE_PRESETS[args.profile]
-    timeout_seconds = int(args.timeout) if args.timeout is not None else int(profile_preset["timeout"])
-    max_workers = int(args.max_workers) if args.max_workers is not None else int(profile_preset["max_concurrency"])
+    timeout_seconds = _int_from_value(args.timeout, profile_preset["timeout"])
+    max_workers = _int_from_value(args.max_workers, profile_preset["max_concurrency"])
     source_profile = (
         str(args.source_profile).strip().lower()
         if args.source_profile
@@ -1918,20 +1940,20 @@ async def _handle_orchestrate_command(args: argparse.Namespace, state: RunnerSta
 
     max_platforms: int | None = None
     if args.max_platforms is not None:
-        max_platforms = int(args.max_platforms)
+        max_platforms = _int_from_value(args.max_platforms, profile_preset["max_platforms"])
     elif isinstance(profile_preset.get("max_platforms"), int):
-        preset_limit = int(profile_preset["max_platforms"])
+        preset_limit = profile_preset["max_platforms"]
         if preset_limit > 0:
             max_platforms = preset_limit
 
     max_subdomains = (
-        int(args.max_subdomains)
+        _int_from_value(args.max_subdomains, SURFACE_PRESETS["balanced"]["max_subdomains"])
         if args.max_subdomains is not None
-        else int(SURFACE_PRESETS["balanced"]["max_subdomains"])
+        else SURFACE_PRESETS["balanced"]["max_subdomains"]
     )
     include_ct = True if args.ct is None else bool(args.ct)
     include_rdap = True if args.rdap is None else bool(args.rdap)
-    min_confidence_value = float(args.min_confidence)
+    min_confidence_value = _float_from_value(args.min_confidence, 0.0)
     if min_confidence_value < 0.0 or min_confidence_value > 1.0:
         print(c(f"{symbol('warn')} --min-confidence must be between 0.0 and 1.0.", Colors.RED))
         return EXIT_USAGE
@@ -2155,7 +2177,7 @@ async def _handle_quicktest_command(args: argparse.Namespace) -> int:
         return EXIT_SUCCESS
 
     template_name = str(args.template or "").strip()
-    seed_value = int(args.seed) if args.seed is not None else None
+    seed_value = _int_from_value(args.seed, 0) if args.seed is not None else None
     try:
         selected = pick_quicktest_template(
             template_id=template_name or None,

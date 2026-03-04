@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections import Counter
+from collections.abc import Sequence
 from contextlib import suppress
 from dataclasses import dataclass, field
 from typing import Any
@@ -29,7 +30,7 @@ def _safe_float(value: object, default: float = 0.0) -> float:
 class IntelligenceAdvisor:
     """Provides recommendations from local run history and research map insights."""
 
-    history: list[dict[str, Any] | str] = field(default_factory=list)
+    history: Sequence[dict[str, Any] | str] = field(default_factory=list)
     source_map_path: str = str(DEFAULT_SOURCE_MAP_PATH)
     capability_index_path: str = str(DEFAULT_CAPABILITY_PACK_ROOT / "index.json")
     auto_build_capability_pack: bool = False
