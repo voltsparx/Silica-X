@@ -1,0 +1,94 @@
+"""Intelligence advisor for workflow recommendations and confidence estimation."""
+
+from __future__ import annotations
+
+from collections import Counter
+from dataclasses import dataclass, field
+from typing import Any
+
+from core.prompt_intelligence import PromptEngine
+from core.reverse_engineering import DEFAULT_MAP_PATH, load_reverse_engineering_map, recommend_research_focus
+
+
+def _safe_float(value: object, default: float = 0.0) -> float:
+    try:
+        return float(value)  # type: ignore[arg-type]
+    except (TypeError, ValueError):
+        return default
+
+
+@dataclass
+class IntelligenceAdvisor:
+    """Provides recommendations from local run history and research map insights."""
+
+    history: list[dict[str, Any] | str] = field(default_factory=list)
+    reverse_map_path: str = str(DEFAULT_MAP_PATH)
+
+    def _history_commands(self) -> list[str]:
+        commands: list[str] = []
+        for entry in self.history:
+            if isinstance(entry, str):
+                token = entry.strip().lower().split()
+                if token:
+                    commands.append(token[0])
+                continue
+            if isinstance(entry, dict):
+                command = str(entry.get("command") or entry.get("mode") or "").strip().lower()
+                if command:
+                    commands.append(command)
+        return commands
+
+    def recommend_next(self) -> list[str]:
+        """Recommend next actions and learning targets."""
+
+        commands = self._history_commands()
+        prompt_engine = PromptEngine(history=commands)
+        suggestions = prompt_engine.suggest_next(limit=4)
+
+        dominant_scope = "profile"
+        if commands:
+            normalized: list[str] = []
+            for command in commands:
+                if command in {"scan", "persona", "social"}:
+                    normalized.append("profile")
+                elif command in {"domain", "asset"}:
+                    normalized.append("surface")
+                elif command in {"full", "combo"}:
+                    normalized.append("fusion")
+                else:
+                    normalized.append(command)
+            dominant_scope = Counter(normalized).most_common(1)[0][0]
+            if dominant_scope not in {"profile", "surface", "fusion"}:
+                dominant_scope = "profile"
+
+        reverse_map = load_reverse_engineering_map(self.reverse_map_path)
+        research = recommend_research_focus(dominant_scope, reverse_map)
+
+        merged = [*suggestions, *research]
+        unique: list[str] = []
+        seen: set[str] = set()
+        for item in merged:
+            if item in seen:
+                continue
+            seen.add(item)
+            unique.append(item)
+        return unique
+
+    def estimate_confidence(self, fused_results: dict[str, Any]) -> float:
+        """Estimate normalized confidence score from fused intelligence artifacts."""
+
+        if not isinstance(fused_results, dict):
+            return 0.0
+
+        if "confidence_score" in fused_results:
+            return max(0.0, min(1.0, _safe_float(fused_results.get("confidence_score")) / 100.0))
+
+        profile = fused_results.get("profile", {}) if isinstance(fused_results.get("profile"), dict) else {}
+        risk = fused_results.get("risk", {}) if isinstance(fused_results.get("risk"), dict) else {}
+        found_profiles = _safe_float(profile.get("found_profiles"), 0.0)
+        avg_confidence = _safe_float(profile.get("average_confidence"), 0.0)
+        risk_score = _safe_float(risk.get("risk_score"), 0.0)
+        overlap = _safe_float(profile.get("identity_overlap_score"), 0.0)
+
+        raw = avg_confidence * 0.55 + overlap * 0.35 + min(found_profiles, 10.0) * 2.5 - risk_score * 0.3
+        return max(0.0, min(1.0, raw / 100.0))
