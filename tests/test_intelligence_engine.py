@@ -43,6 +43,10 @@ class TestIntelligenceEngine(unittest.TestCase):
         self.assertTrue(bundle["relationships"])
         self.assertTrue(bundle["risk_summary"]["total"] >= 1)
         self.assertIn("confidence_distribution", bundle)
+        self.assertIn("entity_facets", bundle)
+        self.assertIn("execution_guidance", bundle)
+        self.assertIn("correlation_summary", bundle)
+        self.assertTrue(isinstance(bundle["scored_entities"], list))
 
     def test_analyze_entities_include_trace_fields(self):
         engine = IntelligenceEngine()
@@ -68,8 +72,8 @@ class TestIntelligenceEngine(unittest.TestCase):
         self.assertIn("expansion_depth", entity)
         self.assertIn("expansion_path", entity)
         self.assertIn(entity["risk_level"], {"LOW", "MEDIUM", "HIGH", "CRITICAL"})
+        self.assertIn("actions", bundle["execution_guidance"])
 
 
 if __name__ == "__main__":
     unittest.main()
-

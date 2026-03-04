@@ -785,6 +785,105 @@ def _resolve_extension_plan_or_fail(
     return plan.plugins, plan.filters, plan.warnings, True
 
 
+def _infer_entity_anomalies(
+    entities: Sequence[BaseEntity],
+    *,
+    issues: Sequence[dict] | None = None,
+    fused_anomalies: Sequence[object] | None = None,
+) -> list[dict[str, str]]:
+    anomalies: list[dict[str, str]] = []
+    first_entity_id = entities[0].id if entities else ""
+
+    for entity in entities:
+        attributes = dict(entity.attributes)
+        status = str(attributes.get("status", "")).strip().upper()
+        if status in {"ERROR", "BLOCKED", "INVALID_USERNAME"}:
+            anomalies.append(
+                {
+                    "entity_id": entity.id,
+                    "reason": f"status_{status.lower()}",
+                }
+            )
+        if entity.entity_type == "domain":
+            https_data = attributes.get("https", {})
+            if isinstance(https_data, dict):
+                status_code = https_data.get("status")
+                if isinstance(status_code, int) and status_code >= 400:
+                    anomalies.append(
+                        {
+                            "entity_id": entity.id,
+                            "reason": f"https_status_{status_code}",
+                        }
+                    )
+
+    for issue in issues or []:
+        if not isinstance(issue, dict):
+            continue
+        title = str(issue.get("title", "")).strip().lower().replace(" ", "_")
+        if not title:
+            continue
+        severity = str(issue.get("severity", "LOW")).strip().upper()
+        if severity in {"HIGH", "CRITICAL", "MEDIUM"}:
+            anomalies.append(
+                {
+                    "entity_id": first_entity_id,
+                    "reason": f"issue_{title}",
+                }
+            )
+
+    for item in fused_anomalies or []:
+        if isinstance(item, dict):
+            entity_id = str(item.get("entity_id", "")).strip() or first_entity_id
+            reason = str(item.get("reason", "")).strip()
+            if entity_id and reason:
+                anomalies.append({"entity_id": entity_id, "reason": reason})
+            continue
+        text = str(item).strip()
+        if text and first_entity_id:
+            anomalies.append({"entity_id": first_entity_id, "reason": text})
+
+    deduped: list[dict[str, str]] = []
+    seen: set[tuple[str, str]] = set()
+    for row in anomalies:
+        entity_id = str(row.get("entity_id", "")).strip()
+        reason = str(row.get("reason", "")).strip().lower()
+        if not entity_id or not reason:
+            continue
+        key = (entity_id, reason)
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append({"entity_id": entity_id, "reason": reason})
+    return deduped
+
+
+def _analyze_intelligence_bundle(
+    entities: Sequence[BaseEntity],
+    *,
+    mode: str,
+    target: str,
+    issues: Sequence[dict] | None = None,
+    fused_anomalies: Sequence[object] | None = None,
+) -> dict:
+    if not entities:
+        return {}
+    anomaly_rows = _infer_entity_anomalies(
+        entities,
+        issues=issues,
+        fused_anomalies=fused_anomalies,
+    )
+    try:
+        return INTELLIGENCE_ENGINE.analyze(
+            list(entities),
+            mode=mode,
+            target=target,
+            anomalies=anomaly_rows,
+        )
+    except Exception as exc:  # pragma: no cover - defensive
+        append_framework_log("intelligence_bundle_failed", f"target={target} mode={mode} reason={exc}", level="WARN")
+        return {}
+
+
 async def run_profile_scan(
     username: str,
     state: RunnerState,
@@ -856,6 +955,13 @@ async def run_profile_scan(
         issues=issues,
         issue_summary=issue_summary,
     )
+    intelligence_entities = build_profile_entities(username, results)
+    intelligence_bundle = _analyze_intelligence_bundle(
+        intelligence_entities,
+        mode=source_profile,
+        target=username,
+        issues=issues,
+    )
     plugin_results, plugin_errors = await PLUGIN_MANAGER.run_plugins(
         {
             "target": username,
@@ -864,6 +970,7 @@ async def run_profile_scan(
             "correlation": correlation,
             "issues": issues,
             "issue_summary": issue_summary,
+            "intelligence_bundle": intelligence_bundle,
         },
         scope="profile",
         requested_plugins=plugin_names,
@@ -883,6 +990,7 @@ async def run_profile_scan(
             "issue_summary": issue_summary,
             "plugins": plugin_results,
             "plugin_errors": plugin_errors,
+            "intelligence_bundle": intelligence_bundle,
         },
     )
     display_results(
@@ -896,6 +1004,7 @@ async def run_profile_scan(
         plugin_errors=plugin_errors,
         filter_results=filter_results,
         filter_errors=filter_errors,
+        intelligence_bundle=intelligence_bundle,
     )
     save_results(
         username,
@@ -909,6 +1018,7 @@ async def run_profile_scan(
         plugin_errors=plugin_errors,
         filter_results=filter_results,
         filter_errors=filter_errors,
+        intelligence_bundle=intelligence_bundle,
     )
 
     if write_csv:
@@ -927,6 +1037,7 @@ async def run_profile_scan(
             plugin_errors=plugin_errors,
             filter_results=filter_results,
             filter_errors=filter_errors,
+            intelligence_bundle=intelligence_bundle,
         )
         if write_html:
             print(c(f"HTML report generated -> {report_path}", Colors.GREEN))
@@ -955,6 +1066,7 @@ async def run_profile_scan(
         "plugin_errors": plugin_errors,
         "filters": filter_results,
         "filter_errors": filter_errors,
+        "intelligence_bundle": intelligence_bundle,
     }
 
 
@@ -1020,6 +1132,13 @@ async def run_surface_scan(
         issues=issues,
         issue_summary=issue_summary,
     )
+    intelligence_entities = build_surface_entities(domain_result)
+    intelligence_bundle = _analyze_intelligence_bundle(
+        intelligence_entities,
+        mode="surface",
+        target=normalized_domain,
+        issues=issues,
+    )
     plugin_results, plugin_errors = await PLUGIN_MANAGER.run_plugins(
         {
             "target": normalized_domain,
@@ -1029,6 +1148,7 @@ async def run_surface_scan(
             "domain_result": domain_result,
             "issues": issues,
             "issue_summary": issue_summary,
+            "intelligence_bundle": intelligence_bundle,
         },
         scope="surface",
         requested_plugins=plugin_names,
@@ -1049,6 +1169,7 @@ async def run_surface_scan(
             "issue_summary": issue_summary,
             "plugins": plugin_results,
             "plugin_errors": plugin_errors,
+            "intelligence_bundle": intelligence_bundle,
         },
     )
     display_domain_results(
@@ -1060,6 +1181,7 @@ async def run_surface_scan(
         plugin_errors=plugin_errors,
         filter_results=filter_results,
         filter_errors=filter_errors,
+        intelligence_bundle=intelligence_bundle,
     )
     save_results(
         normalized_domain,
@@ -1074,6 +1196,7 @@ async def run_surface_scan(
         plugin_errors=plugin_errors,
         filter_results=filter_results,
         filter_errors=filter_errors,
+        intelligence_bundle=intelligence_bundle,
     )
 
     report_path = ""
@@ -1091,6 +1214,7 @@ async def run_surface_scan(
             plugin_errors=plugin_errors,
             filter_results=filter_results,
             filter_errors=filter_errors,
+            intelligence_bundle=intelligence_bundle,
         )
         if write_html:
             print(c(f"HTML report generated -> {report_path}", Colors.GREEN))
@@ -1110,6 +1234,7 @@ async def run_surface_scan(
         "plugin_errors": plugin_errors,
         "filters": filter_results,
         "filter_errors": filter_errors,
+        "intelligence_bundle": intelligence_bundle,
     }
 
 
@@ -1381,6 +1506,21 @@ async def _handle_fusion_command(
     )
     fused_intel = await FUSION_ENGINE.fuse_profile_domain(profile_data, surface_data)
     fusion_graph = await FUSION_ENGINE.generate_graph(fused_intel)
+    intelligence_entities = build_fusion_entities(
+        username,
+        list(profile_data.get("results", []) or []),
+        surface_data.get("domain_result") if isinstance(surface_data.get("domain_result"), dict) else None,
+    )
+    intelligence_bundle = _analyze_intelligence_bundle(
+        intelligence_entities,
+        mode=fusion_mode,
+        target=combined_target,
+        issues=combined_issues,
+        fused_anomalies=list(fused_intel.get("anomalies", []) or []),
+    )
+    fused_intel["intelligence_bundle"] = intelligence_bundle
+    fused_intel["risk_summary"] = intelligence_bundle.get("risk_summary", {})
+    fused_intel["confidence_distribution"] = intelligence_bundle.get("confidence_distribution", {})
     advisor = IntelligenceAdvisor(
         history=[{"mode": "profile"}, {"mode": "surface"}, {"mode": "fusion"}],
         auto_build_capability_pack=True,
@@ -1399,6 +1539,7 @@ async def _handle_fusion_command(
             "issue_summary": combined_issue_summary,
             "fused_intel": fused_intel,
             "fusion_graph": fusion_graph,
+            "intelligence_bundle": intelligence_bundle,
         },
         scope="fusion",
         requested_plugins=list(plugin_ids),
@@ -1421,6 +1562,7 @@ async def _handle_fusion_command(
             "plugin_errors": plugin_errors,
             "fused_intel": fused_intel,
             "fusion_graph": fusion_graph,
+            "intelligence_bundle": intelligence_bundle,
         },
     )
 
@@ -1439,7 +1581,22 @@ async def _handle_fusion_command(
         filter_errors=filter_errors,
         fused_intel=fused_intel,
         fusion_graph=fusion_graph,
+        intelligence_bundle=intelligence_bundle,
     )
+    guidance_actions = (
+        intelligence_bundle.get("execution_guidance", {}).get("actions", [])
+        if isinstance(intelligence_bundle.get("execution_guidance"), dict)
+        else []
+    )
+    if isinstance(guidance_actions, list) and guidance_actions:
+        print(c("\n[ Fusion Guidance ]", Colors.GREEN))
+        print(c("------------------------------------", Colors.GREEN))
+        for action in guidance_actions[:5]:
+            if not isinstance(action, dict):
+                continue
+            print(c(f"- [{action.get('priority', 'P3')}] {action.get('title', 'Action')}", Colors.GREEN))
+            print(c(f"  why: {action.get('rationale', '-')}", Colors.GREY))
+            print(c(f"  hint: {action.get('command_hint', '-')}", Colors.GREY))
 
     report_path = ""
     try:
@@ -1459,6 +1616,7 @@ async def _handle_fusion_command(
                 "filter_errors": filter_errors,
                 "fused_intel": fused_intel,
                 "fusion_graph": fusion_graph,
+                "intelligence_bundle": intelligence_bundle,
             }
         )
         if args.html:
@@ -1610,6 +1768,7 @@ async def _handle_orchestrate_command(args: argparse.Namespace, state: RunnerSta
         "issue_summary": issue_summary,
         "fused_intel": payload.get("fused", {}),
         "fusion_graph": payload.get("fused", {}).get("graph", {}),
+        "intelligence_bundle": payload.get("fused", {}).get("intelligence_bundle", {}),
     }
     plugin_results: list[dict] = []
     plugin_errors: list[str] = []
