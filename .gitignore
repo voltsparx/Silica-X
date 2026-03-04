@@ -1,9 +1,11 @@
 # =========================================
 # Local intelligence / self-assessment files
-intel-sources/
-self-assessment-structure/
 *.zip
 *tree.txt
+repo_tree.txt
+self-assesment-structure/
+silica-x-only.zip
+intel-sources/
 
 # =========================================
 # Python cache and virtual environments
