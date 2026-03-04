@@ -1,6 +1,7 @@
 # Ignoring self assesment work files
 blueprint.txt
 *tree.txt
+reverse-engineering-temp/
 
 # Python cache and virtual environments
 __pycache__/
