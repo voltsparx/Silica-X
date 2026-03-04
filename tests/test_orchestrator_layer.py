@@ -38,6 +38,8 @@ class TestOrchestratorLayer(unittest.TestCase):
         self.assertEqual(payload["mode"], "profile")
         self.assertIn("fused", payload)
         self.assertGreaterEqual(payload["fused"]["entity_count"], 1)
+        self.assertIn("intelligence_bundle", payload["fused"])
+        self.assertTrue(payload["fused"]["intelligence_bundle"]["analysis_ready"])
         self.assertIn("advisory", payload)
         self.assertIn("lifecycle", payload)
 

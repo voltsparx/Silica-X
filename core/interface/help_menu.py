@@ -66,6 +66,8 @@ def show_prompt_help() -> None:
     print("• set filters <none|all|selector1,selector2> - Set module-compatible filters.")
     print("• set profile_preset <fast|quick|balanced|deep|max> - Set default profile preset.")
     print("• set surface_preset <quick|balanced|deep> - Set default surface preset.")
+    print("• set extension_control <auto|manual|hybrid> - Set extension-control default for active module.")
+    print("• set orchestrate_extension_control <auto|manual|hybrid> - Set extension-control default for orchestrate.")
     print("• profile/surface/fusion/orchestrate support --extension-control auto|manual|hybrid.")
     print("• anonymity [flags] - Check or change Tor and proxy routing.")
     print("• wizard - Run guided workflow.")
@@ -77,7 +79,7 @@ def show_prompt_help() -> None:
     print("• help - Show this help menu.")
     print("• exit - Close prompt.\n")
 
-    print("Prompt format: (console <module> plugins=<set> filters=<set>)>>")
+    print("Prompt format: (console <module> ec=<mode> plugins=<set> filters=<set>)>>")
     print("Run 'keywords' to see full alias mappings.\n")
 
 

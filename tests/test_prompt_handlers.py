@@ -20,6 +20,7 @@ class TestPromptHandlers(unittest.TestCase):
         )
         prompt = session.module_prompt()
         self.assertTrue(prompt.startswith("(console fusion"))
+        self.assertIn("ec=manual", prompt)
         self.assertIn("plugins=alpha,beta,+1", prompt)
         self.assertIn("filters=delta", prompt)
         self.assertTrue(prompt.endswith(")>>"))
@@ -49,6 +50,7 @@ class TestPromptHandlers(unittest.TestCase):
             all_filters=False,
             profile_preset="deep",
             surface_preset="quick",
+            profile_extension_control="hybrid",
         )
         args = argparse.Namespace(
             command="profile",
@@ -57,11 +59,13 @@ class TestPromptHandlers(unittest.TestCase):
             all_plugins=False,
             all_filters=False,
             preset="balanced",
+            extension_control="manual",
         )
         updated = apply_prompt_defaults(args, session)
         self.assertEqual(updated.plugin, ["orbit_link_matrix"])
         self.assertEqual(updated.filter, ["contact_canonicalizer"])
         self.assertEqual(updated.preset, "deep")
+        self.assertEqual(updated.extension_control, "hybrid")
 
     def test_handle_prompt_set_command_plugins_and_filters(self):
         session = PromptSessionState()
@@ -145,6 +149,7 @@ class TestPromptHandlers(unittest.TestCase):
             all_filters=False,
             profile_preset="deep",
             surface_preset="quick",
+            surface_extension_control="hybrid",
         )
         args = argparse.Namespace(
             command="surface",
@@ -153,11 +158,77 @@ class TestPromptHandlers(unittest.TestCase):
             all_plugins=False,
             all_filters=False,
             preset="balanced",
+            extension_control="manual",
         )
         updated = apply_prompt_defaults(args, session)
         self.assertEqual(updated.plugin, ["threat_conductor"])
         self.assertEqual(updated.filter, ["exposure_tier_matrix"])
         self.assertEqual(updated.preset, "quick")
+        self.assertEqual(updated.extension_control, "hybrid")
+
+    def test_apply_prompt_defaults_respects_explicit_flags(self):
+        session = PromptSessionState(
+            module="profile",
+            profile_preset="deep",
+            profile_extension_control="hybrid",
+        )
+        args = argparse.Namespace(
+            command="profile",
+            plugin=[],
+            filter=[],
+            all_plugins=False,
+            all_filters=False,
+            preset="balanced",
+            extension_control="manual",
+            _explicit_flags=("--preset", "--extension-control"),
+        )
+        updated = apply_prompt_defaults(args, session)
+        self.assertEqual(updated.preset, "balanced")
+        self.assertEqual(updated.extension_control, "manual")
+
+    def test_apply_prompt_defaults_orchestrate_uses_mode_scope(self):
+        session = PromptSessionState(
+            module="profile",
+            plugin_names=["orbit_link_matrix", "threat_conductor"],
+            filter_names=["contact_canonicalizer", "exposure_tier_matrix"],
+            all_plugins=False,
+            all_filters=False,
+            profile_preset="deep",
+            surface_preset="quick",
+            orchestrate_extension_control="hybrid",
+        )
+        args = argparse.Namespace(
+            command="orchestrate",
+            mode="surface",
+            target="example.com",
+            plugin=[],
+            filter=[],
+            all_plugins=False,
+            all_filters=False,
+            profile="balanced",
+            extension_control="auto",
+        )
+        updated = apply_prompt_defaults(args, session)
+        self.assertEqual(updated.plugin, ["threat_conductor"])
+        self.assertEqual(updated.filter, ["exposure_tier_matrix"])
+        self.assertEqual(updated.profile, "quick")
+        self.assertEqual(updated.extension_control, "hybrid")
+
+    def test_handle_prompt_set_command_extension_controls(self):
+        session = PromptSessionState(module="fusion")
+        handle_prompt_set_command(
+            "set extension_control HYBRID",
+            session,
+            on_message=lambda _message, _color: None,
+        )
+        self.assertEqual(session.fusion_extension_control, "hybrid")
+
+        handle_prompt_set_command(
+            "set orchestrate-extension-control manual",
+            session,
+            on_message=lambda _message, _color: None,
+        )
+        self.assertEqual(session.orchestrate_extension_control, "manual")
 
     def test_handle_prompt_use_command(self):
         session = PromptSessionState(

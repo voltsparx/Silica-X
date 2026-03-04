@@ -1125,6 +1125,21 @@ def _rewrite_tokens_with_keywords(tokens: list[str]) -> list[str]:
     return _rewrite_tokens_with_keywords_impl(tokens)
 
 
+def _extract_explicit_flags(tokens: list[str]) -> tuple[str, ...]:
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for token in tokens:
+        value = str(token).strip().lower()
+        if not value.startswith("--"):
+            continue
+        flag = value.split("=", maxsplit=1)[0]
+        if flag in seen:
+            continue
+        seen.add(flag)
+        ordered.append(flag)
+    return tuple(ordered)
+
+
 def _print_prompt_config(session: PromptSessionState, state: RunnerState) -> None:
     print(c("\n[ Prompt Configuration ]", Colors.BLUE))
     print(c("------------------------------------", Colors.BLUE))
@@ -1134,6 +1149,10 @@ def _print_prompt_config(session: PromptSessionState, state: RunnerState) -> Non
     print(c(f"filters: {session.filters_label()}", Colors.CYAN))
     print(c(f"profile preset: {session.profile_preset}", Colors.CYAN))
     print(c(f"surface preset: {session.surface_preset}", Colors.CYAN))
+    print(c(f"profile extension control: {session.profile_extension_control}", Colors.CYAN))
+    print(c(f"surface extension control: {session.surface_extension_control}", Colors.CYAN))
+    print(c(f"fusion extension control: {session.fusion_extension_control}", Colors.CYAN))
+    print(c(f"orchestrate extension control: {session.orchestrate_extension_control}", Colors.CYAN))
     print(c(f"anonymity: {get_anonymity_status(state)}", Colors.CYAN))
     tor_status = probe_tor_status()
     print(c(f"tor binary: {'present' if tor_status.binary_found else 'missing'}", Colors.CYAN))
@@ -2037,6 +2056,7 @@ async def run_prompt_mode(initial_state: RunnerState | None = None) -> int:
         if len(tokens) == 2 and tokens[0] == "scan":
             # Preserve 'scan <username>' behavior in prompt.
             tokens = ["profile", tokens[1]]
+        explicit_flags = _extract_explicit_flags(tokens)
 
         try:
             args = prompt_parser.parse_args(tokens)
@@ -2044,6 +2064,7 @@ async def run_prompt_mode(initial_state: RunnerState | None = None) -> int:
             print(c(f"Invalid command usage. Type 'help' for options. ({exc})", Colors.RED))
             continue
 
+        setattr(args, "_explicit_flags", explicit_flags)
         args = _apply_prompt_defaults(args, session)
         try:
             await _dispatch(args, state=state, prompt_mode=True)

@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 from typing import Callable
 
-from core.interface.cli_config import PROFILE_PRESETS, PROMPT_KEYWORDS, SURFACE_PRESETS
+from core.interface.cli_config import EXTENSION_CONTROL_MODES, PROFILE_PRESETS, PROMPT_KEYWORDS, SURFACE_PRESETS
 from core.foundation.colors import Colors, c
 from core.extensions.selector_keys import selector_keys
 from core.foundation.session_state import PromptSessionState
@@ -17,6 +17,7 @@ VALID_MODULES = {"profile", "surface", "fusion"}
 PROFILE_ALIASES = {"profile", "scan", "persona", "social"}
 SURFACE_ALIASES = {"surface", "domain", "asset"}
 FUSION_ALIASES = {"fusion", "full", "combo"}
+ORCHESTRATE_ALIASES = {"orchestrate", "orch"}
 
 
 def keyword_to_command(value: str) -> str | None:
@@ -52,6 +53,35 @@ def _module_for_command(command: str) -> str | None:
     if lowered in FUSION_ALIASES:
         return "fusion"
     return None
+
+
+def _prompt_explicit_flags(args: argparse.Namespace) -> set[str]:
+    raw = getattr(args, "_explicit_flags", ())
+    if not isinstance(raw, (list, tuple, set)):
+        return set()
+    explicit: set[str] = set()
+    for value in raw:
+        flag = str(value).strip().lower()
+        if flag.startswith("--"):
+            explicit.add(flag)
+    return explicit
+
+
+def _scope_for_args(args: argparse.Namespace, session: PromptSessionState) -> str | None:
+    command = str(getattr(args, "command", "")).strip().lower()
+    scope = _module_for_command(command)
+    if scope is not None:
+        return scope
+    if command in ORCHESTRATE_ALIASES:
+        selected_mode = str(getattr(args, "mode", session.module) or session.module)
+        return _normalize_module(selected_mode)
+    return None
+
+
+def _default_orchestrate_profile(session: PromptSessionState, scope: str) -> str:
+    if scope == "surface":
+        return session.surface_preset
+    return session.profile_preset
 
 
 def _split_csv_values(raw: str) -> list[str]:
@@ -119,10 +149,12 @@ def _resolve_filters_for_scope(names: list[str], scope: str) -> tuple[list[str],
 
 
 def apply_prompt_defaults(args: argparse.Namespace, session: PromptSessionState) -> argparse.Namespace:
-    command = str(getattr(args, "command", ""))
-    scope = _module_for_command(command)
+    command = str(getattr(args, "command", "")).strip().lower()
+    scope = _scope_for_args(args, session)
     if scope is None:
         return args
+
+    explicit_flags = _prompt_explicit_flags(args)
 
     if not getattr(args, "plugin", None) and not getattr(args, "all_plugins", False):
         if session.all_plugins:
@@ -140,21 +172,32 @@ def apply_prompt_defaults(args: argparse.Namespace, session: PromptSessionState)
             args.filter, _ = _resolve_filters_for_scope(session.filter_names, scope)
             args.all_filters = False
 
-    if scope == "profile":
-        if getattr(args, "preset", None) == "balanced":
+    if hasattr(args, "extension_control") and "--extension-control" not in explicit_flags:
+        if command in ORCHESTRATE_ALIASES:
+            args.extension_control = session.orchestrate_extension_control
+        else:
+            args.extension_control = session.extension_control_for_module(scope)
+
+    if command in PROFILE_ALIASES:
+        if "--preset" not in explicit_flags:
             args.preset = session.profile_preset
         return args
 
-    if scope == "surface":
-        if getattr(args, "preset", None) == "balanced":
+    if command in SURFACE_ALIASES:
+        if "--preset" not in explicit_flags:
             args.preset = session.surface_preset
         return args
 
-    if scope == "fusion":
-        if getattr(args, "profile_preset", None) == "balanced":
+    if command in FUSION_ALIASES:
+        if "--profile-preset" not in explicit_flags:
             args.profile_preset = session.profile_preset
-        if getattr(args, "surface_preset", None) == "balanced":
+        if "--surface-preset" not in explicit_flags:
             args.surface_preset = session.surface_preset
+        return args
+
+    if command in ORCHESTRATE_ALIASES:
+        if "--profile" not in explicit_flags:
+            args.profile = _default_orchestrate_profile(session, scope)
     return args
 
 
@@ -172,11 +215,18 @@ def handle_prompt_set_command(
 
     tokens = command_text.strip().split(maxsplit=2)
     if len(tokens) != 3:
-        _emit("Usage: set <plugins|filters|profile_preset|surface_preset> <value>", Colors.YELLOW)
+        _emit(
+            "Usage: set <plugins|filters|profile_preset|surface_preset|extension_control|orchestrate_extension_control> <value>",
+            Colors.YELLOW,
+        )
         return True
 
     _, key, value = tokens
-    key = key.strip().lower()
+    key = key.strip().lower().replace("-", "_")
+    if key in {"ext", "extension", "control"}:
+        key = "extension_control"
+    if key == "orchestrate_control":
+        key = "orchestrate_extension_control"
     value = value.strip()
     scope = _normalize_module(session.module)
 
@@ -241,19 +291,39 @@ def handle_prompt_set_command(
         return True
 
     if key == "profile_preset":
-        if value not in PROFILE_PRESETS:
+        normalized_value = value.lower()
+        if normalized_value not in PROFILE_PRESETS:
             _emit(f"Invalid profile preset: {value}", Colors.RED)
             return True
-        session.profile_preset = value
-        _emit(f"Profile preset set to: {value}", Colors.GREEN)
+        session.profile_preset = normalized_value
+        _emit(f"Profile preset set to: {normalized_value}", Colors.GREEN)
         return True
 
     if key == "surface_preset":
-        if value not in SURFACE_PRESETS:
+        normalized_value = value.lower()
+        if normalized_value not in SURFACE_PRESETS:
             _emit(f"Invalid surface preset: {value}", Colors.RED)
             return True
-        session.surface_preset = value
-        _emit(f"Surface preset set to: {value}", Colors.GREEN)
+        session.surface_preset = normalized_value
+        _emit(f"Surface preset set to: {normalized_value}", Colors.GREEN)
+        return True
+
+    if key == "extension_control":
+        normalized_value = value.lower()
+        if normalized_value not in EXTENSION_CONTROL_MODES:
+            _emit(f"Invalid extension control mode: {value}", Colors.RED)
+            return True
+        session.set_extension_control_for_module(scope, normalized_value)
+        _emit(f"Extension control set to: {normalized_value} (module={scope})", Colors.GREEN)
+        return True
+
+    if key == "orchestrate_extension_control":
+        normalized_value = value.lower()
+        if normalized_value not in EXTENSION_CONTROL_MODES:
+            _emit(f"Invalid orchestrate extension control mode: {value}", Colors.RED)
+            return True
+        session.orchestrate_extension_control = normalized_value
+        _emit(f"Orchestrate extension control set to: {normalized_value}", Colors.GREEN)
         return True
 
     _emit(f"Unknown set key: {key}", Colors.YELLOW)

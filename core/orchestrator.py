@@ -11,7 +11,7 @@ from core.engine_manager import get_engine
 from core.execution_policy import ExecutionPolicy, load_execution_policy
 from core.filters import FilterPipeline, build_filter_registry
 from core.fusion import FusionEngine
-from core.intelligence import StrategicAdvisor
+from core.intelligence import IntelligenceEngine, StrategicAdvisor
 from core.lifecycle import ScanLifecycle
 from core.reporting import ReportManager
 from core.security import build_proxy_settings
@@ -37,6 +37,7 @@ class Orchestrator:
         self._capabilities = build_capability_registry()
         self._filter_registry = build_filter_registry()
         self._fusion_engine = FusionEngine()
+        self._intelligence_engine = IntelligenceEngine()
         self._advisor = StrategicAdvisor()
         self._report_manager = ReportManager()
 
@@ -140,7 +141,18 @@ class Orchestrator:
     def fuse(self, entities: list[BaseEntity]) -> dict[str, Any]:
         """Fuse refined entities into a correlation payload."""
 
-        return self._fusion_engine.fuse(entities)
+        fused = self._fusion_engine.fuse(entities)
+        intelligence_bundle = self._intelligence_engine.analyze(
+            entities,
+            mode=self.policy.name,
+            target=self.target,
+            anomalies=fused.get("anomalies", []) if isinstance(fused.get("anomalies"), list) else [],
+            relation_map=fused.get("relationship_map", {}) if isinstance(fused.get("relationship_map"), dict) else {},
+        )
+        fused["intelligence_bundle"] = intelligence_bundle
+        fused["risk_summary"] = intelligence_bundle.get("risk_summary", {})
+        fused["confidence_distribution"] = intelligence_bundle.get("confidence_distribution", {})
+        return fused
 
     def generate_report(self, fused_data: dict[str, Any]) -> dict[str, Any]:
         """Generate presentation-layer payloads from fused entities."""
