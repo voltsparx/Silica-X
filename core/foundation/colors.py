@@ -1,18 +1,75 @@
-# core/foundation/colors.py
+# ──────────────────────────────────────────────────────────────
+# SPDX-License-Identifier: Proprietary
+#
+# Silica-X Intelligence Framework
+# Copyright (c) 2026 voltsparx
+#
+# Author     : voltsparx
+# Repository : https://github.com/voltsparx/Silica-X
+# Contact    : voltsparx@gmail.com
+# License    : See LICENSE file in the project root 
+#
+# This file is part of Silica-X and is subject to the terms
+# and conditions defined in the LICENSE file.
+# ──────────────────────────────────────────────────────────────
+
+"""ANSI color helpers used across CLI rendering."""
+
+from __future__ import annotations
+
+import os
+import sys
+
 
 class Colors:
     RESET = "\033[0m"
     BOLD = "\033[1m"
+    DIM = "\033[2m"
+    UNDERLINE = "\033[4m"
 
-    RED = "\033[91m"
-    GREEN = "\033[92m"
-    YELLOW = "\033[93m"
-    BLUE = "\033[94m"
-    MAGENTA = "\033[95m"
-    CYAN = "\033[96m"
-    GREY = "\033[90m"
+    WHITE = "\033[38;5;255m"
+    SILVER = "\033[38;5;250m"
+    GREY = "\033[38;5;245m"
+    DARK_GREY = "\033[38;5;240m"
+
+    YELLOW = "\033[38;5;226m"
+    CYAN = "\033[38;5;51m"
+    BLUE = "\033[38;5;39m"
+    MAGENTA = "\033[38;5;201m"
+
+    GREEN = "\033[38;5;46m"
+    RED = "\033[38;5;196m"
+    ORANGE = "\033[38;5;208m"
+
+    # Backward-compatible aliases
+    GRAY = GREY
+    DARK_GRAY = DARK_GREY
+    LIGHT_GREY = SILVER
+    LIGHT_GRAY = SILVER
+    DEFAULT = RESET
 
 
-def c(text, color):
-    return f"{color}{text}{Colors.RESET}"
+def _colors_enabled() -> bool:
+    force = os.getenv("FORCE_COLOR", "").strip().lower()
+    if force in {"1", "true", "yes", "on"}:
+        return True
+    if os.getenv("NO_COLOR") is not None:
+        return False
+    stream = getattr(sys, "stdout", None)
+    return bool(stream and hasattr(stream, "isatty") and stream.isatty())
 
+
+def c(text: object, color: str | None) -> str:
+    """Apply ANSI color to text when supported by runtime/terminal."""
+    rendered = str(text)
+    if not color or not _colors_enabled():
+        return rendered
+    return f"{color}{rendered}{Colors.RESET}"
+
+
+def bold(text: object) -> str:
+    return c(text, Colors.BOLD)
+
+
+def dim(text: object) -> str:
+    return c(text, Colors.DIM)

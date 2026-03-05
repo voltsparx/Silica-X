@@ -1,5 +1,5 @@
 ──────────────────────────────────────────────
-     Silica-X v9+ - Proprietary License
+     SPDX-License-Identifier: Proprietary
 ──────────────────────────────────────────────
 
 Copyright (c) 2026 Voltsparx
@@ -14,13 +14,13 @@ requires explicit written permission from the copyright holder (Voltsparx).
 You may not:
 
 1. Remove, alter, or obscure any copyright, license, or attribution notices.
-2. Claim authorship or ownership of Sentinel-C or derivative works.
-3. Redistribute Sentinel-C, in whole or in part, in source or binary form, without prior written permission.
-4. Use Sentinel-C for unauthorized penetration testing, hacking, or any illegal activity.
+2. Claim authorship or ownership of Silica-X or derivative works.
+3. Redistribute Silica-X, in whole or in part, in source or binary form, without prior written permission.
+4. Use Silica-X for unauthorized penetration testing, hacking, or any illegal activity.
 
 Attribution must be retained in any permitted use:
 
-    "Silica-X v9+ © 2026 Voltsparx. All rights reserved. 
+    "Silica-X v8+ © 2026 Voltsparx. All rights reserved. 
     Original project: https://github.com/voltsparx/Silica-X"
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE 

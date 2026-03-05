@@ -1,3 +1,18 @@
+# ──────────────────────────────────────────────────────────────
+# SPDX-License-Identifier: Proprietary
+#
+# Silica-X Intelligence Framework
+# Copyright (c) 2026 voltsparx
+#
+# Author     : voltsparx
+# Repository : https://github.com/voltsparx/Silica-X
+# Contact    : voltsparx@gmail.com
+# License    : See LICENSE file in the project root 
+#
+# This file is part of Silica-X and is subject to the terms
+# and conditions defined in the LICENSE file.
+# ──────────────────────────────────────────────────────────────
+
 import unittest
 
 from core.utils.quicktest_data import list_quicktest_templates, pick_quicktest_template, quicktest_template_ids

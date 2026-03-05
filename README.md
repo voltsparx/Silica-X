@@ -13,6 +13,40 @@ This tool is built by stitching together public OSINT workflows and studying how
 
 ---
 
+## 📊 Why Use Silica-X?
+
+* Unified OSINT workflows in one tool: `profile`, `surface`, `fusion`, and `orchestrate`
+* Strong extension system with plugins + filters + scope compatibility checks
+* Prompt mode and flag mode for both guided and automation-friendly usage
+* Rich output lanes: CLI, JSON, CSV, HTML, and logs
+* Built-in quicktest templates for fast smoke validation
+
+---
+
+## 🗂 Quick Start
+
+```bash
+git clone https://github.com/voltsparx/Silica-X.git
+cd Silica-X
+pip install -r requirements.txt
+python silica-x.py
+```
+
+In prompt mode, start here:
+
+```text
+help
+show plugins
+show filters
+profile <username>
+surface <domain>
+fusion <username> <domain>
+```
+
+For full command reference, see [Usage Guide](docs/Usage.txt).
+
+---
+
 ## ⚠️ Disclaimer
 
 * Legal and authorized use only

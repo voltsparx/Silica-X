@@ -1,3 +1,18 @@
+# ──────────────────────────────────────────────────────────────
+# SPDX-License-Identifier: Proprietary
+#
+# Silica-X Intelligence Framework
+# Copyright (c) 2026 voltsparx
+#
+# Author     : voltsparx
+# Repository : https://github.com/voltsparx/Silica-X
+# Contact    : voltsparx@gmail.com
+# License    : See LICENSE file in the project root 
+#
+# This file is part of Silica-X and is subject to the terms
+# and conditions defined in the LICENSE file.
+# ──────────────────────────────────────────────────────────────
+
 """Main runner orchestration for Silica-X."""
 
 from __future__ import annotations
@@ -79,6 +94,15 @@ PROMPT_SHOW_COMMANDS = {"plugins", "filters", "modules", "history", "keywords", 
 def _print_prompt_help_hint() -> None:
     print(c(f"{symbol('tip')} Invalid command. Use `help` command.", Colors.YELLOW))
 
+
+def _set_non_exiting_parser(parser: argparse.ArgumentParser) -> None:
+    parser.exit_on_error = False
+    for action in getattr(parser, "_actions", []):
+        if not isinstance(action, argparse._SubParsersAction):  # noqa: SLF001 - argparse internals
+            continue
+        for subparser in action.choices.values():
+            subparser.exit_on_error = False
+
 PLUGIN_MANAGER = PluginManager()
 FUSION_ENGINE = FusionEngine()
 REPORT_GENERATOR = ReportGenerator()
@@ -97,6 +121,8 @@ def safe_path_component(value: str) -> str:
 
 
 def clear_screen() -> None:
+    if not bool(getattr(sys.stdout, "isatty", lambda: False)()):
+        return
     os.system("cls" if os.name == "nt" else "clear")
 
 
@@ -359,6 +385,7 @@ def _print_keyword_inventory() -> None:
     print(c("-" * 36, Colors.BLUE))
     for command, keywords in PROMPT_KEYWORDS.items():
         print(c(f"{symbol('bullet')} {command}: {', '.join(sorted(keywords))}", Colors.CYAN))
+        print()
     print()
 
 
@@ -388,9 +415,10 @@ def _print_plugin_inventory(scope: str | None = None) -> None:
             crypto_kind = str(plugin.get("crypto_kind") or "").strip().lower()
             if crypto_kind:
                 print(c(f"  crypto-kind: {crypto_kind}", Colors.MAGENTA))
-            print(c(f"  scopes: {scopes_text}", Colors.GREY))
-            print(c(f"  aliases: {alias_text}", Colors.GREY))
-            print(c(f"  desc: {plugin.get('description')}", Colors.GREY))
+            print(c(f"  scopes: {scopes_text}", Colors.WHITE))
+            print(c(f"  aliases: {alias_text}", Colors.WHITE))
+            print(c(f"  desc: {plugin.get('description')}", Colors.WHITE))
+            print()
 
     core_plugins = [
         plugin for plugin in plugins if str(plugin.get("plugin_group") or "").strip().lower() != "cryptography"
@@ -401,7 +429,7 @@ def _print_plugin_inventory(scope: str | None = None) -> None:
     print(
         c(
             f"{symbol('tip')} core plugins: {len(core_plugins)} | cryptography plugins: {len(crypto_plugins)}",
-            Colors.GREY,
+            Colors.WHITE,
         )
     )
     _print_rows(core_plugins, heading="Core Plugin Set", accent=Colors.CYAN)
@@ -431,9 +459,10 @@ def _print_filter_inventory(scope: str | None = None) -> None:
         aliases = row.get("aliases", [])
         alias_text = ", ".join(aliases) if aliases else "-"
         print(c(f"{symbol('feature')} {row.get('id')} - {row.get('title')}", Colors.CYAN))
-        print(c(f"  scopes: {scopes_text}", Colors.GREY))
-        print(c(f"  aliases: {alias_text}", Colors.GREY))
-        print(c(f"  desc: {row.get('description')}", Colors.GREY))
+        print(c(f"  scopes: {scopes_text}", Colors.WHITE))
+        print(c(f"  aliases: {alias_text}", Colors.WHITE))
+        print(c(f"  desc: {row.get('description')}", Colors.WHITE))
+        print()
     for error in discovery_errors:
         print(c(f"{symbol('warn')} {error}", Colors.YELLOW))
     print()
@@ -581,7 +610,7 @@ def _print_modules_inventory(
             c(
                 f"  kind: {row.get('kind')} | scopes: {', '.join(row.get('scopes', []))} "
                 f"| capabilities: {', '.join(row.get('capabilities', [])[:5]) or '-'}",
-                Colors.GREY,
+                Colors.WHITE,
             )
         )
         signals = row.get("signals", {})
@@ -597,9 +626,10 @@ def _print_modules_inventory(
                 f"surface={signals.get('surface_score', 0)} "
                 f"fusion={signals.get('fusion_score', 0)} "
                 f"size={metrics.get('file_size_bytes', 0)}B",
-                Colors.GREY,
+                Colors.WHITE,
             )
         )
+        print()
     print()
 
 
@@ -618,6 +648,7 @@ def _print_scan_history(limit: int = 25) -> None:
         if row.get("source"):
             print(c(f"  source: {row['source']}", Colors.GREY))
         print(c(f"  file: {row['path']}", Colors.GREY))
+        print()
     print()
 
 
@@ -633,6 +664,7 @@ def _print_quicktest_templates() -> None:
                 Colors.CYAN,
             )
         )
+        print()
     print(c(f"{symbol('tip')} Run `quicktest` to pick one randomly.", Colors.GREY))
     print()
 
@@ -3159,8 +3191,14 @@ async def run_prompt_mode(initial_state: RunnerState | None = None) -> int:
 async def run(argv: Sequence[str] | None = None) -> int:
     ensure_output_tree()
     parser = build_root_parser()
+    _set_non_exiting_parser(parser)
     argv_tokens = list(argv) if argv is not None else sys.argv[1:]
-    args = parser.parse_args(argv_tokens)
+    try:
+        args = parser.parse_args(argv_tokens)
+    except (argparse.ArgumentError, ValueError):
+        print(c(f"{symbol('tip')} Invalid command. Use `help` command.", Colors.YELLOW))
+        append_framework_log("framework_exit", f"status={EXIT_USAGE} reason=parse_error")
+        return EXIT_USAGE
     setattr(args, "_explicit_flags", _extract_explicit_flags(argv_tokens))
     _normalize_multi_select_args(args)
     rendered_argv = " ".join(str(item) for item in argv_tokens)

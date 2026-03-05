@@ -1,3 +1,18 @@
+# ──────────────────────────────────────────────────────────────
+# SPDX-License-Identifier: Proprietary
+#
+# Silica-X Intelligence Framework
+# Copyright (c) 2026 voltsparx
+#
+# Author     : voltsparx
+# Repository : https://github.com/voltsparx/Silica-X
+# Contact    : voltsparx@gmail.com
+# License    : See LICENSE file in the project root 
+#
+# This file is part of Silica-X and is subject to the terms
+# and conditions defined in the LICENSE file.
+# ──────────────────────────────────────────────────────────────
+
 """Silica-X native thread and sync engine wiring.
 
 Blocking/CPU-heavy work should run in threads. Completed data then flows into
