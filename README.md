@@ -22,6 +22,7 @@ Multi-engine OSINT orchestration for profile intelligence, domain-surface reconn
 > `profile`, `surface`, `fusion`, and `orchestrate`.
 >  
 > It combines policy-driven execution, plugin/filter control, and explainable scoring into one operator flow, with rich outputs across CLI, JSON, CSV, HTML, and logs.
+> Sorry for the old v3.0 image of Silica-X. I will change that soon^^
 
 ---
 
