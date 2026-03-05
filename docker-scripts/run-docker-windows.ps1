@@ -110,13 +110,6 @@ function Prompt-YesNo {
   return $normalized.StartsWith('y')
 }
 
-function Get-DockerContextArgs {
-  if ([string]::IsNullOrWhiteSpace($RunnerContext)) {
-    return @()
-  }
-  return @('--context', $RunnerContext)
-}
-
 function Parse-RunnerArgs {
   param([string[]]$InputArgs)
 
@@ -328,9 +321,11 @@ function Get-DockerDesktopPath {
 
 function Test-DockerDaemon {
   try {
-    $args = [System.Collections.Generic.List[string]]::new()
-    $args.AddRange((Get-DockerContextArgs))
-    $args.Add('info')
+    $args = @()
+    if (-not [string]::IsNullOrWhiteSpace($RunnerContext)) {
+      $args += @('--context', $RunnerContext)
+    }
+    $args += 'info'
     & docker @args *> $null
     return ($LASTEXITCODE -eq 0)
   } catch {
@@ -340,9 +335,11 @@ function Test-DockerDaemon {
 
 function Test-DockerComposePlugin {
   try {
-    $args = [System.Collections.Generic.List[string]]::new()
-    $args.AddRange((Get-DockerContextArgs))
-    $args.AddRange(@('compose', 'version'))
+    $args = @()
+    if (-not [string]::IsNullOrWhiteSpace($RunnerContext)) {
+      $args += @('--context', $RunnerContext)
+    }
+    $args += @('compose', 'version')
     & docker @args *> $null
     return ($LASTEXITCODE -eq 0)
   } catch {
