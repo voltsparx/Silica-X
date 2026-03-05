@@ -8,8 +8,8 @@ This tool is built by stitching together public OSINT workflows and studying how
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docs/images/silica-x-menu.png" alt="Silica-X Menu" width="600">
-`Sorry for the old images, i will replace it soon`
+  <img src="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docs/images/silica-x-menu.png" alt="Silica-X Menu" width="600"> <br>
+  <H6> <i>Sorry for the old images, i will replace it soon </i> </h6>
 </p>
 
 ---
