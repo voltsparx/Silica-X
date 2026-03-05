@@ -5,7 +5,7 @@ Multi-engine OSINT orchestration for profile intelligence, domain-surface reconn
 
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docs/icon-images/silica-x-icon.png" alt="Silica-X Logo for now" width="600">
+  <img src="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docs/icon-images/silica-x-icon.png" alt="Silica-X Logo for now" width="500px">
 </p>
 
 <p align="center">
@@ -24,7 +24,7 @@ Multi-engine OSINT orchestration for profile intelligence, domain-surface reconn
 >  
 > It combines policy-driven execution, plugin/filter control, and explainable scoring into one operator flow, with rich outputs across CLI, JSON, CSV, HTML, and logs. <br>
 <p align="center">
-  <img src="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docs/images/silica-x-menu.png" alt="Silica-X Menu" width="600"><br>
+  <img src="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docs/images/silica-x-menu.png" alt="Silica-X Menu" width="600px"><br>
 </p>
 
 > Sorry for the old v3.0 image of Silica-X. I will change that soon^^
