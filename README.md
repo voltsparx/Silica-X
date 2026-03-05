@@ -1,4 +1,4 @@
-# Silica-X v9.2
+# 📡Silica-X v9.2
 
 <strong>Release Theme: Lattice</strong><br>
 Multi-engine OSINT orchestration for profile intelligence, domain-surface reconnaissance, and fused correlation reporting.
