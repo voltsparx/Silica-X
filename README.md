@@ -1,18 +1,28 @@
-# 🛰️ Silica-X v9.2
+# Silica-X v9.2
 
-**Release Theme**: Lattice
-
-**Silica-X** is an OSINT framework for **profile intelligence**, **domain-surface reconnaissance**, and **fused correlation reporting**.<br><br>
 <p align="center">
-This tool is built by stitching together public OSINT workflows and studying how data flows through open APIs while standing on the shoulders of established frameworks. Also added my own ideas, architectures, features, etc..., too.....
+  <strong>Release Theme: Lattice</strong><br>
+  Multi-engine OSINT orchestration for profile intelligence, domain-surface reconnaissance, and fused correlation reporting.
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docs/images/silica-x-menu.png" alt="Silica-X Menu" width="600"> <br>
+  <img src="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docs/images/silica-x-menu.png" alt="Silica-X Menu" width="600">
 </p>
-<p>
-  <H6> <i>Sorry for the old images, i will replace it soon </i> </h6>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/version-v9.2-0A66C2?style=for-the-badge" alt="Version v9.2">
+  <img src="https://img.shields.io/badge/theme-Lattice-1F7A8C?style=for-the-badge" alt="Theme Lattice">
+  <img src="https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python Versions">
+  <img src="https://img.shields.io/badge/tests-163%2F163%20passing-2E8B57?style=for-the-badge" alt="Tests Passing">
+  <img src="https://img.shields.io/badge/platforms-70-4C956C?style=for-the-badge" alt="Platforms">
+  <img src="https://img.shields.io/badge/license-Proprietary-8B0000?style=for-the-badge" alt="License Proprietary">
 </p>
+
+> **Power Summary**
+> Silica-X is built to run intelligence workflows as one coordinated system:
+> `profile`, `surface`, `fusion`, and `orchestrate`.
+>  
+> It combines policy-driven execution, plugin/filter control, and explainable scoring into one operator flow, with rich outputs across CLI, JSON, CSV, HTML, and logs.
 
 ---
 
