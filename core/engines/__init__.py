@@ -14,3 +14,14 @@
 # ──────────────────────────────────────────────────────────────
 
 """Execution engines for async, thread, parallel, fusion, and scheduling."""
+
+from core.engines.engine_base import EngineBase
+from core.engines.engine_result import EngineResult
+from core.engines.health_monitor import EngineHealthMonitor, EngineHealthSnapshot
+
+__all__ = [
+    "EngineBase",
+    "EngineResult",
+    "EngineHealthMonitor",
+    "EngineHealthSnapshot",
+]

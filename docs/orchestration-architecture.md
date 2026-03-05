@@ -1,6 +1,6 @@
 # Orchestration Architecture (Layered)
 
-Release: v9.0 (Theme: Lattice)
+Release: v9.2 (Theme: Lattice)
 
 Silica-X now includes an additive layered architecture aligned with `structure.txt`.
 
@@ -17,6 +17,13 @@ Silica-X now includes an additive layered architecture aligned with `structure.t
    - `graph_builder`
 6. `core.intelligence.StrategicAdvisor` generates recommendations and priorities.
 7. `core.reporting.ReportManager` renders text/JSON/HTML/graph outputs.
+
+Engine execution now follows a normalized result schema:
+- `name`
+- `status` (`success|failed|timeout`)
+- `data`
+- `error`
+- `execution_time`
 
 ## Data Contract
 

@@ -49,7 +49,7 @@ class EngineBase(abc.ABC):
         """Run tasks and return standardized engine results."""
 
         timeout_raw = (context or {}).get("timeout")
-        timeout = int(timeout_raw) if isinstance(timeout_raw, (int, float)) and int(timeout_raw) > 0 else None
+        timeout = float(timeout_raw) if isinstance(timeout_raw, (int, float)) and float(timeout_raw) > 0 else None
         results: list[EngineResult] = []
         for index, task in enumerate(tasks, start=1):
             name = self._task_name(task, index=index)
@@ -87,7 +87,7 @@ class EngineBase(abc.ABC):
             results.append(result)
         return results
 
-    async def timeout_guard(self, awaitable: Awaitable[Any], timeout: int | None) -> Any:
+    async def timeout_guard(self, awaitable: Awaitable[Any], timeout: float | None) -> Any:
         """Apply hard timeout guard to an awaitable."""
 
         if timeout is None:
@@ -127,4 +127,3 @@ class EngineBase(abc.ABC):
         if name and name != "<lambda>":
             return name
         return f"task-{index}"
-

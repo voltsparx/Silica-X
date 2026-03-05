@@ -1,6 +1,6 @@
 # Core Module Layout
 
-Release: v9.0 (Theme: Lattice)
+Release: v9.2 (Theme: Lattice)
 
 Core modules are grouped by responsibility to keep runtime wiring and ownership clear.
 
@@ -26,6 +26,9 @@ Core modules are grouped by responsibility to keep runtime wiring and ownership 
 ## Engines + Foundation
 
 - `core/engines/` -> async/thread/parallel execution helpers.
+- `core/engines/engine_result.py` -> standardized engine result schema.
+- `core/engines/engine_base.py` -> timeout guard + exception isolation base contract.
+- `core/engines/health_monitor.py` -> runtime engine health metrics.
 - `core/foundation/` -> low-level shared state, metadata, colors, and credentials.
 - `core/intel/` -> prompt recommendations and capability mapping.
 

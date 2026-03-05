@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 
 
 PROJECT_NAME = "Silica-X"
-VERSION = "9.0"
+VERSION = "9.2"
 VERSION_THEME = "Lattice"
 AUTHOR = "voltsparx"
 AUTHOR_HANDLE = "voltsparx"

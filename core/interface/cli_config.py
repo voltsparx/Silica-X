@@ -35,6 +35,7 @@ class SurfacePreset(TypedDict):
 
 
 PROFILE_PRESETS: dict[str, ProfilePreset] = {
+    "safe": {"timeout": 10, "max_concurrency": 8, "source_profile": "fast", "max_platforms": 25},
     "fast": {"timeout": 10, "max_concurrency": 8, "source_profile": "fast", "max_platforms": 25},
     "quick": {"timeout": 12, "max_concurrency": 10, "source_profile": "fast", "max_platforms": 25},
     "balanced": {
@@ -44,6 +45,7 @@ PROFILE_PRESETS: dict[str, ProfilePreset] = {
         "max_platforms": 45,
     },
     "deep": {"timeout": 35, "max_concurrency": 35, "source_profile": "deep", "max_platforms": 60},
+    "aggressive": {"timeout": 50, "max_concurrency": 50, "source_profile": "max", "max_platforms": 70},
     "max": {"timeout": 50, "max_concurrency": 50, "source_profile": "max", "max_platforms": 70},
 }
 

@@ -57,6 +57,8 @@ class TestOrchestratorLayer(unittest.TestCase):
         self.assertTrue(payload["fused"]["intelligence_bundle"]["analysis_ready"])
         self.assertIn("advisory", payload)
         self.assertIn("lifecycle", payload)
+        self.assertIn("engine_health", payload)
+        self.assertIn("engine_results", payload)
 
 
 if __name__ == "__main__":

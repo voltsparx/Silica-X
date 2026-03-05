@@ -1,4 +1,4 @@
-# 🛰️ Silica-X v9.0
+# 🛰️ Silica-X v9.2
 
 **Release Theme**: Lattice
 
@@ -9,6 +9,8 @@ This tool is built by stitching together public OSINT workflows and studying how
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docs/images/silica-x-menu.png" alt="Silica-X Menu" width="600"> <br>
+</p>
+<p>
   <H6> <i>Sorry for the old images, i will replace it soon </i> </h6>
 </p>
 
@@ -81,8 +83,22 @@ For full command reference, see [Usage Guide](docs/Usage.txt).
 * [OCR/Image Infrastructure Plan](docs/ocr-image-scan-infrastructure.md)
 * [Release Checklist v9.0 Lattice](docs/release-checklist-v9.0-lattice.md)
 * [Release Notes v9.0 Lattice](docs/release-notes-v9.0-lattice.md)
+* [Release Notes v9.2 Lattice](docs/release-notes-v9.2-lattice.md)
 * [Release Commit Plan v9.0 Lattice](docs/release-commit-plan-v9.0-lattice.md)
 * [Code of Conduct](CODE_OF_CONDUCT.md)
+
+---
+
+## 🚀 v9.2 Engine Architecture Updates
+
+* Added a standardized engine result contract: `name`, `status`, `data`, `error`, `execution_time`
+* Added `EngineBase` execution discipline with hard timeout guard + exception isolation
+* Added runtime `EngineHealthMonitor` metrics: active tasks, failure counters, and average latency
+* Updated engine manager to support structured execution (`run_detailed`) while preserving compatibility `run()`
+* Updated orchestrator capability stage to track `success/failed/timeout` and attach `engine_health` + `engine_results` in payload/lifecycle
+* Added execution mode aliases for operator language parity: `safe -> fast`, `aggressive -> max`, `standard -> balanced`
+* Added engine-runtime validation tests (`tests/test_engine_runtime.py`) and updated orchestration/policy tests for v9.2 behavior
+* Detailed notes: `docs/release-notes-v9.2-lattice.md`
 
 ---
 
@@ -121,7 +137,7 @@ For full command reference, see [Usage Guide](docs/Usage.txt).
 
 * Repository-wide file audit completed across **1,198 files** (including generated output/cache artifacts)
 * File audit checks (readability + parser/compile validation) reported **0 errors**
-* Unit tests: **160/160 passing**
+* Unit tests: **163/163 passing**
 * Ruff lint: passing
 * mypy (full repository scope): passing (no issues found)
 * Bytecode compile check (`compileall`): passing
@@ -130,7 +146,7 @@ For full command reference, see [Usage Guide](docs/Usage.txt).
   * root commands = 23
   * prompt commands = 22
   * keyword/flag parity verified
-* Platform manifests loaded: **71**
+* Platform manifests loaded: **70**
 * Runtime plugin/filter discovery: **20 plugins, 17 filters**
 
 ### Scope Compatibility Inventory

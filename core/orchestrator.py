@@ -22,6 +22,7 @@ from typing import Any
 
 from core.capabilities import build_capability_registry
 from core.domain import BaseEntity
+from core.engines.engine_result import EngineResult
 from core.engine_manager import get_engine
 from core.execution_policy import ExecutionPolicy, load_execution_policy
 from core.filters import FilterPipeline, build_filter_registry
@@ -55,6 +56,7 @@ class Orchestrator:
         self._intelligence_engine = IntelligenceEngine()
         self._advisor = StrategicAdvisor()
         self._report_manager = ReportManager()
+        self._last_engine_results: list[dict[str, Any]] = []
 
     async def run(self) -> dict[str, Any]:
         """Execute full orchestration lifecycle and return presentation payloads."""
@@ -62,7 +64,18 @@ class Orchestrator:
         self.lifecycle.mark("policy", "loaded", profile=self.policy.name, engine=self.policy.engine_type)
 
         entities = await self.execute_capabilities()
-        self.lifecycle.mark("capabilities", "completed", count=len(entities))
+        status_counts = self._engine_status_counts()
+        self.lifecycle.mark(
+            "capabilities",
+            "completed",
+            count=len(entities),
+            succeeded=status_counts["success"],
+            failed=status_counts["failed"],
+            timed_out=status_counts["timeout"],
+        )
+
+        engine_health = self._safe_engine_health()
+        self.lifecycle.mark("engine", "health", **engine_health)
 
         filtered_entities = self.apply_filters(entities)
         self.lifecycle.mark("filters", "completed", count=len(filtered_entities))
@@ -80,6 +93,8 @@ class Orchestrator:
         self.lifecycle.complete()
 
         report_payload["lifecycle"] = self.lifecycle.as_dict()
+        report_payload["engine_health"] = engine_health
+        report_payload["engine_results"] = list(self._last_engine_results)
         return report_payload
 
     async def execute_capabilities(self) -> list[BaseEntity]:
@@ -97,15 +112,38 @@ class Orchestrator:
         task_factories = []
         for capability in async_capabilities:
             capability_target = self._target_for_capability(capability.capability_id)
-            task_factories.append(
+            factory = (
                 lambda capability=capability, capability_target=capability_target: capability.execute(
                     capability_target,
                     context,
                 )
             )
+            setattr(factory, "_silica_task_name", capability.capability_id)
+            task_factories.append(factory)
         runtime_context = {"max_workers": self.policy.max_workers, "timeout": self.policy.timeout}
 
-        raw_results = await self._engine.run(task_factories, runtime_context)
+        raw_results: list[Any] = []
+        detailed_results: list[EngineResult] = []
+        if hasattr(self._engine, "run_detailed"):
+            detailed_results = await self._engine.run_detailed(task_factories, runtime_context)
+            self._last_engine_results = [
+                {
+                    "name": item.name,
+                    "status": item.status,
+                    "error": item.error,
+                    "execution_time": round(float(item.execution_time), 4),
+                }
+                for item in detailed_results
+            ]
+            raw_results = [item.data.get("payload") for item in detailed_results if item.status == "success"]
+            for item in detailed_results:
+                if item.status == "success":
+                    continue
+                LOGGER.warning("Capability execution [%s] %s: %s", item.status, item.name, item.error)
+        else:  # pragma: no cover - compatibility fallback
+            raw_results = await self._engine.run(task_factories, runtime_context)
+            self._last_engine_results = []
+
         entities: list[BaseEntity] = []
 
         for item in raw_results:
@@ -119,8 +157,11 @@ class Orchestrator:
             correlation_capability = self._capabilities["correlation"]
             correlation_context = self._build_context(existing_entities=entities)
             correlation_target = self._target_for_capability(correlation_capability.capability_id)
-            correlation_entities = await correlation_capability.execute(correlation_target, correlation_context)
-            entities.extend(entity for entity in correlation_entities if isinstance(entity, BaseEntity))
+            try:
+                correlation_entities = await correlation_capability.execute(correlation_target, correlation_context)
+                entities.extend(entity for entity in correlation_entities if isinstance(entity, BaseEntity))
+            except Exception as exc:  # pragma: no cover - correlation isolation
+                LOGGER.warning("Correlation capability execution error: %s", exc)
 
         return entities
 
@@ -238,3 +279,21 @@ class Orchestrator:
             seen.add(lowered)
             deduped.append(item)
         return deduped
+
+    def _safe_engine_health(self) -> dict[str, Any]:
+        if not hasattr(self._engine, "health_check"):
+            return {}
+        try:
+            snapshot = self._engine.health_check()
+            return snapshot if isinstance(snapshot, dict) else {}
+        except Exception as exc:  # pragma: no cover - defensive boundary
+            LOGGER.warning("Engine health snapshot failed: %s", exc)
+            return {}
+
+    def _engine_status_counts(self) -> dict[str, int]:
+        counters = {"success": 0, "failed": 0, "timeout": 0}
+        for row in self._last_engine_results:
+            status = str(row.get("status", "")).strip().lower()
+            if status in counters:
+                counters[status] += 1
+        return counters

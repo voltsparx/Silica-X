@@ -27,10 +27,13 @@ from core.extensions.signal_sieve import list_filter_descriptors
 VALID_SCOPES = {"profile", "surface", "fusion"}
 VALID_CONTROL_MODES = {"auto", "manual", "hybrid"}
 MODE_ALIASES = {
+    "safe": "fast",
     "quick": "fast",
     "fast": "fast",
+    "standard": "balanced",
     "balanced": "balanced",
     "deep": "deep",
+    "aggressive": "max",
     "max": "max",
 }
 

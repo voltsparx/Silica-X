@@ -22,7 +22,9 @@ from core.engine_manager import AsyncEngine, HybridEngine, get_engine
 class TestExecutionPolicy(unittest.TestCase):
     def test_profile_alias_normalization(self):
         self.assertEqual(normalize_profile_name("quick"), "fast")
+        self.assertEqual(normalize_profile_name("safe"), "fast")
         self.assertEqual(normalize_profile_name("FAST"), "fast")
+        self.assertEqual(normalize_profile_name("aggressive"), "max")
         self.assertEqual(normalize_profile_name("unknown"), "balanced")
 
     def test_load_execution_policy_defaults_balanced(self):

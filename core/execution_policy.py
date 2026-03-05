@@ -37,10 +37,13 @@ class ExecutionPolicy:
 
 
 SCAN_PROFILE_ALIASES: Final[dict[str, str]] = {
+    "safe": "fast",
     "quick": "fast",
     "fast": "fast",
+    "standard": "balanced",
     "balanced": "balanced",
     "deep": "deep",
+    "aggressive": "max",
     "max": "max",
 }
 
