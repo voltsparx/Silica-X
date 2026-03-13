@@ -316,13 +316,13 @@ Running without flags starts **prompt mode**.
 <table>
   <thead>
     <tr>
-      <th>Smoke Suite (2026-03-05)</th>
+      <th>Smoke Suite (2026-03-05; latest pytest 2026-03-14)</th>
       <th>Status</th>
       <th>Notes</th>
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>python -m pytest -q</code></td><td>PASS</td><td>160 tests passed.</td></tr>
+    <tr><td><code>python -m pytest -q</code></td><td>PASS</td><td>163 tests passed (latest run 2026-03-14).</td></tr>
     <tr><td><code>python -m ruff check .</code></td><td>PASS</td><td>No lint errors.</td></tr>
     <tr><td><code>python -m mypy</code></td><td>PASS</td><td>No type errors found (repository scope).</td></tr>
     <tr><td><code>python -m compileall -q core filters plugins tests silica-x.py</code></td><td>PASS</td><td>Bytecode compile smoke passed.</td></tr>
