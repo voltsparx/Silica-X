@@ -3,11 +3,11 @@
 *.zip
 *tree.txt
 repo_tree.txt
+silica-x-watermark.py
 self-structuring/
-silica-x-only.zip
 intel-sources/
 release-assets/
-silica-x-watermark.py
+self-assessment/
 
 # =========================================
 # Python cache and virtual environments
