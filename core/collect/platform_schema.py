@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import json
 import os
+from importlib import resources as importlib_resources
 from dataclasses import dataclass
 from typing import Any
 
@@ -48,7 +49,7 @@ class PlatformConfig:
     confidence_weight: float
 
 
-def load_platforms(platform_dir: str = "platforms") -> list[PlatformConfig]:
+def _load_platforms_from_dir(platform_dir: str) -> list[PlatformConfig]:
     if not os.path.isdir(platform_dir):
         raise PlatformValidationError(
             f"Platform directory not found: {os.path.abspath(platform_dir)}"
@@ -77,6 +78,29 @@ def load_platforms(platform_dir: str = "platforms") -> list[PlatformConfig]:
             f"No platform json files found in {os.path.abspath(platform_dir)}"
         )
     return configs
+
+
+def load_platforms(platform_dir: str = "platforms") -> list[PlatformConfig]:
+    if os.path.isdir(platform_dir):
+        return _load_platforms_from_dir(platform_dir)
+
+    resource_root = None
+    try:
+        resource_root = importlib_resources.files("platforms")
+    except Exception:
+        resource_root = None
+
+    if resource_root is not None:
+        try:
+            with importlib_resources.as_file(resource_root) as resource_path:
+                if os.path.isdir(resource_path):
+                    return _load_platforms_from_dir(os.fspath(resource_path))
+        except Exception:
+            pass
+
+    raise PlatformValidationError(
+        f"Platform directory not found: {os.path.abspath(platform_dir)}"
+    )
 
 
 def _normalize_platform(raw: dict[str, Any], source: str) -> PlatformConfig:

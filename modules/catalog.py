@@ -21,6 +21,7 @@ from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import suppress
 from datetime import datetime, timezone
+from importlib import resources as importlib_resources
 import hashlib
 import json
 import os
@@ -173,6 +174,42 @@ TEXT_SORT_FIELDS = {"framework", "file", "kind"}
 
 def _now_utc() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _load_json_payload(path: Path) -> dict[str, Any] | None:
+    if not path.exists():
+        return None
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
+def _load_json_resource(package: str, relative_path: str) -> dict[str, Any] | None:
+    try:
+        resource = importlib_resources.files(package).joinpath(relative_path)
+    except Exception:
+        return None
+    if not resource.is_file():
+        return None
+    try:
+        payload = json.loads(resource.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
+def _load_module_catalog_resource(payload_path: Path) -> dict[str, Any] | None:
+    parts = payload_path.parts
+    if not parts:
+        return None
+    if parts[0] != DEFAULT_MODULES_ROOT.name:
+        return None
+    relative = Path(*parts[1:]).as_posix()
+    if not relative:
+        return None
+    return _load_json_resource(DEFAULT_MODULES_ROOT.name, relative)
 
 
 def _normalize_id(value: str) -> str:
@@ -806,13 +843,13 @@ def load_module_catalog(path: str | Path = DEFAULT_INDEX_PATH) -> dict[str, Any]
     """Load module catalog index payload from disk."""
 
     payload_path = Path(path)
-    if not payload_path.exists():
-        return {}
-    try:
-        payload = json.loads(payload_path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return {}
-    return payload if isinstance(payload, dict) else {}
+    payload = _load_json_payload(payload_path)
+    if payload is not None:
+        return payload
+    package_payload = _load_module_catalog_resource(payload_path)
+    if package_payload is not None:
+        return package_payload
+    return {}
 
 
 def validate_module_catalog(
@@ -876,7 +913,7 @@ def ensure_module_catalog(
     """Load module catalog or rebuild it when missing/stale."""
 
     index_path = Path(output_root) / "index.json"
-    if refresh or not index_path.exists():
+    if refresh:
         return build_module_catalog(source_root, output_root=output_root, max_workers=max_workers)
 
     payload = load_module_catalog(index_path)

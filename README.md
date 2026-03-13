@@ -43,6 +43,19 @@ Multi-engine OSINT orchestration for profile intelligence, domain-surface reconn
 
 ## 🗂 Quick Start
 
+### Install from PyPI
+
+```bash
+pip install silica-x
+silica-x
+```
+
+```python
+import silica_x
+```
+
+### Run from source
+
 ```bash
 git clone https://github.com/voltsparx/Silica-X.git
 cd Silica-X
