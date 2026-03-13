@@ -27,7 +27,7 @@ Multi-engine OSINT orchestration for profile intelligence, domain-surface reconn
   <img src="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docs/images/silica-x-menu-v9.2.png" alt="Silica-X Menu" width="600px"><br>
 </p>
 
-> Sorry for the old v3.0 image of Silica-X. I will change that soon^^
+> I doubt the pic not looking perfect...
 
 ---
 
