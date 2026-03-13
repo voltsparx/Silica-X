@@ -20,7 +20,7 @@ from __future__ import annotations
 from base64 import urlsafe_b64encode
 from dataclasses import dataclass, field
 
-from core.foundation.credential_manager import CredentialManager
+from core.credential_manager import CredentialManager
 from core.security.encryption import derive_secret_key
 
 

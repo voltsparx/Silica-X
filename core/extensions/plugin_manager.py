@@ -7,17 +7,16 @@
 # Author     : voltsparx
 # Repository : https://github.com/voltsparx/Silica-X
 # Contact    : voltsparx@gmail.com
-# License    : See LICENSE file in the project root 
+# License    : See LICENSE file in the project root
 #
 # This file is part of Silica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
-"""Compatibility wrapper for the reporting generator."""
+"""Compatibility shim for legacy imports."""
 
 from __future__ import annotations
 
-from core.reporting.report_generator import ReportGenerator
+from core.plugin_manager import PluginDescriptor, PluginManager
 
-__all__ = ["ReportGenerator"]
-
+__all__ = ["PluginDescriptor", "PluginManager"]

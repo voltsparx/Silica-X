@@ -23,8 +23,10 @@ from core.reporting.json_export import build_json_payload
 from core.reporting.json_reporter import render_json_report
 from core.reporting.report_manager import ReportManager
 from core.reporting.txt_reporter import render_txt_report
+from core.reporting.report_generator import ReportGenerator
 
 __all__ = [
+    "ReportGenerator",
     "ReportManager",
     "build_json_payload",
     "export_graph_json",

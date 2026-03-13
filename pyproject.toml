@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = { file = "LICENSE" }
 authors = [{ name = "voltsparx", email = "voltsparx@gmail.com" }]
-keywords = ["osint", "intelligence", "recon", "correlation", "security"]
+keywords = ["osint-framework", "intelligence", "recon", "correlation", "security"]
 classifiers = [
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.11",
