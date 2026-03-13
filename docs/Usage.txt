@@ -1,4 +1,4 @@
-Silica-X v9.2 (Theme: Lattice) Usage Guide
+Silica-X v9.2.0 (Theme: Lattice) Usage Guide
 ==========================================
 
 1) Installation
@@ -34,7 +34,7 @@ Prompt-mode startup shows loaded inventory:
 - module catalog/framework count
 - plugin/filter scope coverage
 
-Execution mode aliases (v9.2):
+Execution mode aliases (v9.2.0):
 - `safe` maps to `fast`
 - `aggressive` maps to `max`
 

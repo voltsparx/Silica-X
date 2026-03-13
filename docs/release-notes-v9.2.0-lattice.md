@@ -1,4 +1,4 @@
-# Silica-X v9.2 "Lattice" Update Notes
+# Silica-X v9.2.0 "Lattice" Update Notes
 
 ## Engine Architecture Upgrade
 
@@ -35,5 +35,5 @@
 
 ## Version Marking
 
-- Core metadata version updated to `9.2`.
-- Top-level docs updated to reflect `v9.2`.
+- Core metadata version updated to `9.2.0`.
+- Top-level docs updated to reflect `v9.2.0`.

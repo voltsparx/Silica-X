@@ -7,7 +7,7 @@ name = "silica-x"
 dynamic = ["version"]
 description = "Multi-engine OSINT orchestration for profile intelligence, domain-surface reconnaissance, and fused correlation reporting."
 readme = "README.md"
-requires-python = ">=3.11,<3.15"
+requires-python = ">=3.11"
 license = { file = "LICENSE" }
 authors = [{ name = "voltsparx", email = "voltsparx@gmail.com" }]
 keywords = ["osint", "intelligence", "recon", "correlation", "security"]
