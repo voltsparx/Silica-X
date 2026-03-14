@@ -1,4 +1,4 @@
-# 📡Silica-X v9.2.0
+# 📡Silica-X v9.3.0
 
 <strong>Release Theme: Lattice</strong><br>
 Multi-engine OSINT orchestration for profile intelligence, domain-surface reconnaissance, and fused correlation reporting.
@@ -9,10 +9,10 @@ Multi-engine OSINT orchestration for profile intelligence, domain-surface reconn
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-v9.2.0-0A66C2?style=for-the-badge" alt="Version v9.2.0">
+  <img src="https://img.shields.io/badge/version-v9.3.0-0A66C2?style=for-the-badge" alt="Version v9.3.0">
   <img src="https://img.shields.io/badge/theme-Lattice-1F7A8C?style=for-the-badge" alt="Theme Lattice">
   <img src="https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python Versions">
-  <img src="https://img.shields.io/badge/tests-163%2F163%20passing-2E8B57?style=for-the-badge" alt="Tests Passing">
+  <img src="https://img.shields.io/badge/tests-165%2F165%20passing-2E8B57?style=for-the-badge" alt="Tests Passing">
   <img src="https://img.shields.io/badge/platforms-70-4C956C?style=for-the-badge" alt="Platforms">
   <img src="https://img.shields.io/badge/license-Proprietary-8B0000?style=for-the-badge" alt="License Proprietary">
 </p>
@@ -109,14 +109,14 @@ For full command reference, see [Usage Guide](docs/Usage.txt).
 * [Orchestration Architecture](docs/orchestration-architecture.md)
 * [Capability Scan Report](docs/silica-capability-scan.md)
 * [OCR/Image Infrastructure Plan](docs/ocr-image-scan-infrastructure.md)
-* [Release Checklist v9.2.0 Lattice](docs/release-checklist-v9.2.0-lattice.md)
-* [Release Notes v9.2.0 Lattice](docs/release-notes-v9.2.0-lattice.md)
-* [Release Commit Plan v9.2.0 Lattice](docs/release-commit-plan-v9.2.0-lattice.md)
+* [Release Checklist v9.3.0 Lattice](docs/release-checklist-v9.3.0-lattice.md)
+* [Release Notes v9.3.0 Lattice](docs/release-notes-v9.3.0-lattice.md)
+* [Release Commit Plan v9.3.0 Lattice](docs/release-commit-plan-v9.3.0-lattice.md)
 * [Code of Conduct](CODE_OF_CONDUCT.md)
 
 ---
 
-## 🚀 v9.2.0 Engine Architecture Updates
+## 🚀 v9.3.0 Engine Architecture Updates
 
 * Added a standardized engine result contract: `name`, `status`, `data`, `error`, `execution_time`
 * Added `EngineBase` execution discipline with hard timeout guard + exception isolation
@@ -124,8 +124,8 @@ For full command reference, see [Usage Guide](docs/Usage.txt).
 * Updated engine manager to support structured execution (`run_detailed`) while preserving compatibility `run()`
 * Updated orchestrator capability stage to track `success/failed/timeout` and attach `engine_health` + `engine_results` in payload/lifecycle
 * Added execution mode aliases for operator language parity: `safe -> fast`, `aggressive -> max`, `standard -> balanced`
-* Added engine-runtime validation tests (`tests/test_engine_runtime.py`) and updated orchestration/policy tests for v9.2.0 behavior
-* Detailed notes (v9.2.0): `docs/release-notes-v9.2.0-lattice.md`
+* Added engine-runtime validation tests (`tests/test_engine_runtime.py`) and updated orchestration/policy tests for v9.3.0 behavior
+* Detailed notes (v9.3.0): `docs/release-notes-v9.3.0-lattice.md`
 
 ---
 
@@ -160,11 +160,11 @@ For full command reference, see [Usage Guide](docs/Usage.txt).
 
 ---
 
-## 📊 Verified Audit Snapshot (March 5, 2026)
+## 📊 Verified Audit Snapshot (March 14, 2026)
 
 * Repository-wide file audit completed across **1,198 files** (including generated output/cache artifacts)
 * File audit checks (readability + parser/compile validation) reported **0 errors**
-* Unit tests: **163/163 passing**
+* Unit tests: **165/165 passing**
 * Ruff lint: passing
 * mypy (full repository scope): passing (no issues found)
 * Bytecode compile check (`compileall`): passing
@@ -338,13 +338,13 @@ python silica-x.py filters --scope all
 <table>
   <thead>
     <tr>
-      <th>Smoke Suite (2026-03-05; latest pytest 2026-03-14)</th>
+      <th>Smoke Suite (2026-03-14; latest pytest 2026-03-14)</th>
       <th>Status</th>
       <th>Notes</th>
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>python -m pytest -q</code></td><td>PASS</td><td>163 tests passed (latest run 2026-03-14).</td></tr>
+    <tr><td><code>python -m pytest -q</code></td><td>PASS</td><td>165 tests passed (latest run 2026-03-14).</td></tr>
     <tr><td><code>python -m ruff check .</code></td><td>PASS</td><td>No lint errors.</td></tr>
     <tr><td><code>python -m mypy</code></td><td>PASS</td><td>No type errors found (repository scope).</td></tr>
     <tr><td><code>python -m compileall -q core filters plugins tests silica-x.py</code></td><td>PASS</td><td>Bytecode compile smoke passed.</td></tr>

@@ -1,4 +1,4 @@
-Silica-X v9.2.0 (Theme: Lattice) Usage Guide
+Silica-X v9.3.0 (Theme: Lattice) Usage Guide
 ==========================================
 
 1) Installation
@@ -34,7 +34,7 @@ Prompt-mode startup shows loaded inventory:
 - module catalog count
 - plugin/filter scope coverage
 
-Execution mode aliases (v9.2.0):
+Execution mode aliases (v9.3.0):
 - `safe` maps to `fast`
 - `aggressive` maps to `max`
 
@@ -125,7 +125,7 @@ Execution mode aliases (v9.2.0):
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>python -m pytest -q</code></td><td>PASS</td><td>160 tests passed.</td></tr>
+    <tr><td><code>python -m pytest -q</code></td><td>PASS</td><td>165 tests passed (latest run 2026-03-14).</td></tr>
     <tr><td><code>python -m ruff check .</code></td><td>PASS</td><td>No lint failures.</td></tr>
     <tr><td><code>python -m mypy</code></td><td>PASS</td><td>No type errors found (repository scope).</td></tr>
     <tr><td><code>python -m compileall -q core filters plugins tests silica-x.py</code></td><td>PASS</td><td>Compile smoke passed.</td></tr>
@@ -323,7 +323,7 @@ Prompt format:
 - Plugin inventory view separates crypto modules under a dedicated `Cryptography Plugin Set` section.
 
 
-6) New Plugins and Filters (v9.2.0 Lattice Expansion)
+6) New Plugins and Filters (v9.3.0 Lattice Expansion)
 ----------------------------------------------------
 New plugins:
 - account_recovery_exposure_probe (profile, fusion)
@@ -512,7 +512,7 @@ Bytecode compile check:
 python -m compileall -q core filters plugins tests silica-x.py
 
 Current verified snapshot:
-- tests: 160 passed
+- tests: 165 passed (latest run 2026-03-14)
 - ruff: passing
 - mypy: passing (no issues found)
 

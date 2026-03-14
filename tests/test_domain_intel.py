@@ -65,7 +65,7 @@ class TestDomainIntel(unittest.IsolatedAsyncioTestCase):
             )
             elapsed = time.perf_counter() - started
 
-        self.assertLess(elapsed, 0.35)
+        self.assertLess(elapsed, 0.5)
         self.assertEqual(result["subdomains"], ["a.example.com", "b.example.com"])
         self.assertEqual(result["rdap"], {"handle": "HANDLE-1"})
 

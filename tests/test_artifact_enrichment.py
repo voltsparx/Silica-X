@@ -15,27 +15,32 @@
 
 import json
 import unittest
-from contextlib import ExitStack, contextmanager
+from contextlib import contextmanager
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from unittest.mock import patch
 
 from core.artifacts import csv_export
 from core.artifacts import html_report
 from core.artifacts import output as output_artifacts
-from core.artifacts import storage
+from core.foundation.output_config import (
+    clear_session_output_base_dir,
+    get_session_output_base_dir,
+    set_session_output_base_dir,
+)
 
 
 class TestArtifactEnrichment(unittest.TestCase):
     @contextmanager
     def _patch_paths(self, root: Path):
-        with ExitStack() as stack:
-            stack.enter_context(patch.object(storage, "OUTPUT_ROOT", root))
-            stack.enter_context(patch.object(storage, "DATA_DIR", root / "data"))
-            stack.enter_context(patch.object(storage, "HTML_DIR", root / "html"))
-            stack.enter_context(patch.object(storage, "CLI_DIR", root / "cli"))
-            stack.enter_context(patch.object(storage, "LOG_DIR", root / "logs"))
+        previous = get_session_output_base_dir()
+        set_session_output_base_dir(root)
+        try:
             yield
+        finally:
+            if previous is None:
+                clear_session_output_base_dir()
+            else:
+                set_session_output_base_dir(previous)
 
     def test_save_results_adds_summary_block(self):
         with TemporaryDirectory() as temp_dir:
@@ -87,11 +92,11 @@ class TestArtifactEnrichment(unittest.TestCase):
                     filter_results=[{"id": "f1", "title": "F1", "severity": "INFO", "summary": "x", "highlights": [], "data": {}}],
                     intelligence_bundle={"scored_entities": [], "entity_facets": {"scored_contacts": []}},
                 )
-                csv_path = csv_export.export_to_csv("alice")
+                csv_path = csv_export.export_to_csv("alice", stamp="20240101_000000")
                 self.assertIsNotNone(csv_path)
 
-                base = root / "cli" / "alice"
-                self.assertTrue((base.with_suffix(".csv")).exists())
+                base = Path(csv_path)
+                self.assertTrue(base.exists())
                 self.assertTrue((base.with_suffix(".issues.csv")).exists())
                 self.assertTrue((base.with_suffix(".plugins.csv")).exists())
                 self.assertTrue((base.with_suffix(".filters.csv")).exists())

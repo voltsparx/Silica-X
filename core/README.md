@@ -1,6 +1,6 @@
 # Core Module Layout
 
-Release: v9.2.0 (Theme: Lattice)
+Release: v9.3.0 (Theme: Lattice)
 
 Core modules are grouped by responsibility to keep runtime wiring and ownership clear.
 

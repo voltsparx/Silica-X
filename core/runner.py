@@ -603,6 +603,7 @@ def _sanitize_modules_payload(payload: dict[str, Any]) -> dict[str, Any]:
         summary = dict(summary)
         summary.pop("framework_count", None)
         summary.pop("frameworks", None)
+        summary.pop("kind_counts", None)
         cleaned["summary"] = summary
 
     query = cleaned.get("query", {})
@@ -688,18 +689,10 @@ def _print_modules_inventory(
     print(c(f"module_count: {summary.get('module_count', 0)}", Colors.CYAN))
     print(c(f"matched_total: {matched_total}", Colors.CYAN))
     print(c(f"returned_count: {returned_count}", Colors.CYAN))
-    kind_counts = summary.get("kind_counts", {})
     scope_counts = summary.get("scope_counts", {})
     score_bands = summary.get("score_bands", {})
     language_counts = summary.get("language_counts", {})
     capability_counts = summary.get("capability_counts", {})
-    print(
-        c(
-            "kind_counts: "
-            f"plugin={kind_counts.get('plugin', 0)} filter={kind_counts.get('filter', 0)}",
-            Colors.CYAN,
-        )
-    )
     print(
         c(
             "scope_counts: "
@@ -768,7 +761,7 @@ def _print_modules_inventory(
         print(c(f"{symbol('feature')} {label}", Colors.CYAN))
         print(
             c(
-                f"  kind: {row.get('kind')} | scopes: {', '.join(row.get('scopes', []))} "
+                f"  scopes: {', '.join(row.get('scopes', []))} "
                 f"| capabilities: {', '.join(row.get('capabilities', [])[:5]) or '-'}",
                 Colors.WHITE,
             )
@@ -780,8 +773,6 @@ def _print_modules_inventory(
                 "  scores: "
                 f"power={metrics.get('power_score', 0)} "
                 f"confidence={metrics.get('confidence_score', 0)} "
-                f"plugin={signals.get('plugin_score', 0)} "
-                f"filter={signals.get('filter_score', 0)} "
                 f"profile={signals.get('profile_score', 0)} "
                 f"surface={signals.get('surface_score', 0)} "
                 f"fusion={signals.get('fusion_score', 0)} "

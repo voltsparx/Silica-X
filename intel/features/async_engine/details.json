@@ -13,11 +13,11 @@
   "action": "Increase non-blocking collectors and connector reuse.",
   "silica": {
     "project": "Silica-X",
-    "version": "9.2.0",
+    "version": "9.3.0",
     "theme": "Lattice",
     "component": "intel_pack"
   },
   "schema_version": "1.0",
-  "generated_at_utc": "2026-03-13T22:04:38Z",
+  "generated_at_utc": "2026-03-14T09:38:31Z",
   "coverage_percent": 62.5
 }

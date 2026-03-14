@@ -55,7 +55,7 @@ class TestStorageHistory(unittest.TestCase):
 
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0].source, "data")
-        self.assertTrue(rows[0].path.endswith("results.json"))
+        self.assertTrue(rows[0].path.endswith("alice-info-20240101_000000.json"))
 
     def test_list_targets_uses_html_when_no_data_results_exist(self):
         with TemporaryDirectory() as temp_dir:
@@ -69,7 +69,7 @@ class TestStorageHistory(unittest.TestCase):
 
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0].source, "html")
-        self.assertTrue(rows[0].path.endswith("legacy_target.html"))
+        self.assertTrue(rows[0].path.endswith("legacy_target-info-20240101_000000.html"))
 
 
 if __name__ == "__main__":

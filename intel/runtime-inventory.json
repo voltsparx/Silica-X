@@ -1,11 +1,11 @@
 {
   "silica": {
     "project": "Silica-X",
-    "version": "9.2.0",
+    "version": "9.3.0",
     "theme": "Lattice",
     "component": "intel_pack"
   },
-  "generated_at_utc": "2026-03-14T04:26:55Z",
+  "generated_at_utc": "2026-03-14T09:38:31Z",
   "inventory": {
     "plugins": 20,
     "filters": 17,
