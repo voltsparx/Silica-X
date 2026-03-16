@@ -50,6 +50,8 @@ pip install silica-x
 silica-x
 ```
 
+> It's not actually available as im fixing some issues so i can upload to PyPi
+
 ```python
 import silica_x
 ```
