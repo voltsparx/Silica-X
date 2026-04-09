@@ -5,7 +5,7 @@ Multi-engine OSINT orchestration for profile intelligence, domain-surface reconn
 
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docs/icon-images/silica-x-icon.png" alt="Silica-X Logo for now" width="500px">
+  <img src="https://raw.githubusercontent.com/voltsparx/Silica-X/refs/heads/main/docs/images/illustration/silica-x-icon.png" alt="Silica-X Logo for now" width="500px">
 </p>
 
 <p align="center">
