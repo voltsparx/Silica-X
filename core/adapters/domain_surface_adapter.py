@@ -65,6 +65,8 @@ class DomainSurfaceAdapter:
             "https": https_data,
             "http": http_data,
             "rdap": payload.get("rdap", {}),
+            "prioritized_subdomains": list(payload.get("prioritized_subdomains", [])),
+            "surface_wordlists": dict(payload.get("surface_wordlists", {})),
             "recon_mode": str(payload.get("recon_mode", "hybrid")),
             "collector_status": dict(payload.get("collector_status", {})),
             "surface_map": dict(payload.get("surface_map", {})),

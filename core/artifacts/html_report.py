@@ -310,6 +310,7 @@ def _render_domain_section(domain_result: dict | None) -> str:
     surface_map = domain_result.get("surface_map", {}) if isinstance(domain_result.get("surface_map"), dict) else {}
     source_summary = surface_map.get("source_summary", {}) if isinstance(surface_map.get("source_summary"), dict) else {}
     priority_summary = surface_map.get("priority_summary", {}) if isinstance(surface_map.get("priority_summary"), dict) else {}
+    probe_plan = surface_map.get("probe_plan", {}) if isinstance(surface_map.get("probe_plan"), dict) else {}
     next_steps = domain_result.get("next_steps", []) if isinstance(domain_result.get("next_steps"), list) else []
     next_step_items = "".join(
         "<li>"
@@ -340,6 +341,12 @@ def _render_domain_section(domain_result: dict | None) -> str:
         f"<ul>{subdomain_items}</ul>"
         "<h4>Prioritized Hosts</h4>"
         f"<div>{_render_chip_list(list(priority_summary.get('prioritized_hosts', []) or []), max_items=18)}</div>"
+        "<h4>Matched Priority Labels</h4>"
+        f"<div>{_render_chip_list(list(priority_summary.get('matched_priority_labels', []) or []), max_items=18)}</div>"
+        "<h4>Recommended Ports</h4>"
+        f"<div>{_render_chip_list([str(item) for item in list(probe_plan.get('recommended_ports', []) or [])], max_items=18)}</div>"
+        "<h4>Common Paths</h4>"
+        f"<div>{_render_chip_list(list(probe_plan.get('common_paths', []) or []), max_items=18)}</div>"
         "<h4>Collector Status</h4>"
         f"<ul>{collector_items}</ul>"
         "<h4>Collector Notes</h4>"

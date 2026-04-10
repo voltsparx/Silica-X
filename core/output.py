@@ -582,6 +582,7 @@ def display_domain_results(
     if isinstance(surface_map, dict):
         priority_summary = surface_map.get("priority_summary", {}) if isinstance(surface_map.get("priority_summary"), dict) else {}
         source_summary = surface_map.get("source_summary", {}) if isinstance(surface_map.get("source_summary"), dict) else {}
+        probe_plan = surface_map.get("probe_plan", {}) if isinstance(surface_map.get("probe_plan"), dict) else {}
         print(c(f"\n{symbol('major')} Attack Surface Map", Colors.BLUE))
         print(c("-" * 36, Colors.BLUE))
         print(c(f"{symbol('action')} score={surface_map.get('attack_surface_score', 0)}", Colors.CYAN))
@@ -589,6 +590,24 @@ def display_domain_results(
         print(
             c(
                 f"{symbol('bullet')} prioritized={_preview(list(priority_summary.get('prioritized_hosts', []) or []), limit=10)}",
+                Colors.GREY,
+            )
+        )
+        print(
+            c(
+                f"{symbol('bullet')} matched_labels={_preview(list(priority_summary.get('matched_priority_labels', []) or []), limit=10)}",
+                Colors.GREY,
+            )
+        )
+        print(
+            c(
+                f"{symbol('bullet')} top_ports={_preview([str(item) for item in list(probe_plan.get('recommended_ports', []) or [])], limit=12)}",
+                Colors.GREY,
+            )
+        )
+        print(
+            c(
+                f"{symbol('bullet')} common_paths={_preview(list(probe_plan.get('common_paths', []) or []), limit=10)}",
                 Colors.GREY,
             )
         )
@@ -719,6 +738,20 @@ def _render_cli_report(payload: dict) -> str:
                 lines.append(
                     "- prioritized_hosts: "
                     f"{', '.join(priority_summary.get('prioritized_hosts', []) or []) or 'none'}"
+                )
+                lines.append(
+                    "- matched_priority_labels: "
+                    f"{', '.join(priority_summary.get('matched_priority_labels', []) or []) or 'none'}"
+                )
+            probe_plan = surface_map.get("probe_plan", {})
+            if isinstance(probe_plan, dict):
+                lines.append(
+                    "- top_ports: "
+                    f"{', '.join(str(item) for item in probe_plan.get('recommended_ports', []) or []) or 'none'}"
+                )
+                lines.append(
+                    "- common_paths: "
+                    f"{', '.join(probe_plan.get('common_paths', []) or []) or 'none'}"
                 )
         next_steps = domain_result.get("next_steps", [])
         if isinstance(next_steps, list) and next_steps:

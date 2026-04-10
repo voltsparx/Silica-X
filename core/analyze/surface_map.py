@@ -20,6 +20,7 @@ from __future__ import annotations
 from typing import Any
 
 from core.foundation.recon_modes import normalize_recon_mode
+from core.foundation.surface_wordlists import matched_surface_subdomain_labels
 
 
 HIGH_PRIORITY_TOKENS = ("admin", "auth", "sso", "vpn", "portal", "api", "gateway", "bastion")
@@ -36,6 +37,18 @@ def _safe_list(value: object) -> list[str]:
     if not isinstance(value, list):
         return []
     return [str(item).strip().lower() for item in value if str(item).strip()]
+
+
+def _safe_int_list(value: object) -> list[int]:
+    if not isinstance(value, list):
+        return []
+    results: list[int] = []
+    for item in value:
+        try:
+            results.append(int(item))
+        except (TypeError, ValueError):
+            continue
+    return results
 
 
 def _bucket_subdomains(subdomains: list[str]) -> dict[str, list[str]]:
@@ -88,6 +101,9 @@ def build_surface_map(domain_result: dict[str, Any]) -> dict[str, Any]:
     subdomains = _safe_list(domain_result.get("subdomains"))
     addresses = _safe_list(domain_result.get("resolved_addresses"))
     collector_rows = _collector_rows(domain_result)
+    wordlist_payload = domain_result.get("surface_wordlists", {})
+    if not isinstance(wordlist_payload, dict):
+        wordlist_payload = {}
     rdap_payload = domain_result.get("rdap", {})
     rdap_nameservers = []
     if isinstance(rdap_payload, dict):
@@ -116,7 +132,10 @@ def build_surface_map(domain_result: dict[str, Any]) -> dict[str, Any]:
         + (0 if domain_result.get("http", {}).get("redirects_to_https") else 5),
     )
 
-    prioritized_hosts = (high_priority + medium_priority)[:16]
+    prioritized_hosts = _safe_list(domain_result.get("prioritized_subdomains")) or (high_priority + medium_priority)[:16]
+    matched_priority_labels = _safe_list(wordlist_payload.get("matched_priority_labels")) or matched_surface_subdomain_labels(subdomains)
+    recommended_ports = _safe_int_list(wordlist_payload.get("top_ports"))
+    common_paths = _safe_list(wordlist_payload.get("common_paths"))
     return {
         "target": target,
         "recon_mode": recon_mode,
@@ -139,6 +158,11 @@ def build_surface_map(domain_result: dict[str, Any]) -> dict[str, Any]:
             "prioritized_hosts": prioritized_hosts,
             "high_priority_hosts": high_priority[:80],
             "medium_priority_hosts": medium_priority[:80],
+            "matched_priority_labels": matched_priority_labels,
+        },
+        "probe_plan": {
+            "recommended_ports": recommended_ports[:32],
+            "common_paths": common_paths[:24],
         },
         "attack_surface_score": attack_surface_score,
     }
@@ -156,6 +180,7 @@ def build_surface_next_steps(
     surface_map = build_surface_map(domain_result)
     priority_summary = surface_map.get("priority_summary", {}) if isinstance(surface_map, dict) else {}
     source_summary = surface_map.get("source_summary", {}) if isinstance(surface_map, dict) else {}
+    probe_plan = surface_map.get("probe_plan", {}) if isinstance(surface_map, dict) else {}
     actions: list[dict[str, str]] = []
 
     if recon_mode == "passive":
@@ -185,6 +210,18 @@ def build_surface_next_steps(
                 "title": "Review high-priority subdomains",
                 "rationale": f"{high_priority_count} likely attack-path host(s) were identified from naming patterns.",
                 "command_hint": "show modules && use surface",
+            }
+        )
+
+    recommended_ports = _safe_int_list(probe_plan.get("recommended_ports"))
+    common_paths = _safe_list(probe_plan.get("common_paths"))
+    if recommended_ports or common_paths:
+        actions.append(
+            {
+                "priority": "P2",
+                "title": "Review the built-in surface recon plan",
+                "rationale": "Curated assessment wordlists supplied safe top-port and common-path guidance for authorized follow-up.",
+                "command_hint": f"surface {target} --recon-mode hybrid --preset deep --html",
             }
         )
 

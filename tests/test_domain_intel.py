@@ -68,6 +68,9 @@ class TestDomainIntel(unittest.IsolatedAsyncioTestCase):
 
         self.assertLess(elapsed, 0.5)
         self.assertEqual(result["subdomains"], ["a.example.com", "b.example.com"])
+        self.assertEqual(result["prioritized_subdomains"], ["a.example.com", "b.example.com"])
+        self.assertIn("top_ports", result["surface_wordlists"])
+        self.assertIn("common_paths", result["surface_wordlists"])
         self.assertEqual(result["rdap"]["handle"], "HANDLE-1")
         self.assertEqual(result["rdap"]["name_servers"], [])
 
@@ -95,6 +98,7 @@ class TestDomainIntel(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result["resolved_addresses"], [])
         self.assertEqual(result["collector_status"]["dns"]["status"], "skipped")
         self.assertEqual(result["collector_status"]["ct"]["status"], "ok")
+        self.assertIn("api", result["surface_wordlists"]["matched_priority_labels"])
         self.assertEqual(result["rdap"]["name_servers"], ["ns1.example.com"])
 
 

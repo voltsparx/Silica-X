@@ -28,6 +28,7 @@ from urllib.parse import quote, urlsplit
 import aiohttp
 
 from core.foundation.recon_modes import normalize_recon_mode
+from core.foundation.surface_wordlists import build_surface_wordlist_guidance
 
 
 DEFAULT_TIMEOUT_SECONDS = 20
@@ -349,6 +350,12 @@ async def scan_domain_surface(
                 status="disabled",
                 detail="rdap lookup disabled",
             )
+        wordlist_guidance = build_surface_wordlist_guidance(subdomains)
+        matched_priority_labels = list(wordlist_guidance.get("matched_priority_labels", []))
+        if matched_priority_labels:
+            scan_notes.append(
+                "surface priority labels observed: " + ", ".join(matched_priority_labels[:12])
+            )
 
         robots_present = False
         security_present = False
@@ -409,6 +416,8 @@ async def scan_domain_surface(
         "https": _http_artifact_payload(https_artifact),
         "http": _http_artifact_payload(http_artifact),
         "subdomains": subdomains,
+        "prioritized_subdomains": list(wordlist_guidance.get("prioritized_subdomains", [])),
+        "surface_wordlists": wordlist_guidance,
         "rdap": rdap_payload,
         "collector_status": collector_status,
         "scan_notes": scan_notes,
