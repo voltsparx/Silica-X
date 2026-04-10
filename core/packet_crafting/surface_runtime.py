@@ -22,21 +22,14 @@ from ipaddress import ip_address, ip_network
 from typing import Any
 
 from core.interface.command_spec import SurfaceScanDirectives
-from core.packet_crafting import (
-    PacketCraftingBundle,
-    PacketCraftingCombinationEngine,
-    PacketCraftingRequest,
-    craft_packet_bundle,
-    list_packet_crafting_profiles,
-)
+from core.packet_crafting.combination_engine import list_packet_crafting_profiles
+from core.packet_crafting.models import PacketCraftingBundle, PacketCraftingRequest
+from core.packet_crafting.registry import craft_packet_bundle
 
 
 _PACKET_CRAFTING_SCAN_TYPES = frozenset(
     {"arp", "syn", "tcp-connect", "udp", "fin", "null", "xmas", "os-fingerprint"}
 )
-_PROFILE_ENGINE = PacketCraftingCombinationEngine()
-
-
 @dataclass(frozen=True)
 class SurfacePacketCraftingPlan:
     """Summarize read-only packet-crafting bundles for an authorized surface target."""

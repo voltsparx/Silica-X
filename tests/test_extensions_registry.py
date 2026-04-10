@@ -45,6 +45,9 @@ class TestExtensionsRegistry(unittest.TestCase):
             "username_impersonation_probe",
             "rdap_lifecycle_inspector",
             "surface_transport_stability_probe",
+            "entity_link_intel",
+            "media_intel_core",
+            "darkweb_tor_intel",
             "crypto_aes_attachment",
             "crypto_xor_attachment",
             "crypto_rot13_attachment",
@@ -101,4 +104,3 @@ class TestExtensionsRegistry(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

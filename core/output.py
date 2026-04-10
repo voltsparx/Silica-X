@@ -813,6 +813,14 @@ def _render_cli_report(payload: dict) -> str:
                     "- common_paths: "
                     f"{', '.join(probe_plan.get('common_paths', []) or []) or 'none'}"
                 )
+        packet_crafting = domain_result.get("packet_crafting", {}) if isinstance(domain_result.get("packet_crafting"), dict) else {}
+        if packet_crafting:
+            lines.append(
+                "- packet_crafting: "
+                f"host={packet_crafting.get('authorized_host', '-')} "
+                f"types={', '.join(packet_crafting.get('requested_scan_types', []) or []) or 'none'} "
+                f"ports={', '.join(str(item) for item in packet_crafting.get('selected_ports', []) or []) or 'none'}"
+            )
         next_steps = domain_result.get("next_steps", [])
         if isinstance(next_steps, list) and next_steps:
             lines.append("- recon_next_steps:")
