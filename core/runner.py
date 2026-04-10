@@ -89,6 +89,16 @@ from core.intel.capability_matrix import (
     write_capability_report,
     write_runtime_inventory_snapshot,
 )
+from core.intel.recon_frameworks import (
+    build_bbot_scan_plan,
+    filter_bbot_flags,
+    filter_bbot_modules,
+    filter_bbot_presets,
+    load_amass_reference,
+    load_bbot_reference,
+    load_metasploit_ui_reference,
+    load_temp_framework_inventory,
+)
 from core.extensions.signal_forge import list_plugin_descriptors, list_plugin_discovery_errors
 from core.collect.platform_schema import PlatformValidationError, load_platforms
 from core.analyze.profile_summary import error_profile_rows, found_profile_rows, summarize_target_intel
@@ -123,7 +133,7 @@ DEFAULT_DASHBOARD_PORT = 8000
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
 EXIT_USAGE = 2
-PROMPT_SHOW_COMMANDS = {"plugins", "filters", "modules", "history", "keywords", "config", "templates"}
+PROMPT_SHOW_COMMANDS = {"plugins", "filters", "modules", "frameworks", "history", "keywords", "config", "templates"}
 
 
 def _prompt_command_catalog() -> list[str]:
@@ -138,6 +148,7 @@ def _prompt_command_catalog() -> list[str]:
         "exit",
         "explain",
         "filters",
+        "frameworks",
         "fusion",
         "help",
         "history",
@@ -148,6 +159,7 @@ def _prompt_command_catalog() -> list[str]:
         "orchestrate",
         "out-print",
         "out-type",
+        "bbot",
         "profile",
         "quicktest",
         "remove",
@@ -863,6 +875,213 @@ def _print_modules_inventory(
             )
         )
         print()
+    print()
+
+
+def _print_framework_inventory(
+    *,
+    framework: str = "all",
+    show_modules: bool = False,
+    show_presets: bool = False,
+    show_flags: bool = False,
+    show_commands: bool = False,
+    search: str = "",
+    limit: int = 25,
+    as_json: bool = False,
+) -> None:
+    inventory = load_temp_framework_inventory()
+    selected = str(framework or "all").strip().lower()
+
+    payload: dict[str, Any]
+    if selected == "bbot":
+        payload = {"inventory": inventory, "bbot": load_bbot_reference()}
+    elif selected == "amass":
+        payload = {"inventory": inventory, "amass": load_amass_reference()}
+    elif selected == "metasploit-ui":
+        payload = {"inventory": inventory, "metasploit_ui": load_metasploit_ui_reference()}
+    else:
+        payload = inventory
+
+    if as_json:
+        if selected == "bbot":
+            if show_modules:
+                payload = {"framework": "bbot", "modules": filter_bbot_modules(search=search, limit=limit)}
+            elif show_presets:
+                payload = {"framework": "bbot", "presets": filter_bbot_presets(search=search, limit=limit)}
+            elif show_flags:
+                payload = {"framework": "bbot", "flags": filter_bbot_flags(search=search, limit=limit)}
+            elif show_commands:
+                payload = {"framework": "bbot", "commands": load_bbot_reference().get("commands", [])}
+        print(json.dumps(payload, indent=2))
+        return
+
+    print(c(f"\n{symbol('major')} Framework Intel", Colors.BLUE))
+    print(c("-" * 36, Colors.BLUE))
+
+    frameworks = inventory.get("frameworks", [])
+    if selected == "all":
+        for row in frameworks:
+            if not isinstance(row, dict):
+                continue
+            print(c(f"{symbol('feature')} {row.get('name')}", Colors.CYAN))
+            print(c(f"  path: {row.get('path')}", Colors.WHITE))
+            print(c(f"  summary: {row.get('summary')}", Colors.WHITE))
+            extra = []
+            if row.get("module_count") is not None:
+                extra.append(f"modules={row.get('module_count')}")
+            if row.get("preset_count") is not None:
+                extra.append(f"presets={row.get('preset_count')}")
+            if row.get("command_count") is not None:
+                extra.append(f"commands={row.get('command_count')}")
+            if row.get("engine_component_count") is not None:
+                extra.append(f"engine_components={row.get('engine_component_count')}")
+            if row.get("plugin_family_count") is not None:
+                extra.append(f"plugin_families={row.get('plugin_family_count')}")
+            if extra:
+                print(c(f"  stats: {', '.join(extra)}", Colors.WHITE))
+            print()
+
+        other_dirs = inventory.get("other_dirs", [])
+        if other_dirs:
+            print(c(f"{symbol('tip')} Other temp/ directories", Colors.YELLOW))
+            for row in other_dirs:
+                if isinstance(row, dict):
+                    print(c(f"  - {row.get('name')}: {row.get('path')}", Colors.GREY))
+            print()
+        return
+
+    if selected == "bbot":
+        reference = load_bbot_reference()
+        print(c(f"{symbol('feature')} bbot", Colors.CYAN))
+        print(c(f"  path: {reference.get('path')}", Colors.WHITE))
+        print(c(f"  architecture: {', '.join(reference.get('architecture', []))}", Colors.WHITE))
+        print(
+            c(
+                f"  stats: modules={reference.get('module_count', 0)} "
+                f"presets={reference.get('preset_count', 0)} flags={reference.get('flag_count', 0)} "
+                f"commands={len(reference.get('commands', []))}",
+                Colors.WHITE,
+            )
+        )
+        if show_commands:
+            print()
+            print(c(f"{symbol('major')} BBOT Command Capabilities", Colors.BLUE))
+            print(c("-" * 36, Colors.BLUE))
+            for row in reference.get("commands", []):
+                if isinstance(row, dict):
+                    print(c(f"{symbol('bullet')} {row.get('id')}: {row.get('title')}", Colors.CYAN))
+            print()
+        if show_presets:
+            print()
+            print(c(f"{symbol('major')} BBOT Presets", Colors.BLUE))
+            print(c("-" * 36, Colors.BLUE))
+            for row in filter_bbot_presets(search=search, limit=limit):
+                print(c(f"{symbol('feature')} {row.get('name')}", Colors.CYAN))
+                print(c(f"  desc: {row.get('description')}", Colors.WHITE))
+                print(c(f"  flags: {', '.join(row.get('flags', [])) or '-'}", Colors.WHITE))
+                print(c(f"  includes: {', '.join(row.get('include', [])) or '-'}", Colors.WHITE))
+                print()
+        if show_flags:
+            print()
+            print(c(f"{symbol('major')} BBOT Flags", Colors.BLUE))
+            print(c("-" * 36, Colors.BLUE))
+            for row in filter_bbot_flags(search=search, limit=limit):
+                print(c(f"{symbol('feature')} {row.get('name')} ({row.get('count')})", Colors.CYAN))
+                print(c(f"  sample modules: {', '.join(row.get('modules', [])[:8]) or '-'}", Colors.WHITE))
+                print()
+        if show_modules:
+            print()
+            print(c(f"{symbol('major')} BBOT Modules", Colors.BLUE))
+            print(c("-" * 36, Colors.BLUE))
+            for row in filter_bbot_modules(search=search, limit=limit):
+                print(c(f"{symbol('feature')} {row.get('name')} [{row.get('type')}]", Colors.CYAN))
+                print(c(f"  desc: {row.get('description')}", Colors.WHITE))
+                print(c(f"  flags: {', '.join(row.get('flags', [])) or '-'}", Colors.WHITE))
+                print(
+                    c(
+                        f"  flow: consumes={', '.join(row.get('consumes', [])[:4]) or '-'} "
+                        f"produces={', '.join(row.get('produces', [])[:4]) or '-'}",
+                        Colors.WHITE,
+                    )
+                )
+                print()
+        print()
+        return
+
+    if selected == "amass":
+        reference = load_amass_reference()
+        print(c(f"{symbol('feature')} amass", Colors.CYAN))
+        print(c(f"  path: {reference.get('path')}", Colors.WHITE))
+        print(c(f"  architecture: {', '.join(reference.get('architecture', []))}", Colors.WHITE))
+        print(
+            c(
+                f"  commands: {', '.join(reference.get('commands', [])) or '-'}",
+                Colors.WHITE,
+            )
+        )
+        print(
+            c(
+                f"  engine: {', '.join(reference.get('engine_components', [])) or '-'}",
+                Colors.WHITE,
+            )
+        )
+        print(
+            c(
+                f"  plugin families: {', '.join(reference.get('plugin_families', [])[:12]) or '-'}",
+                Colors.WHITE,
+            )
+        )
+        print()
+        return
+
+    reference = load_metasploit_ui_reference()
+    print(c(f"{symbol('feature')} metasploit-ui", Colors.CYAN))
+    print(c(f"  path: {reference.get('path')}", Colors.WHITE))
+    print(c(f"  architecture: {', '.join(reference.get('architecture', []))}", Colors.WHITE))
+    print()
+
+
+def _print_bbot_plan(plan: dict[str, Any]) -> None:
+    preset = plan.get("preset", {}) if isinstance(plan.get("preset"), dict) else {}
+    mapping = plan.get("silica_mapping", {}) if isinstance(plan.get("silica_mapping"), dict) else {}
+
+    print(c(f"\n{symbol('major')} BBOT Translation Plan", Colors.BLUE))
+    print(c("-" * 36, Colors.BLUE))
+    print(c(f"{symbol('feature')} target={plan.get('target')} preset={preset.get('name')}", Colors.CYAN))
+    print(c(f"  preset_desc: {preset.get('description', '-')}", Colors.WHITE))
+    print(
+        c(
+            f"  translated_to: surface_preset={mapping.get('surface_preset')} "
+            f"recon_mode={mapping.get('recon_mode')} ct={mapping.get('include_ct')} "
+            f"rdap={mapping.get('include_rdap')}",
+            Colors.WHITE,
+        )
+    )
+    print(c(f"  coverage: {mapping.get('coverage', '-')}", Colors.WHITE))
+    print(c(f"  selected_flags: {', '.join(plan.get('selected_flags', [])) or '-'}", Colors.WHITE))
+    print(c(f"  selected_module_count: {plan.get('selected_module_count', 0)}", Colors.WHITE))
+    print(
+        c(
+            f"  native_capabilities: {', '.join(plan.get('native_capabilities', [])) or '-'}",
+            Colors.WHITE,
+        )
+    )
+    print(
+        c(
+            f"  partial_capabilities: {', '.join(plan.get('partial_capabilities', [])) or '-'}",
+            Colors.WHITE,
+        )
+    )
+    print(
+        c(
+            f"  unsupported_capabilities: {', '.join(plan.get('unsupported_capabilities', [])) or '-'}",
+            Colors.WHITE,
+        )
+    )
+    unsupported_modules = plan.get("unsupported_modules_preview", [])
+    if isinstance(unsupported_modules, list) and unsupported_modules:
+        print(c(f"  unsupported_modules_preview: {', '.join(unsupported_modules)}", Colors.WHITE))
+    print(c(f"  silica_command: {plan.get('execution_preview', '-')}", Colors.CYAN))
     print()
 
 
@@ -3160,6 +3379,138 @@ async def _handle_modules_command(args: argparse.Namespace) -> int:
     return EXIT_SUCCESS
 
 
+async def _handle_frameworks_command(args: argparse.Namespace) -> int:
+    try:
+        _print_framework_inventory(
+            framework=str(getattr(args, "framework", "all") or "all"),
+            show_modules=bool(getattr(args, "modules", False)),
+            show_presets=bool(getattr(args, "presets", False)),
+            show_flags=bool(getattr(args, "flags", False)),
+            show_commands=bool(getattr(args, "commands", False)),
+            search=str(getattr(args, "search", "") or ""),
+            limit=_int_from_value(getattr(args, "limit", 25), 25),
+            as_json=bool(getattr(args, "json", False)),
+        )
+    except Exception as exc:  # pragma: no cover - defensive user-facing guard
+        append_framework_log("framework_intel_failed", str(exc), level="WARN")
+        print(c(f"{symbol('warn')} Framework intel query failed: {exc}", Colors.RED))
+        return EXIT_FAILURE
+    return EXIT_SUCCESS
+
+
+async def _handle_bbot_command(args: argparse.Namespace, state: RunnerState) -> int:
+    if getattr(args, "list_modules", False):
+        _print_framework_inventory(
+            framework="bbot",
+            show_modules=True,
+            search=str(getattr(args, "search", "") or ""),
+            limit=_int_from_value(getattr(args, "limit", 25), 25),
+            as_json=bool(getattr(args, "json", False)),
+        )
+        return EXIT_SUCCESS
+    if getattr(args, "list_presets", False):
+        _print_framework_inventory(
+            framework="bbot",
+            show_presets=True,
+            search=str(getattr(args, "search", "") or ""),
+            limit=_int_from_value(getattr(args, "limit", 25), 25),
+            as_json=bool(getattr(args, "json", False)),
+        )
+        return EXIT_SUCCESS
+    if getattr(args, "list_flags", False):
+        _print_framework_inventory(
+            framework="bbot",
+            show_flags=True,
+            search=str(getattr(args, "search", "") or ""),
+            limit=_int_from_value(getattr(args, "limit", 25), 25),
+            as_json=bool(getattr(args, "json", False)),
+        )
+        return EXIT_SUCCESS
+
+    domain = str(getattr(args, "domain", "") or "").strip()
+    if not domain:
+        _print_framework_inventory(
+            framework="bbot",
+            show_commands=True,
+            show_presets=True,
+            search=str(getattr(args, "search", "") or ""),
+            limit=_int_from_value(getattr(args, "limit", 25), 25),
+            as_json=bool(getattr(args, "json", False)),
+        )
+        print(c(f"{symbol('tip')} Supply a domain to run a translated BBOT-style surface workflow.", Colors.YELLOW))
+        return EXIT_SUCCESS
+
+    try:
+        plan = build_bbot_scan_plan(
+            domain=domain,
+            preset_name=str(getattr(args, "preset", "subdomain-enum") or "subdomain-enum"),
+            modules=_split_csv_tokens(getattr(args, "module", []) or []),
+            require_flags=_split_csv_tokens(getattr(args, "require_flag", []) or []),
+            exclude_flags=_split_csv_tokens(getattr(args, "exclude_flag", []) or []),
+            recon_mode=getattr(args, "recon_mode", None),
+        )
+    except ValueError as exc:
+        print(c(f"{symbol('warn')} {exc}", Colors.RED))
+        return EXIT_USAGE
+
+    if getattr(args, "json", False):
+        print(json.dumps(plan, indent=2))
+    else:
+        _print_bbot_plan(plan)
+
+    if bool(getattr(args, "dry_run", False)):
+        return EXIT_SUCCESS
+
+    mapping = plan.get("silica_mapping", {}) if isinstance(plan.get("silica_mapping"), dict) else {}
+    resolved_preset = str(mapping.get("surface_preset", "balanced"))
+    resolved_recon_mode = str(mapping.get("recon_mode", "hybrid"))
+    timeout_seconds, max_subdomains, _ = _resolve_surface_runtime(
+        argparse.Namespace(
+            preset=resolved_preset,
+            timeout=None,
+            max_subdomains=None,
+            recon_mode=resolved_recon_mode,
+        )
+    )
+    override_types, error = _parse_output_type_override(getattr(args, "out_type", None))
+    if error:
+        print(c(f"{symbol('warn')} {error}", Colors.RED))
+        return EXIT_USAGE
+    selected_types = _resolve_output_types(
+        html_flag=getattr(args, "html", None),
+        csv_flag=getattr(args, "csv", None),
+        base_types=override_types,
+    )
+    override_applied, override_prev = _apply_output_base_override(getattr(args, "out_print", None))
+    if getattr(args, "out_print", None) and not override_applied and override_prev:
+        print(c(f"{symbol('warn')} {override_prev}", Colors.RED))
+        return EXIT_FAILURE
+
+    effective_state = compute_effective_state(
+        state,
+        getattr(args, "tor", None),
+        getattr(args, "proxy", None),
+    )
+    try:
+        status, _payload = await run_surface_scan(
+            domain=domain,
+            state=effective_state,
+            timeout_seconds=timeout_seconds,
+            max_subdomains=max_subdomains,
+            include_ct=bool(mapping.get("include_ct", True)),
+            include_rdap=bool(mapping.get("include_rdap", True)),
+            recon_mode=resolved_recon_mode,
+            scan_mode=resolved_preset,
+            write_csv=bool(getattr(args, "csv", False)),
+            write_html=bool(getattr(args, "html", False)),
+            output_types=selected_types,
+        )
+    finally:
+        if override_applied:
+            _restore_output_base_override(override_prev)
+    return status
+
+
 async def _handle_history_command(args: argparse.Namespace) -> int:
     _print_scan_history(limit=args.limit)
     return EXIT_SUCCESS
@@ -3771,6 +4122,10 @@ async def _dispatch(args: argparse.Namespace, state: RunnerState, prompt_mode: b
         return await _handle_fusion_command(args, state=state)
     if args.command in {"orchestrate", "orch"}:
         return await _handle_orchestrate_command(args, state=state)
+    if args.command == "frameworks":
+        return await _handle_frameworks_command(args)
+    if args.command == "bbot":
+        return await _handle_bbot_command(args, state=state)
     if args.command == "live":
         return await _handle_live_command(args, prompt_mode=prompt_mode)
     if args.command == "anonymity":
@@ -3894,6 +4249,9 @@ async def run_prompt_mode(initial_state: RunnerState | None = None) -> int:
             continue
         if keyword_match == "modules":
             _print_modules_inventory(scope="all", kind="all", frameworks=[], limit=25, sync=False, as_json=False)
+            continue
+        if keyword_match == "frameworks":
+            _print_framework_inventory(framework="all", as_json=False)
             continue
         if keyword_match == "history":
             _print_scan_history(limit=25)

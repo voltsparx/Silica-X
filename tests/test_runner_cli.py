@@ -66,6 +66,8 @@ class TestRunnerCli(unittest.TestCase):
         self.assertEqual(_keyword_to_command("info"), "about")
         self.assertEqual(_keyword_to_command("explain"), "explain")
         self.assertEqual(_keyword_to_command("banner"), "banner")
+        self.assertEqual(_keyword_to_command("framework"), "frameworks")
+        self.assertEqual(_keyword_to_command("bbot"), "bbot")
         self.assertIsNone(_keyword_to_command("unknown"))
 
     def test_root_profile_parser_parses_flags(self):
@@ -275,6 +277,37 @@ class TestRunnerCli(unittest.TestCase):
         self.assertEqual(args.command, "history")
         self.assertEqual(args.limit, 10)
 
+    def test_frameworks_parser_parses_flags(self):
+        parser = build_root_parser()
+        args = parser.parse_args(["frameworks", "--framework", "bbot", "--modules", "--search", "httpx", "--limit", "5"])
+        self.assertEqual(args.command, "frameworks")
+        self.assertEqual(args.framework, "bbot")
+        self.assertTrue(args.modules)
+        self.assertEqual(args.search, "httpx")
+        self.assertEqual(args.limit, 5)
+
+    def test_bbot_parser_parses_translation_flags(self):
+        parser = build_root_parser()
+        args = parser.parse_args(
+            [
+                "bbot",
+                "example.com",
+                "--preset",
+                "subdomain-enum",
+                "--require-flag",
+                "passive",
+                "--exclude-flag",
+                "deadly",
+                "--dry-run",
+            ]
+        )
+        self.assertEqual(args.command, "bbot")
+        self.assertEqual(args.domain, "example.com")
+        self.assertEqual(args.preset, "subdomain-enum")
+        self.assertEqual(args.require_flag, ["passive"])
+        self.assertEqual(args.exclude_flag, ["deadly"])
+        self.assertTrue(args.dry_run)
+
     def test_quicktest_parser_parses_flags(self):
         parser = build_root_parser()
         args = parser.parse_args(["quicktest", "--template", "atlas-mercier", "--seed", "9", "--json"])
@@ -426,6 +459,21 @@ class TestRunnerCli(unittest.TestCase):
         args = parser.parse_args(["modules", "--kind", "plugin"])
         self.assertEqual(args.command, "modules")
         self.assertEqual(args.kind, "plugin")
+
+    def test_prompt_parser_parses_frameworks_command(self):
+        parser = build_prompt_parser()
+        args = parser.parse_args(["frameworks", "--framework", "amass", "--commands"])
+        self.assertEqual(args.command, "frameworks")
+        self.assertEqual(args.framework, "amass")
+        self.assertTrue(args.commands)
+
+    def test_prompt_parser_parses_bbot_command(self):
+        parser = build_prompt_parser()
+        args = parser.parse_args(["bbot", "example.com", "--preset", "web-basic", "--dry-run"])
+        self.assertEqual(args.command, "bbot")
+        self.assertEqual(args.domain, "example.com")
+        self.assertEqual(args.preset, "web-basic")
+        self.assertTrue(args.dry_run)
 
     def test_prompt_parser_parses_quicktest_command(self):
         parser = build_prompt_parser()

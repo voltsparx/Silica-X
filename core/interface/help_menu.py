@@ -81,6 +81,7 @@ def show_flag_help() -> None:
             ("orchestrate <mode> <target>:", "Run policy-driven layered orchestration."),
             ("wizard:", "Run guided workflow questions."),
             ("quicktest [flags]:", "Run one random built-in victim template with report outputs."),
+            ("bbot [domain] [flags]:", "Translate local BBOT preset intent into a native Silica-X surface run."),
         )
     )
 
@@ -91,6 +92,7 @@ def show_flag_help() -> None:
             ("filters [--scope ...]:", "List available filters."),
             ("templates [--json]:", "List bundled info-templates for focused arrangements."),
             ("modules [query flags]:", "List/sync/query source-intel module catalog."),
+            ("frameworks [flags]:", "Inspect reverse-engineered intel from temp/ framework codebases."),
             ("history [--limit N]:", "List previously scanned targets."),
             ("live <target> [--port]:", "Open local live dashboard."),
             ("anonymity [flags]:", "Check or change Tor/proxy routing."),
@@ -162,6 +164,7 @@ def show_prompt_help() -> None:
             ("surface <domain> --recon-mode <...>:", "Choose passive, active, or hybrid reconnaissance."),
             ("fusion <username> <domain>:", "Run fusion workflow."),
             ("orchestrate <mode> <target>:", "Run layered orchestration."),
+            ("bbot <domain> --preset <name>:", "Use the local BBOT source study to drive a Silica-X surface plan."),
             ("quicktest [flags]:", "Run one random built-in victim template."),
             ("wizard:", "Guided workflow with prompts."),
         )
@@ -171,6 +174,7 @@ def show_prompt_help() -> None:
     _render_items(
         (
             ("show plugins | show filters | show modules:", "Inventory and module intelligence catalog."),
+            ("show frameworks:", "Inspect reverse-engineered temp/ framework inventory."),
             ("show templates:", "List bundled info-templates."),
             ("show history [--limit N]:", "List previously scanned targets."),
             ("show config:", "Show prompt defaults and active module."),
@@ -223,7 +227,9 @@ def show_prompt_help() -> None:
 
     _section("Prompt Examples", icon="tip")
     _example("show plugins:", "List plugin inventory.")
+    _example("show frameworks:", "Inspect BBOT, Amass, and local console architecture references.")
     _example("use fusion:", "Switch prompt context to fusion workflows.")
+    _example("bbot example.com --preset subdomain-enum --dry-run:", "Preview the translated Silica-X plan for a BBOT preset.")
     _example("set plugins threat_conductor,signal_fusion_core:", "Set plugin defaults by name.")
     _example("quicktest --seed 7 --html --csv:", "Run deterministic synthetic smoke with reports.")
     print()

@@ -67,6 +67,8 @@ PROMPT_KEYWORDS = {
     "surface": {"surface", "domain", "asset", "infra", "recon", "footprint"},
     "fusion": {"fusion", "full", "combo", "allscan", "stack"},
     "orchestrate": {"orchestrate", "orch", "pipeline", "orchestration"},
+    "bbot": {"bbot"},
+    "frameworks": {"frameworks", "framework", "temp", "sources"},
     "anonymity": {"anonymity", "anon", "privacy", "routing", "tor"},
     "live": {"live", "dashboard", "watch", "monitor"},
     "keywords": {"keywords", "keyword", "verbs", "commands", "lexicon"},

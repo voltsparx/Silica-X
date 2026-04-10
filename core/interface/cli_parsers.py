@@ -253,6 +253,147 @@ def _add_modules_args(parser: argparse.ArgumentParser) -> None:
     )
 
 
+def _add_frameworks_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--framework",
+        choices=["all", "bbot", "amass", "metasploit-ui"],
+        default="all",
+        help="Show reverse-engineered intel for a specific temp/ framework.",
+    )
+    parser.add_argument(
+        "--modules",
+        action="store_true",
+        help="List reverse-engineered BBOT modules.",
+    )
+    parser.add_argument(
+        "--presets",
+        action="store_true",
+        help="List reverse-engineered BBOT presets.",
+    )
+    parser.add_argument(
+        "--flags",
+        action="store_true",
+        help="List reverse-engineered BBOT flags.",
+    )
+    parser.add_argument(
+        "--commands",
+        action="store_true",
+        help="List discovered command capabilities for the selected framework.",
+    )
+    parser.add_argument(
+        "--search",
+        default="",
+        help="Filter BBOT module/preset/flag output by search text.",
+    )
+    parser.add_argument(
+        "--limit",
+        type=positive_int,
+        default=25,
+        help="Maximum number of rows to show for module/preset/flag listings.",
+    )
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Print framework intel as JSON payload.",
+    )
+
+
+def _add_bbot_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "domain",
+        nargs="?",
+        default="",
+        help="Domain to translate into a BBOT-style Silica-X surface run.",
+    )
+    _add_toggle_flags(parser, "tor", "Tor routing")
+    _add_toggle_flags(parser, "proxy", "HTTP proxy routing")
+    parser.add_argument(
+        "--preset",
+        default="subdomain-enum",
+        help="BBOT preset name discovered from temp/bbot/bbot/presets.",
+    )
+    parser.add_argument(
+        "--module",
+        action="append",
+        default=[],
+        help="Narrow the BBOT-style plan to specific module names.",
+    )
+    parser.add_argument(
+        "--require-flag",
+        action="append",
+        default=[],
+        help="Require BBOT flags when building the native Silica-X translation plan.",
+    )
+    parser.add_argument(
+        "--exclude-flag",
+        action="append",
+        default=[],
+        help="Exclude BBOT flags when building the native Silica-X translation plan.",
+    )
+    parser.add_argument(
+        "--recon-mode",
+        choices=list(SURFACE_RECON_MODES),
+        default=None,
+        help="Override the translated Silica-X recon mode.",
+    )
+    parser.add_argument(
+        "--list-modules",
+        action="store_true",
+        help="List BBOT modules reverse-engineered from temp/bbot.",
+    )
+    parser.add_argument(
+        "--list-presets",
+        action="store_true",
+        help="List BBOT presets reverse-engineered from temp/bbot.",
+    )
+    parser.add_argument(
+        "--list-flags",
+        action="store_true",
+        help="List BBOT flags reverse-engineered from temp/bbot.",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show the translated Silica-X execution plan without running a scan.",
+    )
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Print BBOT reverse-engineering output as JSON payload.",
+    )
+    parser.add_argument(
+        "--search",
+        default="",
+        help="Filter BBOT listing output by search text.",
+    )
+    parser.add_argument(
+        "--limit",
+        type=positive_int,
+        default=25,
+        help="Maximum number of listing rows to show.",
+    )
+    _add_toggle_flags(
+        parser,
+        "html",
+        "HTML report output/html/<target>-info-<timestamp>.html",
+    )
+    _add_toggle_flags(
+        parser,
+        "csv",
+        "CSV export output/csv/<target>-info-<timestamp>.csv",
+    )
+    parser.add_argument(
+        "--out-type",
+        default="",
+        help="Override output formats for this run only (comma-separated, non-persistent).",
+    )
+    parser.add_argument(
+        "--out-print",
+        default="",
+        help="Override output base directory for this run only (non-persistent).",
+    )
+
+
 def _add_history_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--limit",
@@ -709,6 +850,18 @@ def build_root_parser(
     )
     _add_orchestrate_args(orchestrate_parser)
 
+    frameworks_parser = subparsers.add_parser(
+        "frameworks",
+        help="Inspect reverse-engineered recon framework intel from temp/.",
+    )
+    _add_frameworks_args(frameworks_parser)
+
+    bbot_parser = subparsers.add_parser(
+        "bbot",
+        help="Use local BBOT source study to plan or run a native Silica-X translation.",
+    )
+    _add_bbot_args(bbot_parser)
+
     live_parser = subparsers.add_parser("live", help="Launch live dashboard for saved results.")
     _add_live_args(live_parser, default_dashboard_port=default_dashboard_port)
 
@@ -830,6 +983,12 @@ def build_prompt_parser(*, default_dashboard_port: int) -> InteractiveArgumentPa
         add_help=False,
     )
     _add_orchestrate_args(orchestrate_parser)
+
+    frameworks_parser = subparsers.add_parser("frameworks", add_help=False)
+    _add_frameworks_args(frameworks_parser)
+
+    bbot_parser = subparsers.add_parser("bbot", add_help=False)
+    _add_bbot_args(bbot_parser)
 
     live_parser = subparsers.add_parser("live", add_help=False)
     _add_live_args(live_parser, default_dashboard_port=default_dashboard_port)
