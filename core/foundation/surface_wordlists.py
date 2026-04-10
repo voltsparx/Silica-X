@@ -17,8 +17,9 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Final
+
+from wordlists.attack_surface import load_attack_surface_port_wordlist, load_attack_surface_text_wordlist
 
 
 _DEFAULT_PRIORITY_SUBDOMAIN_LABELS: Final[tuple[str, ...]] = (
@@ -233,49 +234,15 @@ _DEFAULT_TOP_PORTS: Final[tuple[int, ...]] = (
     11211, 15672, 27017,
 )
 
-
-def _wordlist_root() -> Path:
-    return Path(__file__).resolve().parents[2] / "wordlists" / "attack_surface"
-
-
-def _read_wordlist_text(filename: str, fallback: tuple[str, ...]) -> tuple[str, ...]:
-    path = _wordlist_root() / filename
-    if not path.exists():
-        return fallback
-    values: list[str] = []
-    for raw_line in path.read_text(encoding="utf-8").splitlines():
-        line = raw_line.strip()
-        if not line or line.startswith("#"):
-            continue
-        values.append(line)
-    return tuple(values) or fallback
-
-
-def _read_wordlist_ports(filename: str, fallback: tuple[int, ...]) -> tuple[int, ...]:
-    path = _wordlist_root() / filename
-    if not path.exists():
-        return fallback
-    values: list[int] = []
-    for raw_line in path.read_text(encoding="utf-8").splitlines():
-        line = raw_line.strip()
-        if not line or line.startswith("#"):
-            continue
-        try:
-            values.append(int(line))
-        except ValueError:
-            continue
-    return tuple(values) or fallback
-
-
-SURFACE_PRIORITY_SUBDOMAIN_LABELS: Final[tuple[str, ...]] = _read_wordlist_text(
+SURFACE_PRIORITY_SUBDOMAIN_LABELS: Final[tuple[str, ...]] = load_attack_surface_text_wordlist(
     "subdomains_small.txt",
     _DEFAULT_PRIORITY_SUBDOMAIN_LABELS,
 )
-SURFACE_COMMON_WEB_PATHS: Final[tuple[str, ...]] = _read_wordlist_text(
+SURFACE_COMMON_WEB_PATHS: Final[tuple[str, ...]] = load_attack_surface_text_wordlist(
     "paths_common.txt",
     _DEFAULT_COMMON_WEB_PATHS,
 )
-SURFACE_TOP_PORTS: Final[tuple[int, ...]] = _read_wordlist_ports(
+SURFACE_TOP_PORTS: Final[tuple[int, ...]] = load_attack_surface_port_wordlist(
     "ports_top100.txt",
     _DEFAULT_TOP_PORTS,
 )
