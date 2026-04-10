@@ -1,15 +1,15 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Silica-X Intelligence Framework
+# Sylica-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Silica-X
+# Repository : https://github.com/voltsparx/Sylica-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root
 #
-# This file is part of Silica-X and is subject to the terms
+# This file is part of Sylica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
@@ -311,7 +311,7 @@ async def _probe_platform(
 ) -> dict[str, Any]:
     platform_url = platform.url.format(username=quote(username, safe=""))
     url_probe = platform.url_probe.format(username=quote(username, safe=""))
-    headers = {"User-Agent": "Silica-X/9.3.0", **(platform.headers or {})}
+    headers = {"User-Agent": "Sylica-X/9.3.0", **(platform.headers or {})}
 
     if not _evaluate_regex(platform, username):
         return {
@@ -424,7 +424,7 @@ async def _fetch_profile_content(
     proxy_url: str | None,
 ) -> dict[str, Any]:
     url = platform.url.format(username=quote(username, safe=""))
-    headers = {"User-Agent": "Silica-X/9.3.0", **(platform.headers or {})}
+    headers = {"User-Agent": "Sylica-X/9.3.0", **(platform.headers or {})}
     response = await _fetch_with_retries(
         session,
         method="GET",

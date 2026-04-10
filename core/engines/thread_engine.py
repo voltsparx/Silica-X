@@ -1,19 +1,19 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Silica-X Intelligence Framework
+# Sylica-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Silica-X
+# Repository : https://github.com/voltsparx/Sylica-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root 
 #
-# This file is part of Silica-X and is subject to the terms
+# This file is part of Sylica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
-"""Silica-X native thread and sync engine wiring.
+"""Sylica-X native thread and sync engine wiring.
 
 Blocking/CPU-heavy work should run in threads. Completed data then flows into
 sync orchestration (plugins, filters, scoring, reporting).
@@ -120,7 +120,7 @@ ENGINE_RULES: Final[tuple[str, ...]] = (
     "Needs full dataset -> SYNC",
 )
 
-_THREAD_WORKER_ENV = "SILICA_THREAD_WORKERS"
+_THREAD_WORKER_ENV = "SYLICA_THREAD_WORKERS"
 DEFAULT_THREAD_WORKERS: Final[int] = max(8, min(64, (os.cpu_count() or 4) * 4))
 MAX_THREAD_BATCH_CONCURRENCY: Final[int] = max(8, min(128, DEFAULT_THREAD_WORKERS * 2))
 
@@ -138,7 +138,7 @@ def _resolve_thread_worker_count() -> int:
 
 THREAD_EXECUTOR = ThreadPoolExecutor(
     max_workers=_resolve_thread_worker_count(),
-    thread_name_prefix="silica-thread",
+    thread_name_prefix="sylica-thread",
 )
 atexit.register(lambda: THREAD_EXECUTOR.shutdown(wait=False, cancel_futures=True))
 

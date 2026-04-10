@@ -1,15 +1,15 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Silica-X Intelligence Framework
+# Sylica-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Silica-X
+# Repository : https://github.com/voltsparx/Sylica-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root 
 #
-# This file is part of Silica-X and is subject to the terms
+# This file is part of Sylica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
@@ -67,7 +67,7 @@ class TestRunnerCli(unittest.TestCase):
         self.assertEqual(_keyword_to_command("explain"), "explain")
         self.assertEqual(_keyword_to_command("banner"), "banner")
         self.assertEqual(_keyword_to_command("framework"), "frameworks")
-        self.assertEqual(_keyword_to_command("bbot"), "bbot")
+        self.assertEqual(_keyword_to_command("kit"), "surface-kit")
         self.assertIsNone(_keyword_to_command("unknown"))
 
     def test_root_profile_parser_parses_flags(self):
@@ -279,18 +279,18 @@ class TestRunnerCli(unittest.TestCase):
 
     def test_frameworks_parser_parses_flags(self):
         parser = build_root_parser()
-        args = parser.parse_args(["frameworks", "--framework", "bbot", "--modules", "--search", "httpx", "--limit", "5"])
+        args = parser.parse_args(["frameworks", "--framework", "recursive-modules", "--modules", "--search", "httpx", "--limit", "5"])
         self.assertEqual(args.command, "frameworks")
-        self.assertEqual(args.framework, "bbot")
+        self.assertEqual(args.framework, "recursive-modules")
         self.assertTrue(args.modules)
         self.assertEqual(args.search, "httpx")
         self.assertEqual(args.limit, 5)
 
-    def test_bbot_parser_parses_translation_flags(self):
+    def test_surface_kit_parser_parses_translation_flags(self):
         parser = build_root_parser()
         args = parser.parse_args(
             [
-                "bbot",
+                "surface-kit",
                 "example.com",
                 "--preset",
                 "subdomain-enum",
@@ -301,7 +301,7 @@ class TestRunnerCli(unittest.TestCase):
                 "--dry-run",
             ]
         )
-        self.assertEqual(args.command, "bbot")
+        self.assertEqual(args.command, "surface-kit")
         self.assertEqual(args.domain, "example.com")
         self.assertEqual(args.preset, "subdomain-enum")
         self.assertEqual(args.require_flag, ["passive"])
@@ -462,15 +462,15 @@ class TestRunnerCli(unittest.TestCase):
 
     def test_prompt_parser_parses_frameworks_command(self):
         parser = build_prompt_parser()
-        args = parser.parse_args(["frameworks", "--framework", "amass", "--commands"])
+        args = parser.parse_args(["frameworks", "--framework", "graph-registry", "--commands"])
         self.assertEqual(args.command, "frameworks")
-        self.assertEqual(args.framework, "amass")
+        self.assertEqual(args.framework, "graph-registry")
         self.assertTrue(args.commands)
 
-    def test_prompt_parser_parses_bbot_command(self):
+    def test_prompt_parser_parses_surface_kit_command(self):
         parser = build_prompt_parser()
-        args = parser.parse_args(["bbot", "example.com", "--preset", "web-basic", "--dry-run"])
-        self.assertEqual(args.command, "bbot")
+        args = parser.parse_args(["surface-kit", "example.com", "--preset", "web-basic", "--dry-run"])
+        self.assertEqual(args.command, "surface-kit")
         self.assertEqual(args.domain, "example.com")
         self.assertEqual(args.preset, "web-basic")
         self.assertTrue(args.dry_run)

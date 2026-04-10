@@ -1,19 +1,19 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Silica-X Intelligence Framework
+# Sylica-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Silica-X
+# Repository : https://github.com/voltsparx/Sylica-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root 
 #
-# This file is part of Silica-X and is subject to the terms
+# This file is part of Sylica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
-"""Signal Forge schema definitions for Silica-X."""
+"""Signal Forge schema definitions for Sylica-X."""
 
 from __future__ import annotations
 
@@ -33,7 +33,7 @@ class PluginSpec:
     description: str
     scopes: tuple[str, ...]
     version: str = "1.0"
-    author: str = "Silica-X"
+    author: str = "Sylica-X"
     aliases: tuple[str, ...] = ()
 
 

@@ -18,17 +18,17 @@ class TestHybridArchitecture(unittest.TestCase):
         self.assertIn("Hybrid console lanes:", text)
         self.assertIn("Tor only", text)
 
-    def test_hybrid_architecture_snapshot_is_native_to_silica(self):
+    def test_hybrid_architecture_snapshot_is_native_to_sylica(self):
         snapshot = build_hybrid_architecture_snapshot()
-        self.assertEqual(snapshot["identity"], "silica-x-hybrid")
+        self.assertEqual(snapshot["identity"], "sylica-x-hybrid")
         self.assertEqual(len(snapshot["lanes"]), 4)
         self.assertEqual(len(snapshot["engines"]), 5)
         inspiration_ids = {row["id"] for row in snapshot["inspiration"]}
-        self.assertEqual(inspiration_ids, {"metasploit-ui", "amass-registry", "bbot-event-flow"})
+        self.assertEqual(inspiration_ids, {"console-shell-pattern", "graph-registry-pattern", "recursive-event-pattern"})
 
         lines = render_hybrid_inventory_lines(snapshot)
         self.assertTrue(any("console-dispatch" in line for line in lines))
-        self.assertTrue(any("metasploit-ui" in line for line in lines))
+        self.assertTrue(any("console-shell-pattern" in line for line in lines))
 
     def test_runtime_inventory_snapshot_embeds_hybrid_architecture(self):
         hybrid = build_hybrid_architecture_snapshot()
@@ -41,10 +41,10 @@ class TestHybridArchitecture(unittest.TestCase):
             filter_scope_counts={"profile": 1, "surface": 1, "fusion": 2},
             hybrid_architecture=hybrid,
         )
-        self.assertEqual(snapshot["hybrid_architecture"]["identity"], "silica-x-hybrid")
+        self.assertEqual(snapshot["hybrid_architecture"]["identity"], "sylica-x-hybrid")
         self.assertEqual(snapshot["inventory"]["modules"], 11)
 
-    def test_spinner_frames_match_metasploit_style_cycle(self):
+    def test_spinner_frames_match_console_cycle(self):
         self.assertEqual(spinner_frames(), ("/", "-", "\\", "|"))
 
 

@@ -1,26 +1,26 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Silica-X Intelligence Framework
+# Sylica-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Silica-X
+# Repository : https://github.com/voltsparx/Sylica-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root 
 #
-# This file is part of Silica-X and is subject to the terms
+# This file is part of Sylica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
-"""Central project metadata for Silica-X."""
+"""Central project metadata for Sylica-X."""
 
 from __future__ import annotations
 
 from datetime import datetime, timezone
 
 
-PROJECT_NAME = "Silica-X"
+PROJECT_NAME = "Sylica-X"
 VERSION = "9.3.0"
 VERSION_THEME = "Lattice"
 AUTHOR = "voltsparx"

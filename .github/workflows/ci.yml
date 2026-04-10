@@ -47,7 +47,7 @@ jobs:
         run: python -m mypy
 
       - name: Run compile smoke
-        run: python -m compileall -q core filters modules plugins silica_x platforms tests silica-x.py
+        run: python -m compileall -q core filters modules plugins sylica_x platforms tests sylica-x.py
 
   package:
     runs-on: ubuntu-latest

@@ -12,7 +12,7 @@
         "fusion"
       ],
       "version": "1.1",
-      "author": "Silica-X",
+      "author": "Sylica-X",
       "aliases": [
         "contact_mesh",
         "contacts",
@@ -28,7 +28,7 @@
         "fusion"
       ],
       "version": "1.0",
-      "author": "Silica-X",
+      "author": "Sylica-X",
       "aliases": [
         "activity_timeline",
         "timeline",
@@ -43,7 +43,7 @@
         "surface"
       ],
       "version": "1.0",
-      "author": "Silica-X",
+      "author": "Sylica-X",
       "aliases": [
         "takeover_probe",
         "dangling_dns",
@@ -58,7 +58,7 @@
         "fusion"
       ],
       "version": "1.0",
-      "author": "Silica-X",
+      "author": "Sylica-X",
       "aliases": [
         "email_pattern",
         "mail_pattern",
@@ -74,7 +74,7 @@
         "fusion"
       ],
       "version": "1.1",
-      "author": "Silica-X",
+      "author": "Sylica-X",
       "aliases": [
         "surface_header_audit",
         "headers",
@@ -90,7 +90,7 @@
         "fusion"
       ],
       "version": "1.1",
-      "author": "Silica-X",
+      "author": "Sylica-X",
       "aliases": [
         "persona_signal_fusion",
         "persona",
@@ -107,7 +107,7 @@
         "fusion"
       ],
       "version": "1.0",
-      "author": "Silica-X",
+      "author": "Sylica-X",
       "aliases": [
         "module_matrix",
         "catalog_matrix",
@@ -123,7 +123,7 @@
         "fusion"
       ],
       "version": "1.1",
-      "author": "Silica-X",
+      "author": "Sylica-X",
       "aliases": [
         "account_link_graph",
         "linkgraph",
@@ -138,7 +138,7 @@
         "surface"
       ],
       "version": "1.0",
-      "author": "Silica-X",
+      "author": "Sylica-X",
       "aliases": [
         "securitytxt",
         "disclosure_policy",
@@ -148,14 +148,14 @@
     {
       "id": "signal_fusion_core",
       "title": "Signal Fusion Core",
-      "description": "Runs internal connector lanes and merges normalized signals into Silica workflows.",
+      "description": "Runs internal connector lanes and merges normalized signals into Sylica workflows.",
       "scopes": [
         "profile",
         "surface",
         "fusion"
       ],
       "version": "1.0",
-      "author": "Silica-X",
+      "author": "Sylica-X",
       "aliases": [
         "fusion_core",
         "signal_core",
@@ -171,7 +171,7 @@
         "fusion"
       ],
       "version": "1.1",
-      "author": "Silica-X",
+      "author": "Sylica-X",
       "aliases": [
         "subdomain_exposure_map",
         "subdomainmap",
@@ -188,7 +188,7 @@
         "fusion"
       ],
       "version": "1.1",
-      "author": "Silica-X",
+      "author": "Sylica-X",
       "aliases": [
         "risk_orchestrator",
         "risk",

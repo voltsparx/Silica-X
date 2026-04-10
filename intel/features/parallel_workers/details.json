@@ -10,8 +10,8 @@
   "strength": "core",
   "priority": "harden",
   "action": "Balance async/thread/process lanes by workload shape.",
-  "silica": {
-    "project": "Silica-X",
+  "sylica": {
+    "project": "Sylica-X",
     "version": "9.3.0",
     "theme": "Lattice",
     "component": "intel_pack"

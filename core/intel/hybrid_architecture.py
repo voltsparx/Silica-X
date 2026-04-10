@@ -1,19 +1,19 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Silica-X Intelligence Framework
+# Sylica-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Silica-X
+# Repository : https://github.com/voltsparx/Sylica-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root
 #
-# This file is part of Silica-X and is subject to the terms
+# This file is part of Sylica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
-"""Silica-X hybrid architecture descriptors for runtime inventory and docs."""
+"""Sylica-X hybrid architecture descriptors for runtime inventory and docs."""
 
 from __future__ import annotations
 
@@ -23,11 +23,11 @@ from core.foundation.metadata import PROJECT_NAME, VERSION, VERSION_THEME
 
 
 _HYBRID_ARCHITECTURE: dict[str, object] = {
-    "identity": "silica-x-hybrid",
+    "identity": "sylica-x-hybrid",
     "project": PROJECT_NAME,
     "version": VERSION,
     "theme": VERSION_THEME,
-    "tagline": "Silica-X native console, registry, event-flow, and fusion architecture.",
+    "tagline": "Sylica-X native console, registry, event-flow, and fusion architecture.",
     "engines": ("async", "thread", "process", "hybrid", "fusion"),
     "lanes": (
         {
@@ -77,8 +77,8 @@ _HYBRID_ARCHITECTURE: dict[str, object] = {
     ),
     "inspiration": (
         {
-            "id": "metasploit-ui",
-            "source": "temp/only-ui-architecture/metasploit-framework-master",
+            "id": "console-shell-pattern",
+            "source": "temp/console-ui-source",
             "patterns": (
                 "module-aware console prompt",
                 "startup banner + inventory rhythm",
@@ -87,8 +87,8 @@ _HYBRID_ARCHITECTURE: dict[str, object] = {
             ),
         },
         {
-            "id": "amass-registry",
-            "source": "temp/amass",
+            "id": "graph-registry-pattern",
+            "source": "temp/graph-engine-source",
             "patterns": (
                 "registry + dispatcher composition",
                 "session manager topology",
@@ -96,8 +96,8 @@ _HYBRID_ARCHITECTURE: dict[str, object] = {
             ),
         },
         {
-            "id": "bbot-event-flow",
-            "source": "temp/bbot",
+            "id": "recursive-event-pattern",
+            "source": "temp/recursive-module-source",
             "patterns": (
                 "event-driven scan lifecycle",
                 "parallel module lanes",
@@ -109,7 +109,7 @@ _HYBRID_ARCHITECTURE: dict[str, object] = {
 
 
 def build_hybrid_architecture_snapshot() -> dict[str, object]:
-    """Return the Silica-X hybrid architecture snapshot."""
+    """Return the Sylica-X hybrid architecture snapshot."""
 
     return deepcopy(_HYBRID_ARCHITECTURE)
 

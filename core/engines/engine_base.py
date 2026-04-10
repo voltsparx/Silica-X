@@ -1,15 +1,15 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Silica-X Intelligence Framework
+# Sylica-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Silica-X
+# Repository : https://github.com/voltsparx/Sylica-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root 
 #
-# This file is part of Silica-X and is subject to the terms
+# This file is part of Sylica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
@@ -28,7 +28,7 @@ from core.engines.health_monitor import EngineHealthMonitor
 
 
 class EngineBase(abc.ABC):
-    """Base contract for Silica-X execution engines."""
+    """Base contract for Sylica-X execution engines."""
 
     def __init__(self, *, monitor: EngineHealthMonitor | None = None) -> None:
         self._monitor = monitor or EngineHealthMonitor()
@@ -120,7 +120,7 @@ class EngineBase(abc.ABC):
 
     @staticmethod
     def _task_name(task_factory: Callable[[], Awaitable[Any]], *, index: int) -> str:
-        explicit = str(getattr(task_factory, "_silica_task_name", "")).strip()  # noqa: SLF001
+        explicit = str(getattr(task_factory, "_sylica_task_name", "")).strip()  # noqa: SLF001
         if explicit:
             return explicit
         name = str(getattr(task_factory, "__name__", "")).strip()

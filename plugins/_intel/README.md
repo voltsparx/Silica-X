@@ -2,7 +2,7 @@
 
 Release: v9.3.0 (Theme: Lattice)
 
-Silica-native plugin inventory and usage guidance.
+Sylica-native plugin inventory and usage guidance.
 
 ## Inventory
 

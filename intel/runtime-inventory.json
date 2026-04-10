@@ -1,6 +1,6 @@
 {
-  "silica": {
-    "project": "Silica-X",
+  "sylica": {
+    "project": "Sylica-X",
     "version": "9.3.0",
     "theme": "Lattice",
     "component": "intel_pack"

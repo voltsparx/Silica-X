@@ -1,15 +1,15 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Silica-X Intelligence Framework
+# Sylica-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Silica-X
+# Repository : https://github.com/voltsparx/Sylica-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root 
 #
-# This file is part of Silica-X and is subject to the terms
+# This file is part of Sylica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
@@ -256,24 +256,24 @@ def _add_modules_args(parser: argparse.ArgumentParser) -> None:
 def _add_frameworks_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--framework",
-        choices=["all", "bbot", "amass", "metasploit-ui"],
+        choices=["all", "recursive-modules", "graph-registry", "console-shell"],
         default="all",
-        help="Show reverse-engineered intel for a specific temp/ framework.",
+        help="Show local source-profile intel for a specific temp/ reference tree.",
     )
     parser.add_argument(
         "--modules",
         action="store_true",
-        help="List reverse-engineered BBOT modules.",
+        help="List modules discovered from the recursive-module source profile.",
     )
     parser.add_argument(
         "--presets",
         action="store_true",
-        help="List reverse-engineered BBOT presets.",
+        help="List recipes discovered from the recursive-module source profile.",
     )
     parser.add_argument(
         "--flags",
         action="store_true",
-        help="List reverse-engineered BBOT flags.",
+        help="List flags discovered from the recursive-module source profile.",
     )
     parser.add_argument(
         "--commands",
@@ -283,7 +283,7 @@ def _add_frameworks_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--search",
         default="",
-        help="Filter BBOT module/preset/flag output by search text.",
+        help="Filter module/recipe/flag output by search text.",
     )
     parser.add_argument(
         "--limit",
@@ -294,77 +294,77 @@ def _add_frameworks_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--json",
         action="store_true",
-        help="Print framework intel as JSON payload.",
+        help="Print source-profile intel as JSON payload.",
     )
 
 
-def _add_bbot_args(parser: argparse.ArgumentParser) -> None:
+def _add_surface_kit_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "domain",
         nargs="?",
         default="",
-        help="Domain to translate into a BBOT-style Silica-X surface run.",
+        help="Domain to translate into a source-derived Sylica-X surface run.",
     )
     _add_toggle_flags(parser, "tor", "Tor routing")
     _add_toggle_flags(parser, "proxy", "HTTP proxy routing")
     parser.add_argument(
         "--preset",
         default="subdomain-enum",
-        help="BBOT preset name discovered from temp/bbot/bbot/presets.",
+        help="Recipe name discovered from the recursive-module source profile.",
     )
     parser.add_argument(
         "--module",
         action="append",
         default=[],
-        help="Narrow the BBOT-style plan to specific module names.",
+        help="Narrow the source-derived plan to specific module names.",
     )
     parser.add_argument(
         "--require-flag",
         action="append",
         default=[],
-        help="Require BBOT flags when building the native Silica-X translation plan.",
+        help="Require source flags when building the native Sylica-X plan.",
     )
     parser.add_argument(
         "--exclude-flag",
         action="append",
         default=[],
-        help="Exclude BBOT flags when building the native Silica-X translation plan.",
+        help="Exclude source flags when building the native Sylica-X plan.",
     )
     parser.add_argument(
         "--recon-mode",
         choices=list(SURFACE_RECON_MODES),
         default=None,
-        help="Override the translated Silica-X recon mode.",
+        help="Override the translated Sylica-X recon mode.",
     )
     parser.add_argument(
         "--list-modules",
         action="store_true",
-        help="List BBOT modules reverse-engineered from temp/bbot.",
+        help="List modules discovered from the recursive-module source profile.",
     )
     parser.add_argument(
         "--list-presets",
         action="store_true",
-        help="List BBOT presets reverse-engineered from temp/bbot.",
+        help="List recipes discovered from the recursive-module source profile.",
     )
     parser.add_argument(
         "--list-flags",
         action="store_true",
-        help="List BBOT flags reverse-engineered from temp/bbot.",
+        help="List flags discovered from the recursive-module source profile.",
     )
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Show the translated Silica-X execution plan without running a scan.",
+        help="Show the translated Sylica-X execution plan without running a scan.",
     )
     parser.add_argument(
         "--json",
         action="store_true",
-        help="Print BBOT reverse-engineering output as JSON payload.",
+        help="Print surface-kit planning output as JSON payload.",
     )
     parser.add_argument(
         "--search",
         default="",
-        help="Filter BBOT listing output by search text.",
+        help="Filter listing output by search text.",
     )
     parser.add_argument(
         "--limit",
@@ -805,7 +805,7 @@ def build_root_parser(
     default_dashboard_port: int,
 ) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="silica-x.py",
+        prog="sylica-x.py",
         description=f"{project_name} v{version} OSINT runner (flags + prompt + keyword system).",
     )
     parser.add_argument(
@@ -852,15 +852,15 @@ def build_root_parser(
 
     frameworks_parser = subparsers.add_parser(
         "frameworks",
-        help="Inspect reverse-engineered recon framework intel from temp/.",
+        help="Inspect local source-profile intel from temp/.",
     )
     _add_frameworks_args(frameworks_parser)
 
-    bbot_parser = subparsers.add_parser(
-        "bbot",
-        help="Use local BBOT source study to plan or run a native Silica-X translation.",
+    surface_kit_parser = subparsers.add_parser(
+        "surface-kit",
+        help="Use local source-study recipes to plan or run a native Sylica-X surface workflow.",
     )
-    _add_bbot_args(bbot_parser)
+    _add_surface_kit_args(surface_kit_parser)
 
     live_parser = subparsers.add_parser("live", help="Launch live dashboard for saved results.")
     _add_live_args(live_parser, default_dashboard_port=default_dashboard_port)
@@ -932,7 +932,7 @@ def build_root_parser(
     subparsers.add_parser(
         "capability-pack",
         aliases=["intel"],
-        help="Generate Silica-X capability-pack folders and report artifacts.",
+        help="Generate Sylica-X capability-pack folders and report artifacts.",
     )
 
     wizard_parser = subparsers.add_parser(
@@ -987,8 +987,8 @@ def build_prompt_parser(*, default_dashboard_port: int) -> InteractiveArgumentPa
     frameworks_parser = subparsers.add_parser("frameworks", add_help=False)
     _add_frameworks_args(frameworks_parser)
 
-    bbot_parser = subparsers.add_parser("bbot", add_help=False)
-    _add_bbot_args(bbot_parser)
+    surface_kit_parser = subparsers.add_parser("surface-kit", add_help=False)
+    _add_surface_kit_args(surface_kit_parser)
 
     live_parser = subparsers.add_parser("live", add_help=False)
     _add_live_args(live_parser, default_dashboard_port=default_dashboard_port)

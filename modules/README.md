@@ -9,8 +9,8 @@ Generated index for module-like capabilities discovered under `intel-sources/`.
 - `filter-modules.json`: filter-like subset
 
 Refresh from CLI:
-- `python silica-x.py modules --sync`
+- `python sylica-x.py modules --sync`
 
 Advanced query examples:
-- `python silica-x.py modules --search dns --sort-by power_score --descending`
-- `python silica-x.py modules --kind plugin --tag identity --min-score 55`
+- `python sylica-x.py modules --search dns --sort-by power_score --descending`
+- `python sylica-x.py modules --kind plugin --tag identity --min-score 55`

@@ -1,4 +1,4 @@
-"""Reverse-engineered framework intelligence from local temp/ source trees."""
+"""Generic source-study helpers for local recon architecture references under temp/."""
 
 from __future__ import annotations
 
@@ -12,32 +12,27 @@ from core.collect.domain_intel import normalize_domain
 from core.foundation.recon_modes import normalize_recon_mode
 
 DEFAULT_TEMP_ROOT = Path("temp")
-DEFAULT_BBOT_ROOT = DEFAULT_TEMP_ROOT / "bbot"
-DEFAULT_AMASS_ROOT = DEFAULT_TEMP_ROOT / "amass"
-DEFAULT_METASPLOIT_ROOT = (
-    DEFAULT_TEMP_ROOT / "only-ui-architecture" / "metasploit-framework-master" / "metasploit-framework-master"
-)
 
 _PIPE_SPLIT_RE = re.compile(r"\s*\|\s*")
 _OPTION_RE = re.compile(r"options\.([a-z_]+)")
 
-_BBOT_OPTION_LABELS: dict[str, str] = {
+_SOURCE_OPTION_LABELS: dict[str, str] = {
     "allow_deadly": "Allow highly intrusive modules",
-    "current_preset": "Show the merged preset before execution",
-    "current_preset_full": "Show the full resolved preset/config",
-    "dry_run": "Build module plan without executing the scan",
+    "current_preset": "Show the merged recipe before execution",
+    "current_preset_full": "Show the full resolved recipe/config",
+    "dry_run": "Build a module plan without executing the scan",
     "install_all_deps": "Install dependencies for all modules",
     "list_flags": "List available module flags",
     "list_module_options": "List module-specific options",
     "list_modules": "List scan and internal modules",
     "list_output_modules": "List output modules",
-    "list_presets": "List built-in presets",
+    "list_presets": "List built-in recipes",
     "module_help": "Show help for a specific module",
-    "version": "Show BBOT version",
+    "version": "Show source runtime version",
     "yes": "Skip interactive scan confirmation",
 }
 
-_BBOT_PRESET_TO_SILICA: dict[str, dict[str, Any]] = {
+_RECIPE_TO_SYLICA: dict[str, dict[str, Any]] = {
     "subdomain-enum": {
         "surface_preset": "deep",
         "recon_mode": "passive",
@@ -117,7 +112,7 @@ _BBOT_PRESET_TO_SILICA: dict[str, dict[str, Any]] = {
     },
 }
 
-_BBOT_NATIVE_CAPABILITIES: dict[str, str] = {
+_NATIVE_CAPABILITIES: dict[str, str] = {
     "subdomain-enum": "Subdomain discovery and prioritization",
     "passive": "Passive ownership and discovery mode",
     "active": "Active HTTP and DNS verification mode",
@@ -126,23 +121,23 @@ _BBOT_NATIVE_CAPABILITIES: dict[str, str] = {
     "web-thorough": "Deeper active web coverage pattern",
 }
 
-_BBOT_PARTIAL_CAPABILITIES: dict[str, str] = {
-    "tech-detect": "Technology hints are inferred through HTTP behavior and headers, not full fingerprint stacks",
-    "spider": "Recursive web discovery is represented as follow-up guidance, not full crawler parity",
-    "web-screenshots": "Silica-X can validate web targets but does not capture screenshots natively",
-    "baddns": "DNS takeover-style review is represented as prioritization hints, not dedicated takeover modules",
+_PARTIAL_CAPABILITIES: dict[str, str] = {
+    "tech-detect": "Technology hints are inferred through HTTP behavior and headers, not a full fingerprint stack",
+    "spider": "Recursive web discovery is represented as follow-up guidance, not crawler parity",
+    "web-screenshots": "Sylica-X validates web targets but does not capture screenshots natively",
+    "baddns": "DNS takeover review is represented as prioritization hints, not dedicated takeover modules",
 }
 
-_BBOT_UNSUPPORTED_CAPABILITIES: dict[str, str] = {
+_UNSUPPORTED_CAPABILITIES: dict[str, str] = {
     "code-enum": "Repository mining and code-search modules are not native in the surface engine",
     "email-enum": "Dedicated email enumeration is outside the current surface lane",
-    "web-paramminer": "Parameter mining/fuzzing is not implemented",
-    "portscan": "Port scan and service fingerprint parity is not implemented",
+    "web-paramminer": "Parameter mining and fuzzing are not implemented",
+    "portscan": "Port scan and service fingerprint parity are not implemented",
     "service-enum": "Protocol fingerprint modules are not implemented",
-    "deadly": "Intrusive vulnerability modules are intentionally not mirrored",
-    "aggressive": "High-noise brute-force/fuzz lanes are intentionally not mirrored",
+    "deadly": "Highly intrusive modules are intentionally not mirrored",
+    "aggressive": "High-noise brute-force and fuzz lanes are intentionally not mirrored",
     "download": "File and repository download workflows are not mirrored",
-    "iis-shortnames": "Dedicated IIS shortname exploitation checks are not implemented",
+    "iis-shortnames": "Dedicated IIS shortname checks are not implemented",
 }
 
 
@@ -151,6 +146,42 @@ def _safe_read(path: Path) -> str:
         return path.read_text(encoding="utf-8", errors="ignore")
     except OSError:
         return ""
+
+
+def _iter_temp_dirs(root: Path) -> list[Path]:
+    if not root.exists():
+        return []
+    return sorted(item for item in root.iterdir() if item.is_dir())
+
+
+def _detect_console_shell_root(root: Path = DEFAULT_TEMP_ROOT) -> Path | None:
+    for path in _iter_temp_dirs(root):
+        driver = path / "lib" / "msf" / "ui" / "console" / "driver.rb"
+        dispatcher = path / "lib" / "rex" / "ui" / "text" / "dispatcher_shell.rb"
+        if driver.exists() and dispatcher.exists():
+            return path
+        for nested in path.rglob("driver.rb"):
+            if nested.as_posix().endswith("lib/msf/ui/console/driver.rb"):
+                return nested.parents[5]
+    return None
+
+
+def _detect_graph_registry_root(root: Path = DEFAULT_TEMP_ROOT) -> Path | None:
+    for path in _iter_temp_dirs(root):
+        if (path / "cmd").exists() and (path / "engine" / "plugins").exists() and (path / "internal").exists():
+            return path
+    return None
+
+
+def _detect_recursive_modules_root(root: Path = DEFAULT_TEMP_ROOT) -> Path | None:
+    for path in _iter_temp_dirs(root):
+        if not (path / "docs" / "modules" / "list_of_modules.md").exists():
+            continue
+        has_recipes = any(item.is_dir() and any(item.glob("*.yml")) for item in path.rglob("presets"))
+        has_cli = any(item.name == "cli.py" for item in path.rglob("cli.py"))
+        if has_recipes and has_cli:
+            return path
+    return None
 
 
 def _clean_value(value: str) -> str:
@@ -172,7 +203,7 @@ def _parse_markdown_rows(text: str) -> list[list[str]]:
     return rows
 
 
-def _parse_simple_preset(path: Path) -> dict[str, Any]:
+def _parse_simple_recipe(path: Path) -> dict[str, Any]:
     data: dict[str, Any] = {
         "name": path.stem,
         "description": "",
@@ -191,7 +222,6 @@ def _parse_simple_preset(path: Path) -> dict[str, Any]:
         stripped = line.strip()
         if not stripped or stripped.startswith("#"):
             continue
-
         if stripped.startswith("- "):
             item = stripped[2:].split("#", maxsplit=1)[0].strip().strip("'\"")
             if item and section in list_sections:
@@ -203,14 +233,12 @@ def _parse_simple_preset(path: Path) -> dict[str, Any]:
                 if isinstance(hints, list):
                     hints.append(item)
             continue
-
         if ":" not in stripped:
             if section == "config":
                 hints = data["config_hints"]
                 if isinstance(hints, list):
                     hints.append(stripped)
             continue
-
         key, _, remainder = stripped.partition(":")
         key = key.strip()
         value = remainder.strip().strip("'\"")
@@ -232,23 +260,34 @@ def _parse_simple_preset(path: Path) -> dict[str, Any]:
             hints = data["config_hints"]
             if isinstance(hints, list):
                 hints.append(stripped)
-
     return data
 
 
 def _match_search(text: str, search: str) -> bool:
     query = str(search or "").strip().lower()
-    if not query:
-        return True
-    return query in text.lower()
+    return not query or query in text.lower()
+
+
+def _find_first_dir(root: Path, name: str) -> Path | None:
+    for item in root.rglob(name):
+        if item.is_dir():
+            return item
+    return None
+
+
+def _find_first_file(root: Path, name: str) -> Path | None:
+    for item in root.rglob(name):
+        if item.is_file():
+            return item
+    return None
 
 
 @lru_cache(maxsize=1)
-def load_bbot_reference(root: str | Path = DEFAULT_BBOT_ROOT) -> dict[str, Any]:
-    base = Path(root)
+def load_recursive_module_reference(root: str | Path | None = None) -> dict[str, Any]:
+    base = Path(root) if root is not None else _detect_recursive_modules_root() or DEFAULT_TEMP_ROOT
     modules_path = base / "docs" / "modules" / "list_of_modules.md"
-    presets_dir = base / "bbot" / "presets"
-    cli_path = base / "bbot" / "cli.py"
+    recipes_dir = _find_first_dir(base, "presets")
+    cli_path = _find_first_file(base, "cli.py")
 
     module_rows: list[dict[str, Any]] = []
     flag_to_modules: dict[str, list[str]] = {}
@@ -272,73 +311,60 @@ def load_bbot_reference(root: str | Path = DEFAULT_BBOT_ROOT) -> dict[str, Any]:
         for flag in module_flags:
             flag_to_modules.setdefault(flag, []).append(str(module["name"]))
 
-    presets: list[dict[str, Any]] = []
-    if presets_dir.exists():
-        for preset_path in sorted(presets_dir.glob("*.yml")):
-            presets.append(_parse_simple_preset(preset_path))
+    recipes: list[dict[str, Any]] = []
+    if recipes_dir and recipes_dir.exists():
+        for recipe_path in sorted(recipes_dir.glob("*.yml")):
+            recipes.append(_parse_simple_recipe(recipe_path))
 
-    raw_cli = _safe_read(cli_path)
     commands: list[dict[str, str]] = []
-    for option in sorted(set(_OPTION_RE.findall(raw_cli))):
-        label = _BBOT_OPTION_LABELS.get(option)
-        if not label:
-            continue
-        commands.append({"id": option, "title": label})
+    if cli_path is not None:
+        raw_cli = _safe_read(cli_path)
+        for option in sorted(set(_OPTION_RE.findall(raw_cli))):
+            label = _SOURCE_OPTION_LABELS.get(option)
+            if label:
+                commands.append({"id": option, "title": label})
 
     flags: list[dict[str, Any]] = [
-        {
-            "name": name,
-            "count": len(modules),
-            "modules": sorted(modules),
-        }
+        {"name": name, "count": len(modules), "modules": sorted(modules)}
         for name, modules in sorted(flag_to_modules.items(), key=lambda item: (-len(item[1]), item[0]))
     ]
 
     return {
-        "framework": "bbot",
+        "profile": "recursive-modules",
         "path": str(base),
         "module_count": len(module_rows),
-        "preset_count": len(presets),
+        "recipe_count": len(recipes),
         "flag_count": len(flags),
         "architecture": [
             "Event-driven and recursive scan model",
-            "Preset-driven scan composition",
-            "Module flags for passive/active/safe/aggressive selection",
-            "Parallel module execution with queue-based event flow",
+            "Recipe-driven scan composition",
+            "Module flags for passive, active, safe, and aggressive selection",
+            "Parallel module execution with queue-like event flow",
         ],
         "commands": commands,
         "modules": module_rows,
-        "presets": presets,
+        "recipes": recipes,
         "flags": flags,
     }
 
 
 @lru_cache(maxsize=1)
-def load_amass_reference(root: str | Path = DEFAULT_AMASS_ROOT) -> dict[str, Any]:
-    base = Path(root)
+def load_graph_registry_reference(root: str | Path | None = None) -> dict[str, Any]:
+    base = Path(root) if root is not None else _detect_graph_registry_root() or DEFAULT_TEMP_ROOT
     cmd_dir = base / "cmd"
     engine_dir = base / "engine"
     plugin_dir = engine_dir / "plugins"
 
-    commands = []
-    if cmd_dir.exists():
-        for path in sorted(item for item in cmd_dir.iterdir() if item.is_dir()):
-            commands.append(path.name)
-
-    plugin_families = []
-    if plugin_dir.exists():
-        for path in sorted(item for item in plugin_dir.iterdir() if item.is_dir()):
-            plugin_families.append(path.name)
-
-    engine_components = []
-    if engine_dir.exists():
-        for name in ("api", "dispatcher", "plugins", "pubsub", "registry", "sessions", "types"):
-            component = engine_dir / name
-            if component.exists():
-                engine_components.append(name)
+    commands = [path.name for path in sorted(cmd_dir.iterdir()) if path.is_dir()] if cmd_dir.exists() else []
+    plugin_families = [path.name for path in sorted(plugin_dir.iterdir()) if path.is_dir()] if plugin_dir.exists() else []
+    engine_components = [
+        name
+        for name in ("api", "dispatcher", "plugins", "pubsub", "registry", "sessions", "types")
+        if (engine_dir / name).exists()
+    ]
 
     return {
-        "framework": "amass",
+        "profile": "graph-registry",
         "path": str(base),
         "command_count": len(commands),
         "commands": commands,
@@ -346,18 +372,18 @@ def load_amass_reference(root: str | Path = DEFAULT_AMASS_ROOT) -> dict[str, Any
         "plugin_families": plugin_families,
         "architecture": [
             "Attack-surface mapping with open-source and active reconnaissance",
-            "Dedicated engine registry, dispatcher, and session subsystems",
-            "Separate command binaries for enum, viz, track, assoc, and engine tasks",
+            "Dedicated registry, dispatcher, and session subsystems",
+            "Separate command binaries for enumeration, tracking, visualization, and engine tasks",
             "Plugin families for brute force, scrape, DNS, enrich, and service discovery",
         ],
     }
 
 
 @lru_cache(maxsize=1)
-def load_metasploit_ui_reference(root: str | Path = DEFAULT_METASPLOIT_ROOT) -> dict[str, Any]:
-    base = Path(root)
+def load_console_shell_reference(root: str | Path | None = None) -> dict[str, Any]:
+    base = Path(root) if root is not None else _detect_console_shell_root() or DEFAULT_TEMP_ROOT
     return {
-        "framework": "metasploit-ui",
+        "profile": "console-shell",
         "path": str(base),
         "architecture": [
             "Console-first driver and dispatcher shell pattern",
@@ -367,63 +393,75 @@ def load_metasploit_ui_reference(root: str | Path = DEFAULT_METASPLOIT_ROOT) -> 
     }
 
 
-def load_temp_framework_inventory(temp_root: str | Path = DEFAULT_TEMP_ROOT) -> dict[str, Any]:
+def load_source_inventory(temp_root: str | Path = DEFAULT_TEMP_ROOT) -> dict[str, Any]:
     base = Path(temp_root)
-    frameworks: list[dict[str, Any]] = []
-    if DEFAULT_BBOT_ROOT.exists():
-        bbot = load_bbot_reference()
-        frameworks.append(
+    profiles: list[dict[str, Any]] = []
+
+    recursive_root = _detect_recursive_modules_root(base)
+    if recursive_root is not None:
+        recursive = load_recursive_module_reference(str(recursive_root))
+        profiles.append(
             {
-                "name": "bbot",
-                "path": bbot["path"],
-                "summary": "Recursive event-driven recon with presets, flags, and large module inventory",
-                "module_count": bbot["module_count"],
-                "preset_count": bbot["preset_count"],
-                "command_count": len(bbot["commands"]),
-            }
-        )
-    if DEFAULT_AMASS_ROOT.exists():
-        amass = load_amass_reference()
-        frameworks.append(
-            {
-                "name": "amass",
-                "path": amass["path"],
-                "summary": "Attack-surface mapping engine with dedicated binaries, registry, and plugin families",
-                "command_count": amass["command_count"],
-                "engine_component_count": len(amass["engine_components"]),
-                "plugin_family_count": len(amass["plugin_families"]),
-            }
-        )
-    if DEFAULT_METASPLOIT_ROOT.exists():
-        metasploit = load_metasploit_ui_reference()
-        frameworks.append(
-            {
-                "name": "metasploit-ui",
-                "path": metasploit["path"],
-                "summary": "Console UX reference for prompt, inventory, and dispatcher-shell interactions",
+                "name": "recursive-modules",
+                "path": recursive["path"],
+                "summary": "Recursive event-driven collection with recipes, flags, and broad module coverage",
+                "module_count": recursive["module_count"],
+                "recipe_count": recursive["recipe_count"],
+                "command_count": len(recursive["commands"]),
             }
         )
 
-    generic_dirs: list[dict[str, Any]] = []
+    graph_root = _detect_graph_registry_root(base)
+    if graph_root is not None:
+        graph = load_graph_registry_reference(str(graph_root))
+        profiles.append(
+            {
+                "name": "graph-registry",
+                "path": graph["path"],
+                "summary": "Attack-surface engine with command families, registry control, and plugin lanes",
+                "command_count": graph["command_count"],
+                "engine_component_count": len(graph["engine_components"]),
+                "plugin_family_count": len(graph["plugin_families"]),
+            }
+        )
+
+    console_root = _detect_console_shell_root(base)
+    if console_root is not None:
+        console = load_console_shell_reference(str(console_root))
+        profiles.append(
+            {
+                "name": "console-shell",
+                "path": console["path"],
+                "summary": "Console UX reference for prompt, inventory, spinner, and shell-style interaction",
+            }
+        )
+
+    other_dirs: list[dict[str, Any]] = []
     if base.exists():
-        known = {"bbot", "amass", "only-ui-architecture"}
-        for path in sorted(item for item in base.iterdir() if item.is_dir() and item.name not in known):
-            generic_dirs.append({"name": path.name, "path": str(path)})
+        matched = {Path(str(row.get("path", ""))).resolve() for row in profiles if isinstance(row, dict) and row.get("path")}
+        for path in _iter_temp_dirs(base):
+            try:
+                resolved = path.resolve()
+            except OSError:
+                resolved = path
+            if resolved in matched:
+                continue
+            other_dirs.append({"name": path.name, "path": str(path)})
 
     return {
         "temp_root": str(base),
-        "frameworks": frameworks,
-        "other_dirs": generic_dirs,
+        "profiles": profiles,
+        "other_dirs": other_dirs,
     }
 
 
-def _bbot_modules_for_preset(reference: dict[str, Any], preset_name: str) -> list[dict[str, Any]]:
-    preset = next((row for row in reference.get("presets", []) if row.get("name") == preset_name), None)
-    if not isinstance(preset, dict):
+def _modules_for_recipe(reference: dict[str, Any], recipe_name: str) -> list[dict[str, Any]]:
+    recipe = next((row for row in reference.get("recipes", []) if row.get("name") == recipe_name), None)
+    if not isinstance(recipe, dict):
         return []
+    requested_names = {str(name) for name in recipe.get("modules", []) if str(name).strip()}
+    requested_flags = {str(flag) for flag in recipe.get("flags", []) if str(flag).strip()}
 
-    requested_names = {str(name) for name in preset.get("modules", []) if str(name).strip()}
-    requested_flags = {str(flag) for flag in preset.get("flags", []) if str(flag).strip()}
     modules: list[dict[str, Any]] = []
     for row in reference.get("modules", []):
         if not isinstance(row, dict):
@@ -435,10 +473,10 @@ def _bbot_modules_for_preset(reference: dict[str, Any], preset_name: str) -> lis
     return modules
 
 
-def build_bbot_scan_plan(
+def build_surface_recipe_plan(
     *,
     domain: str,
-    preset_name: str = "subdomain-enum",
+    recipe_name: str = "subdomain-enum",
     modules: list[str] | None = None,
     require_flags: list[str] | None = None,
     exclude_flags: list[str] | None = None,
@@ -446,14 +484,14 @@ def build_bbot_scan_plan(
 ) -> dict[str, Any]:
     normalized_domain = normalize_domain(domain)
     if not normalized_domain:
-        raise ValueError("Invalid domain for BBOT-style plan.")
+        raise ValueError("Invalid domain for the surface kit plan.")
 
-    reference = load_bbot_reference()
-    preset = next((row for row in reference.get("presets", []) if row.get("name") == preset_name), None)
-    if not isinstance(preset, dict):
-        raise ValueError(f"Unknown BBOT preset: {preset_name}")
+    reference = load_recursive_module_reference()
+    recipe = next((row for row in reference.get("recipes", []) if row.get("name") == recipe_name), None)
+    if not isinstance(recipe, dict):
+        raise ValueError(f"Unknown surface recipe: {recipe_name}")
 
-    selected_modules = _bbot_modules_for_preset(reference, preset_name)
+    selected_modules = _modules_for_recipe(reference, recipe_name)
     requested_module_names = {str(name).strip() for name in (modules or []) if str(name).strip()}
     required_flag_names = {str(name).strip() for name in (require_flags or []) if str(name).strip()}
     excluded_flag_names = {str(name).strip() for name in (exclude_flags or []) if str(name).strip()}
@@ -483,15 +521,15 @@ def build_bbot_scan_plan(
         }
     )
 
-    preset_defaults = dict(_BBOT_PRESET_TO_SILICA.get(preset_name, {}))
-    resolved_recon_mode = normalize_recon_mode(recon_mode or str(preset_defaults.get("recon_mode", "hybrid")))
-    surface_preset = str(preset_defaults.get("surface_preset", "balanced"))
-    include_ct = bool(preset_defaults.get("include_ct", True))
-    include_rdap = bool(preset_defaults.get("include_rdap", True))
+    recipe_defaults = dict(_RECIPE_TO_SYLICA.get(recipe_name, {}))
+    resolved_recon_mode = normalize_recon_mode(recon_mode or str(recipe_defaults.get("recon_mode", "hybrid")))
+    surface_preset = str(recipe_defaults.get("surface_preset", "balanced"))
+    include_ct = bool(recipe_defaults.get("include_ct", True))
+    include_rdap = bool(recipe_defaults.get("include_rdap", True))
 
-    native_capabilities = [text for flag, text in _BBOT_NATIVE_CAPABILITIES.items() if flag in selected_flags]
-    partial_capabilities = [text for flag, text in _BBOT_PARTIAL_CAPABILITIES.items() if flag in selected_flags]
-    unsupported_capabilities = [text for flag, text in _BBOT_UNSUPPORTED_CAPABILITIES.items() if flag in selected_flags]
+    native_capabilities = [text for flag, text in _NATIVE_CAPABILITIES.items() if flag in selected_flags]
+    partial_capabilities = [text for flag, text in _PARTIAL_CAPABILITIES.items() if flag in selected_flags]
+    unsupported_capabilities = [text for flag, text in _UNSUPPORTED_CAPABILITIES.items() if flag in selected_flags]
     unsupported_modules = sorted(
         str(row.get("name", ""))
         for row in selected_modules
@@ -500,29 +538,29 @@ def build_bbot_scan_plan(
         )
     )
 
-    command_parts = [
-        "python",
-        "silica-x.py",
-        "surface",
-        normalized_domain,
-        "--preset",
-        surface_preset,
-        "--recon-mode",
-        resolved_recon_mode,
-    ]
-    command_parts.append("--ct" if include_ct else "--no-ct")
-    command_parts.append("--rdap" if include_rdap else "--no-rdap")
-
-    command_preview = shlex.join(command_parts)
+    command_preview = shlex.join(
+        [
+            "python",
+            "sylica-x.py",
+            "surface",
+            normalized_domain,
+            "--preset",
+            surface_preset,
+            "--recon-mode",
+            resolved_recon_mode,
+            "--ct" if include_ct else "--no-ct",
+            "--rdap" if include_rdap else "--no-rdap",
+        ]
+    )
 
     return {
-        "framework": "bbot",
+        "profile": "surface-kit",
         "target": normalized_domain,
-        "preset": {
-            "name": preset_name,
-            "description": str(preset.get("description", "")),
-            "flags": list(preset.get("flags", [])),
-            "includes": list(preset.get("include", [])),
+        "recipe": {
+            "name": recipe_name,
+            "description": str(recipe.get("description", "")),
+            "flags": list(recipe.get("flags", [])),
+            "includes": list(recipe.get("include", [])),
         },
         "selected_module_count": len(selected_modules),
         "selected_flags": selected_flags,
@@ -531,29 +569,25 @@ def build_bbot_scan_plan(
         "partial_capabilities": partial_capabilities,
         "unsupported_capabilities": unsupported_capabilities,
         "unsupported_modules_preview": unsupported_modules[:20],
-        "silica_mapping": {
+        "sylica_mapping": {
             "surface_preset": surface_preset,
             "recon_mode": resolved_recon_mode,
             "include_ct": include_ct,
             "include_rdap": include_rdap,
-            "coverage": str(preset_defaults.get("coverage", "General BBOT-style surface translation")),
+            "coverage": str(recipe_defaults.get("coverage", "General recipe-to-surface translation")),
         },
         "execution_preview": command_preview,
         "notes": [
-            "This is a native Silica-X translation of BBOT preset intent, not a full BBOT engine port.",
-            "Supported coverage maps into Silica-X passive/active/hybrid surface collection lanes.",
-            "Unsupported BBOT module families remain analyst follow-up areas until dedicated Silica-X engines are added.",
+            "This is a native Sylica-X translation of source-derived recipe intent, not a foreign engine port.",
+            "Supported coverage maps into Sylica-X passive, active, and hybrid surface collection lanes.",
+            "Unsupported module families remain analyst follow-up areas until dedicated Sylica-X engines are added.",
         ],
     }
 
 
-def filter_bbot_modules(
-    *,
-    search: str = "",
-    limit: int = 25,
-) -> list[dict[str, Any]]:
-    reference = load_bbot_reference()
-    rows: list[dict[str, Any]] = []
+def filter_recipe_modules(*, search: str = "", limit: int = 25) -> list[dict[str, Any]]:
+    reference = load_recursive_module_reference()
+    rows = []
     for row in reference.get("modules", []):
         if not isinstance(row, dict):
             continue
@@ -570,15 +604,11 @@ def filter_bbot_modules(
     return rows[: max(1, int(limit))]
 
 
-def filter_bbot_presets(
-    *,
-    search: str = "",
-    limit: int = 25,
-) -> list[dict[str, Any]]:
-    reference = load_bbot_reference()
+def filter_recipes(*, search: str = "", limit: int = 25) -> list[dict[str, Any]]:
+    reference = load_recursive_module_reference()
     rows = [
         row
-        for row in reference.get("presets", [])
+        for row in reference.get("recipes", [])
         if isinstance(row, dict)
         and _match_search(
             " ".join(
@@ -594,12 +624,8 @@ def filter_bbot_presets(
     return rows[: max(1, int(limit))]
 
 
-def filter_bbot_flags(
-    *,
-    search: str = "",
-    limit: int = 25,
-) -> list[dict[str, Any]]:
-    reference = load_bbot_reference()
+def filter_recipe_flags(*, search: str = "", limit: int = 25) -> list[dict[str, Any]]:
+    reference = load_recursive_module_reference()
     rows = [
         row
         for row in reference.get("flags", [])

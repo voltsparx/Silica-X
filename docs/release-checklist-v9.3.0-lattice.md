@@ -1,4 +1,4 @@
-# Silica-X v9.3.0 "Lattice" Release Checklist
+# Sylica-X v9.3.0 "Lattice" Release Checklist
 
 Date: 2026-03-14
 
@@ -15,7 +15,7 @@ Date: 2026-03-14
 - [x] `python -m pytest -q` -> PASS (`165 passed`)
 - [x] `python -m ruff check .` -> PASS
 - [x] `python -m mypy` -> PASS
-- [x] `python -m compileall -q core filters plugins tests silica-x.py` -> PASS
+- [x] `python -m compileall -q core filters plugins tests sylica-x.py` -> PASS
 
 ## 3) Wiring/Compatibility Gate
 
@@ -40,8 +40,8 @@ Date: 2026-03-14
   - `python -m ruff check .`
   - `python -m mypy`
 - [ ] Execute one prompt quicktest and one flag quicktest:
-  - `python silica-x.py quicktest --seed 7 --html --csv`
-  - `python silica-x.py` then run `quicktest --seed 7`
+  - `python sylica-x.py quicktest --seed 7 --html --csv`
+  - `python sylica-x.py` then run `quicktest --seed 7`
 - [ ] Open generated HTML report once and verify table rendering.
 - [ ] Verify `.github/workflows` status is green on the target branch.
 

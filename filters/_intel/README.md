@@ -2,7 +2,7 @@
 
 Release: v9.3.0 (Theme: Lattice)
 
-Silica-native filter inventory and triage guidance.
+Sylica-native filter inventory and triage guidance.
 
 ## Inventory
 

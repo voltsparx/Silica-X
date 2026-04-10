@@ -3,7 +3,7 @@ requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "silica-x"
+name = "sylica-x"
 dynamic = ["version"]
 description = "Multi-engine OSINT orchestration for profile intelligence, domain-surface reconnaissance, and fused correlation reporting."
 readme = "README.md"
@@ -38,12 +38,12 @@ dev = [
 ]
 
 [project.scripts]
-silica-x = "silica_x.cli:main"
+sylica-x = "sylica_x.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/voltsparx/Silica-X"
-Repository = "https://github.com/voltsparx/Silica-X"
-Issues = "https://github.com/voltsparx/Silica-X/issues"
+Homepage = "https://github.com/voltsparx/Sylica-X"
+Repository = "https://github.com/voltsparx/Sylica-X"
+Issues = "https://github.com/voltsparx/Sylica-X/issues"
 
 [tool.setuptools]
 include-package-data = true
@@ -53,7 +53,7 @@ version = { attr = "core.foundation.metadata.VERSION" }
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["core*", "filters*", "modules*", "plugins*", "silica_x*", "platforms*"]
+include = ["core*", "filters*", "modules*", "plugins*", "sylica_x*", "platforms*"]
 exclude = ["tests*", "docs*", "output*", "release-assets*", "self-structuring*", "docker*", "docker-scripts*"]
 
 [tool.setuptools.package-data]
@@ -84,8 +84,8 @@ warn_redundant_casts = true
 files = [
   "core",
   "tests",
-  "silica_x",
-  "silica-x.py",
+  "sylica_x",
+  "sylica-x.py",
 ]
 
 [tool.pytest.ini_options]

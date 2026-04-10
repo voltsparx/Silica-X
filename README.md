@@ -1,11 +1,11 @@
-# 📡Silica-X v9.3.0
+# 📡Sylica-X v9.3.0
 
 <strong>Release Theme: Lattice</strong><br>
 Multi-engine OSINT orchestration for profile intelligence, domain-surface reconnaissance, and fused correlation reporting.
 
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/voltsparx/Silica-X/refs/heads/main/docs/images/illustration/silica-x-icon.png" alt="Silica-X Logo for now" width="500px">
+  <img src="https://raw.githubusercontent.com/voltsparx/Sylica-X/refs/heads/main/docs/images/illustration/sylica-x-icon.png" alt="Sylica-X Logo for now" width="500px">
 </p>
 
 <p align="center">
@@ -18,20 +18,21 @@ Multi-engine OSINT orchestration for profile intelligence, domain-surface reconn
 </p>
 
 > **Power Summary:**
-> Silica-X is a fast, modular OSINT framework designed for identity, surface, and fusion intelligence workflows. It uses multi-engine orchestration (async, threading, scheduler, and parallel execution) to gather, correlate, and score open-source signals with structured reporting. <br>
-> Silica-X is built to run intelligence workflows as one coordinated system:
+> Sylica-X is a fast, modular OSINT framework designed for identity, surface, and fusion intelligence workflows. It uses multi-engine orchestration (async, threading, scheduler, and parallel execution) to gather, correlate, and score open-source signals with structured reporting. <br>
+> Sylica-X is built to run intelligence workflows as one coordinated system:
 > `profile`, `surface`, `fusion`, and `orchestrate`.
 >  
 > It combines policy-driven execution, plugin/filter control, and explainable scoring into one operator flow, with rich outputs across CLI, JSON, CSV, HTML, and logs. <br>
+> Its runtime and console patterns were shaped by reverse engineering multiple reconnaissance tools into a native Sylica-X architecture, rather than exposing those tools directly in the codebase. <br>
 <p align="center">
-  <img src="https://raw.githubusercontent.com/voltsparx/Silica-X/refs/heads/main/docs/images/ui/silica-x-menu-v9.2.png" alt="Silica-X Menu" width="600px"><br>
+  <img src="https://raw.githubusercontent.com/voltsparx/Sylica-X/refs/heads/main/docs/images/ui/sylica-x-menu-v9.2.png" alt="Sylica-X Menu" width="600px"><br>
 </p>
 
 > I doubt the pic not looking perfect...also gotta fix the version
 
 ---
 
-## 📊 Why Use Silica-X?
+## 📊 Why Use Sylica-X?
 
 * Unified OSINT workflows in one tool: `profile`, `surface`, `fusion`, and `orchestrate`
 * Strong extension system with plugins + filters + scope compatibility checks
@@ -46,23 +47,23 @@ Multi-engine OSINT orchestration for profile intelligence, domain-surface reconn
 ### Install from PyPI
 
 ```bash
-pip install silica-x
-silica-x
+pip install sylica-x
+sylica-x
 ```
 
 > It's not actually available as im fixing some issues so i can upload to PyPi
 
 ```python
-import silica_x
+import sylica_x
 ```
 
 ### Run from source
 
 ```bash
-git clone https://github.com/voltsparx/Silica-X.git
-cd Silica-X
+git clone https://github.com/voltsparx/Sylica-X.git
+cd Sylica-X
 pip install -r requirements.txt
-python silica-x.py
+python sylica-x.py
 ```
 
 In prompt mode, start here:
@@ -97,7 +98,7 @@ For full command reference, see [Usage Guide](docs/Usage.txt).
 * 🧹 Pluggable filtering system (`core/extensions/signal_sieve.py` + `filters/`)
 * 🧱 External module catalog system (`modules/catalog.py` + `modules/*.json`)
 * 🌌 Signal fusion connector layer (`core/collect/source_fusion.py` + `signal_*` plugin/filter pair)
-* 🖥️ Prompt mode with keyword shortcuts, metasploit-style context prompt, and session defaults
+* 🖥️ Prompt mode with keyword shortcuts, context-aware prompt flow, and session defaults
 * 📖 Explain system (`--explain`, `explain`) for command/plugin/filter onboarding
 * 📦 Prompt startup inventory shows loaded plugin/filter/platform/module counts
 * 📊 HTML, JSON, CLI, CSV, and run-log outputs
@@ -109,7 +110,8 @@ For full command reference, see [Usage Guide](docs/Usage.txt).
 
 * [Usage Guide](docs/Usage.txt)
 * [Orchestration Architecture](docs/orchestration-architecture.md)
-* [Capability Scan Report](docs/silica-capability-scan.md)
+* [Recon Source Integration](docs/recon-source-integration.md)
+* [Capability Scan Report](docs/sylica-capability-scan.md)
 * [OCR/Image Infrastructure Plan](docs/ocr-image-scan-infrastructure.md)
 * [Release Checklist v9.3.0 Lattice](docs/release-checklist-v9.3.0-lattice.md)
 * [Release Notes v9.3.0 Lattice](docs/release-notes-v9.3.0-lattice.md)
@@ -149,7 +151,7 @@ For full command reference, see [Usage Guide](docs/Usage.txt).
 * 🔐 Credential + security managers (`core/foundation/credential_manager.py`, `core/foundation/security_manager.py`)
 * 📈 Reporting/scheduler/CLI helpers (`core/artifacts/reporting.py`, `core/engines/scheduler.py`, `core/interface/cli_ui.py`)
 * 🗺️ Capability-source map integration (`core/intel/capability_matrix.py`)
-* 🧬 Silica capability intel generated under `intel/` (`baseline/`, `features/`, `plans/`, `wiring/`)
+* 🧬 Sylica capability intel generated under `intel/` (`baseline/`, `features/`, `plans/`, `wiring/`)
 * 🧩 Plugin/filter intel views generated in `plugins/_intel/` and `filters/_intel/`
 * 🌌 Signal fusion connector layer with normalized signal extraction (`core/collect/source_fusion.py`)
 * 🔒 TLS verification enabled by default in scan collectors
@@ -190,8 +192,8 @@ For full command reference, see [Usage Guide](docs/Usage.txt).
 ## 🚀 Installation
 
 ```bash
-git clone https://github.com/voltsparx/Silica-X.git
-cd Silica-X
+git clone https://github.com/voltsparx/Sylica-X.git
+cd Sylica-X
 pip install -r requirements.txt
 ```
 
@@ -215,7 +217,7 @@ OCR roadmap dependency note:
 ## ▶️ Run
 
 ```bash
-python silica-x.py
+python sylica-x.py
 ```
 
 Running without flags starts **prompt mode**.
@@ -234,8 +236,8 @@ python scripts/scaffold_extension.py filter my_filter --title "My Filter" --scop
 Verify discovery:
 
 ```bash
-python silica-x.py plugins --scope all
-python silica-x.py filters --scope all
+python sylica-x.py plugins --scope all
+python sylica-x.py filters --scope all
 ```
 
 ---
@@ -349,7 +351,7 @@ python silica-x.py filters --scope all
     <tr><td><code>python -m pytest -q</code></td><td>PASS</td><td>165 tests passed (latest run 2026-03-14).</td></tr>
     <tr><td><code>python -m ruff check .</code></td><td>PASS</td><td>No lint errors.</td></tr>
     <tr><td><code>python -m mypy</code></td><td>PASS</td><td>No type errors found (repository scope).</td></tr>
-    <tr><td><code>python -m compileall -q core filters plugins tests silica-x.py</code></td><td>PASS</td><td>Bytecode compile smoke passed.</td></tr>
+    <tr><td><code>python -m compileall -q core filters plugins tests sylica-x.py</code></td><td>PASS</td><td>Bytecode compile smoke passed.</td></tr>
     <tr><td>CLI matrix (about/explain/help/keywords/plugins/filters/modules/history)</td><td>PASS</td><td>All returned exit code 0.</td></tr>
     <tr><td>Command-path matrix (profile/surface/fusion/orchestrate via <code>--list-plugins/--list-filters</code>, plus <code>anonymity --check</code>)</td><td>PASS</td><td>All returned exit code 0 without external collection.</td></tr>
     <tr><td>Quicktest matrix (<code>quicktest</code>, <code>qtest</code>, <code>smoke</code>, prompt quicktest)</td><td>PASS</td><td>All produced expected artifacts and exit code 0.</td></tr>
@@ -435,7 +437,7 @@ If selectors conflict or are incompatible, wizard stops before scanning and prin
 Example:
 
 ```bash
-python silica-x.py wizard \
+python sylica-x.py wizard \
   --profile-phase --surface-phase --fusion-phase \
   --usernames alice,bob --domain example.com \
   --profile-preset deep --surface-preset balanced \
@@ -457,8 +459,8 @@ Crypto plugin set:
 Selection:
 
 ```bash
-python silica-x.py profile alice --plugin crypto_aes_attachment --html
-python silica-x.py fusion alice example.com --plugin crypto_xor_attachment --filter signal_lane_fusion --html
+python sylica-x.py profile alice --plugin crypto_aes_attachment --html
+python sylica-x.py fusion alice example.com --plugin crypto_xor_attachment --filter signal_lane_fusion --html
 ```
 
 Runtime behavior:
@@ -518,7 +520,7 @@ Reference docs:
 
 ## 🌍 Platform Coverage
 
-Silica-X currently ships with **71 platform manifests** in `platforms/`.  
+Sylica-X currently ships with **71 platform manifests** in `platforms/`.  
 Representative set:
 
 Behance • Bitbucket • Blogger • BuyMeACoffee • Codeforces • CodePen • Dev.to • DeviantArt • Discord • DockerHub • Dribbble • Facebook • Flickr • GitHub • GitLab • HackerOne • HackerRank • Instagram • Kaggle • Keybase • LeetCode • LinkedIn • Mastodon • Medium • NPM • Pastebin • Patreon • Pinterest • ProductHunt • PyPI • Quora • Reddit • Replit • Roblox • Snapchat • SoundCloud • SourceForge • Spotify • StackOverflow • SteamCommunity • Telegram • Threads • TikTok • TryHackMe • Twitch • Twitter/X • Unsplash • Vimeo • WordPress • YouTube
@@ -546,19 +548,19 @@ output/logs/framework.log.txt
 ## 🧪 Examples
 
 ```bash
-python silica-x.py --about
-python silica-x.py --explain
-python silica-x.py anonymity --check
-python silica-x.py templates
-python silica-x.py plugins --scope all
-python silica-x.py filters --scope all
-python silica-x.py modules --sync --kind plugin --scope profile --limit 30
-python silica-x.py profile alice --info-template contact-discovery --html
-python silica-x.py profile alice --tor --plugin orbit_link_matrix --filter contact_canonicalizer --html
-python silica-x.py surface example.com --plugin header_hardening_probe --filter exposure_tier_matrix --html
-python silica-x.py fusion alice example.com --info-template fusion-coverage --html
-python silica-x.py fusion alice example.com --plugin signal_fusion_core --filter signal_lane_fusion --html
-python silica-x.py history --limit 20
+python sylica-x.py --about
+python sylica-x.py --explain
+python sylica-x.py anonymity --check
+python sylica-x.py templates
+python sylica-x.py plugins --scope all
+python sylica-x.py filters --scope all
+python sylica-x.py modules --sync --kind plugin --scope profile --limit 30
+python sylica-x.py profile alice --info-template contact-discovery --html
+python sylica-x.py profile alice --tor --plugin orbit_link_matrix --filter contact_canonicalizer --html
+python sylica-x.py surface example.com --plugin header_hardening_probe --filter exposure_tier_matrix --html
+python sylica-x.py fusion alice example.com --info-template fusion-coverage --html
+python sylica-x.py fusion alice example.com --plugin signal_fusion_core --filter signal_lane_fusion --html
+python sylica-x.py history --limit 20
 ```
 
 ---
@@ -566,18 +568,18 @@ python silica-x.py history --limit 20
 ## 🐳 Docker
 
 ```bash
-docker compose -f docker/docker-compose.yml run --rm silica-x help
-docker compose -f docker/docker-compose.yml run --rm silica-x profile alice --html
+docker compose -f docker/docker-compose.yml run --rm sylica-x help
+docker compose -f docker/docker-compose.yml run --rm sylica-x profile alice --html
 ```
 
 ### Tor-enabled compose profile
 
 ```bash
-docker compose -f docker/docker-compose.yml --profile tor run --rm silica-x-tor anonymity --check
-docker compose -f docker/docker-compose.yml --profile tor run --rm silica-x-tor profile alice --tor --html
+docker compose -f docker/docker-compose.yml --profile tor run --rm sylica-x-tor anonymity --check
+docker compose -f docker/docker-compose.yml --profile tor run --rm sylica-x-tor profile alice --tor --html
 ```
 
-`silica-x-tor` is built from `docker/Dockerfile.tor`, includes `tor`, and uses a container-safe Tor config (`/etc/tor/torrc.silica`) that writes under `/tmp`.
+`sylica-x-tor` is built from `docker/Dockerfile.tor`, includes `tor`, and uses a container-safe Tor config (`/etc/tor/torrc.sylica`) that writes under `/tmp`.
 Host-side Tor wrapper scripts for Linux/macOS/Termux/Windows are documented in `docker/README.md`.
 
 ### Cross-platform Docker runners
@@ -634,19 +636,19 @@ Detailed runner options are documented in `docker-scripts/README.md`.
 
 Runner behavior:
 
-* Script-only flags are namespaced as `--runner-*` to avoid collisions with Silica flags.
-* Any non-`--runner-*` args are forwarded to `silica-x.py` (flag mode).
-* No forwarded args starts Silica prompt mode automatically.
+* Script-only flags are namespaced as `--runner-*` to avoid collisions with Sylica flags.
+* Any non-`--runner-*` args are forwarded to `sylica-x.py` (flag mode).
+* No forwarded args starts Sylica prompt mode automatically.
 * `--runner-upgrade` refreshes and rebuilds containers (`--pull` + `--no-cache`).
 * `--runner-upgrade-host` upgrades host Docker/Desktop packages (OS package manager).
 * `--runner-show-contexts` lists available Docker contexts.
 * `--runner-diagnose` runs a non-interactive compatibility check and exits.
 * `--runner-context <name>` runs against a selected Docker context.
 * `--runner-python-version <v>` lets you pin the Docker build runtime (defaults to `3.13`).
-* `--runner-stop` cleanly tears down Silica containers when finished.
+* `--runner-stop` cleanly tears down Sylica containers when finished.
 * `--runner-stop-docker` also stops the local Docker daemon/Desktop (when supported).
-* Use `--` if you want to pass args like `--help` directly to Silica.
-* If forwarded args include `--tor` (without `--no-tor`), runners auto-switch to `silica-x-tor`.
+* Use `--` if you want to pass args like `--help` directly to Sylica.
+* If forwarded args include `--tor` (without `--no-tor`), runners auto-switch to `sylica-x-tor`.
 
 ### Compose Security Profile
 
@@ -681,7 +683,7 @@ python -m mypy --follow-imports=skip core/intelligence core/artifacts core/repor
 ### Repository compile pass
 
 ```bash
-python -m compileall -q core filters modules plugins tests silica-x.py
+python -m compileall -q core filters modules plugins tests sylica-x.py
 ```
 
 ### Capability source scan
@@ -690,11 +692,11 @@ python -m compileall -q core filters modules plugins tests silica-x.py
 python -c "from core.intel.capability_matrix import write_capability_report; print(write_capability_report())"
 ```
 
-Writes a capability summary to `docs/silica-capability-scan.md`.
+Writes a capability summary to `docs/sylica-capability-scan.md`.
 
 ```bash
-python silica-x.py capability-pack
-# same as: python silica-x.py intel
+python sylica-x.py capability-pack
+# same as: python sylica-x.py intel
 ```
 
 Generates/refreshes:
@@ -723,4 +725,4 @@ Generates/refreshes:
 
 ---
 
-⭐ If you find Silica-X useful, consider starring the repository!
+⭐ If you find Sylica-X useful, consider starring the repository!

@@ -81,7 +81,7 @@
     {
       "id": "signal_fusion_core",
       "title": "Signal Fusion Core",
-      "description": "Runs internal connector lanes and merges normalized signals into Silica workflows.",
+      "description": "Runs internal connector lanes and merges normalized signals into Sylica workflows.",
       "aliases": [
         "fusion_core",
         "signal_core",

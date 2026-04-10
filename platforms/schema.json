@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Silica-X Platform Manifest Entry",
+  "title": "Sylica-X Platform Manifest Entry",
   "type": "object",
   "required": ["name", "url"],
   "properties": {

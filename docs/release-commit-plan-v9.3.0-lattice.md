@@ -1,4 +1,4 @@
-# Silica-X v9.3.0 "Lattice" Commit Plan
+# Sylica-X v9.3.0 "Lattice" Commit Plan
 
 Use this grouping to keep history readable and simplify rollback/cherry-pick paths.
 
@@ -52,7 +52,7 @@ Suggested files:
 - `README.md`
 - `docs/Usage.txt`
 - `docs/orchestration-architecture.md` (if changed)
-- `docs/silica-capability-scan.md` (if changed)
+- `docs/sylica-capability-scan.md` (if changed)
 - `docs/ocr-image-scan-infrastructure.md`
 - `docs/release-checklist-v9.3.0-lattice.md`
 - `docs/release-notes-v9.3.0-lattice.md`
@@ -62,6 +62,6 @@ Suggested files:
 
 After commits and CI green:
 
-1. `git tag -a v9.3.0 -m "Silica-X v9.3.0 Lattice"`
+1. `git tag -a v9.3.0 -m "Sylica-X v9.3.0 Lattice"`
 2. `git push origin <branch> --follow-tags`
 3. Create GitHub release using `docs/release-notes-v9.3.0-lattice.md`

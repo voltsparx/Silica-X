@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-Silica-X is committed to maintaining a respectful, safe, and professional community for contributors and users.
+Sylica-X is committed to maintaining a respectful, safe, and professional community for contributors and users.
 
 ## 2. Our Standards
 
@@ -52,4 +52,4 @@ All reports will be reviewed in good faith and handled as promptly and confident
 
 ## 6. Attribution
 
-This policy is inspired by common open-source community conduct standards, including Contributor Covenant principles, adapted for the Silica-X project context.
+This policy is inspired by common open-source community conduct standards, including Contributor Covenant principles, adapted for the Sylica-X project context.

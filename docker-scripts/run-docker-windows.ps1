@@ -24,14 +24,14 @@ $RunnerStop = $false
 $RunnerStopDocker = $false
 $RunnerShowContexts = $false
 $RunnerDiagnose = $false
-$RunnerService = 'silica-x'
+$RunnerService = 'sylica-x'
 $RunnerProfile = ''
 $RunnerPythonVersion = ''
 $RunnerContext = ''
 $RunnerServiceSet = $false
 $RunnerProfileSet = $false
 $UseLegacyCompose = $false
-$SilicaArgs = [System.Collections.Generic.List[string]]::new()
+$SylicaArgs = [System.Collections.Generic.List[string]]::new()
 
 function Write-InfoLine {
   param([string]$Message)
@@ -51,8 +51,8 @@ function Write-ErrorLine {
 function Show-Help {
   $help = @"
 Usage:
-  .\docker-scripts\$ScriptName [runner-options] [silica-args...]
-  .\docker-scripts\$ScriptName [runner-options] -- [silica-args...]
+  .\docker-scripts\$ScriptName [runner-options] [sylica-args...]
+  .\docker-scripts\$ScriptName [runner-options] -- [sylica-args...]
 
 Runner options (reserved for this script):
   --runner-help              Show this help message.
@@ -61,23 +61,23 @@ Runner options (reserved for this script):
   --runner-no-cache          Build with --no-cache.
   --runner-upgrade           Upgrade container runtime (implies --runner-build --runner-pull --runner-no-cache).
   --runner-upgrade-host      Upgrade host Docker Desktop/components.
-  --runner-stop              Stop/remove Silica containers.
-  --runner-stop-docker       Stop/remove Silica containers and stop Docker Desktop.
+  --runner-stop              Stop/remove Sylica containers.
+  --runner-stop-docker       Stop/remove Sylica containers and stop Docker Desktop.
   --runner-show-contexts     List Docker contexts and exit.
   --runner-diagnose          Run non-interactive environment diagnostics and exit.
   --runner-context <name>    Use a specific Docker context.
-  --runner-use-tor-service   Force Tor service container (silica-x-tor).
-  --runner-service <name>    Override compose service (default: silica-x).
+  --runner-use-tor-service   Force Tor service container (sylica-x-tor).
+  --runner-service <name>    Override compose service (default: sylica-x).
   --runner-profile <name>    Override compose profile (default: auto).
   --runner-python-version <v>  Override Docker build arg PYTHON_VERSION (e.g., 3.13).
   --runner-no-install        Never install missing Docker components.
-  --runner-prompt            Force Silica prompt mode (ignore silica-args).
+  --runner-prompt            Force Sylica prompt mode (ignore sylica-args).
 
-Silica args:
-  Any argument not prefixed with --runner- is passed to silica-x.
-  If no silica args are passed, silica-x starts in prompt mode.
-  If silica args include --tor (without --no-tor), this script auto-selects
-  service 'silica-x-tor' and profile 'tor' unless you override it.
+Sylica args:
+  Any argument not prefixed with --runner- is passed to sylica-x.
+  If no sylica args are passed, sylica-x starts in prompt mode.
+  If sylica args include --tor (without --no-tor), this script auto-selects
+  service 'sylica-x-tor' and profile 'tor' unless you override it.
 
 Examples:
   .\docker-scripts\$ScriptName
@@ -194,13 +194,13 @@ function Parse-RunnerArgs {
       '--' {
         $i++
         while ($i -lt $InputArgs.Count) {
-          $script:SilicaArgs.Add($InputArgs[$i])
+          $script:SylicaArgs.Add($InputArgs[$i])
           $i++
         }
         break
       }
       default {
-        $script:SilicaArgs.Add($token)
+        $script:SylicaArgs.Add($token)
       }
     }
     $i++
@@ -209,24 +209,24 @@ function Parse-RunnerArgs {
 
 function Configure-ModeAndService {
   if ($RunnerPrompt) {
-    $SilicaArgs.Clear()
+    $SylicaArgs.Clear()
   }
 
   if ($RunnerForceTorService) {
-    $script:RunnerService = 'silica-x-tor'
+    $script:RunnerService = 'sylica-x-tor'
     if (-not $RunnerProfileSet) {
       $script:RunnerProfile = 'tor'
     }
   }
 
-  if ($RunnerService -eq 'silica-x-tor' -and -not $RunnerProfileSet -and [string]::IsNullOrWhiteSpace($RunnerProfile)) {
+  if ($RunnerService -eq 'sylica-x-tor' -and -not $RunnerProfileSet -and [string]::IsNullOrWhiteSpace($RunnerProfile)) {
     $script:RunnerProfile = 'tor'
   }
 
   if (-not $RunnerServiceSet -and -not $RunnerForceTorService) {
     $wantsTor = $false
     $disablesTor = $false
-    foreach ($arg in $SilicaArgs) {
+    foreach ($arg in $SylicaArgs) {
       if ($arg -eq '--tor') {
         $wantsTor = $true
       } elseif ($arg -eq '--no-tor') {
@@ -234,7 +234,7 @@ function Configure-ModeAndService {
       }
     }
     if ($wantsTor -and -not $disablesTor) {
-      $script:RunnerService = 'silica-x-tor'
+      $script:RunnerService = 'sylica-x-tor'
       if (-not $RunnerProfileSet) {
         $script:RunnerProfile = 'tor'
       }
@@ -698,7 +698,7 @@ function Invoke-ComposeWithProfile {
   }
 }
 
-function Stop-SilicaComposeStack {
+function Stop-SylicaComposeStack {
   if (-not (Get-Command docker -ErrorAction SilentlyContinue) -and -not (Get-Command docker-compose -ErrorAction SilentlyContinue)) {
     Write-WarnLine 'Docker CLI is not available. Nothing to stop.'
     return
@@ -714,7 +714,7 @@ function Stop-SilicaComposeStack {
     return
   }
 
-  Write-InfoLine 'Stopping Silica compose services...'
+  Write-InfoLine 'Stopping Sylica compose services...'
   try {
     Invoke-ComposeWithProfile -Profile '' -ComposeArgs @('down', '--remove-orphans')
   } catch {
@@ -746,20 +746,20 @@ function Stop-DockerHost {
 }
 
 function Perform-Shutdown {
-  if ($SilicaArgs.Count -gt 0) {
-    Write-WarnLine 'Ignoring forwarded Silica args during shutdown.'
+  if ($SylicaArgs.Count -gt 0) {
+    Write-WarnLine 'Ignoring forwarded Sylica args during shutdown.'
   }
 
-  Stop-SilicaComposeStack
+  Stop-SylicaComposeStack
 
   if ($RunnerStopDocker) {
     Stop-DockerHost
   } else {
-    Write-InfoLine 'Silica containers stopped. Docker daemon left running.'
+    Write-InfoLine 'Sylica containers stopped. Docker daemon left running.'
   }
 }
 
-function Run-Silica {
+function Run-Sylica {
   if ($RunnerUpgrade) {
     $script:RunnerBuild = $true
     $script:RunnerPull = $true
@@ -793,11 +793,11 @@ function Run-Silica {
   $runArgs.Add('--rm')
   $runArgs.Add($RunnerService)
 
-  if ($SilicaArgs.Count -eq 0) {
-    Write-InfoLine "Starting Silica-X in prompt mode via Docker service: $RunnerService"
+  if ($SylicaArgs.Count -eq 0) {
+    Write-InfoLine "Starting Sylica-X in prompt mode via Docker service: $RunnerService"
   } else {
-    Write-InfoLine "Running Silica-X via Docker service: $RunnerService"
-    foreach ($arg in $SilicaArgs) {
+    Write-InfoLine "Running Sylica-X via Docker service: $RunnerService"
+    foreach ($arg in $SylicaArgs) {
       $runArgs.Add($arg)
     }
   }
@@ -837,7 +837,7 @@ try {
   Ensure-DockerDaemon
   Ensure-ComposeAvailable
   Ensure-OutputDirs
-  Run-Silica
+  Run-Sylica
 } catch {
   Write-ErrorLine $_.Exception.Message
   exit 1

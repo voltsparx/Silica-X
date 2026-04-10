@@ -1,4 +1,4 @@
-"""Console entrypoint for Silica-X."""
+"""Console entrypoint for Sylica-X."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from core.runner import run
 
 
 def main(argv: Sequence[str] | None = None) -> None:
-    """Run the Silica-X CLI."""
+    """Run the Sylica-X CLI."""
     try:
         raise SystemExit(asyncio.run(run(argv)))
     except KeyboardInterrupt:

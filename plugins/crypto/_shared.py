@@ -1,15 +1,15 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Silica-X Intelligence Framework
+# Sylica-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Silica-X
+# Repository : https://github.com/voltsparx/Sylica-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root 
 #
-# This file is part of Silica-X and is subject to the terms
+# This file is part of Sylica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
@@ -150,7 +150,7 @@ def extract_attachment_texts(context: dict[str, Any], *, limit: int = 8) -> list
     fallback = str(context.get("target") or context.get("domain") or "").strip()
     if fallback:
         return [fallback]
-    return ["silica-x"]
+    return ["sylica-x"]
 
 
 def _append_candidate(candidates: list[str], seen: set[str], value: object) -> bool:
@@ -297,5 +297,5 @@ def collect_crypto_payloads(
         add("target", context.get("target"))
         add("target", context.get("domain"))
     if not candidates:
-        add("target", "silica-x")
+        add("target", "sylica-x")
     return candidates[:max_items], source_counts

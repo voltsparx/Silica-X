@@ -1,12 +1,12 @@
-# Silica-X Hybrid Architecture
+# Sylica-X Hybrid Architecture
 
-Silica-X now exposes a native hybrid console/runtime model that combines three local source-study patterns into the existing framework:
+Sylica-X now exposes a native hybrid console/runtime model that combines three local source-study patterns into the existing framework:
 
-- `metasploit-ui`: console prompt rhythm, startup banner cadence, rotating spinner feedback, and command-recovery patterns.
-- `amass-registry`: registry, dispatcher, and session-manager topology for runtime inventory thinking.
-- `bbot-event-flow`: event-driven scan lifecycle and parallel workload lane ideas.
+- `console-shell-pattern`: console prompt rhythm, startup banner cadence, rotating spinner feedback, and command-recovery patterns.
+- `graph-registry-pattern`: registry, dispatcher, and session-manager topology for runtime inventory thinking.
+- `recursive-event-pattern`: event-driven scan lifecycle and parallel workload lane ideas.
 
-This is implemented as part of Silica-X itself, not as a bundled copy of those frameworks.
+This is implemented as part of Sylica-X itself, not as a bundled copy of those frameworks.
 
 ## Native Lanes
 
@@ -27,7 +27,7 @@ This is implemented as part of Silica-X itself, not as a bundled copy of those f
 - `hybrid`
 - `fusion`
 
-## Silica-X Ownership
+## Sylica-X Ownership
 
 The hybrid architecture is surfaced through:
 
@@ -37,4 +37,4 @@ The hybrid architecture is surfaced through:
 - `core/interface/banner.py`
 - `intel/runtime-inventory.json`
 
-At runtime, the framework writes the hybrid architecture snapshot into the inventory report so the console and intel layer both treat it as a first-class part of Silica-X.
+At runtime, the framework writes the hybrid architecture snapshot into the inventory report so the console and intel layer both treat it as a first-class part of Sylica-X.

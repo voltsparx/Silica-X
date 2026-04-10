@@ -1,4 +1,4 @@
-# Silica Capability Scan
+# Sylica Capability Scan
 
 Release: v9.3.0 (Theme: Lattice)
 

@@ -1,15 +1,15 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Silica-X Intelligence Framework
+# Sylica-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Silica-X
+# Repository : https://github.com/voltsparx/Sylica-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root
 #
-# This file is part of Silica-X and is subject to the terms
+# This file is part of Sylica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
@@ -37,7 +37,7 @@ class SpinnerStream(Protocol):
 
 
 def spinner_frames() -> tuple[str, ...]:
-    """Return the Metasploit-style spinner cycle used at startup."""
+    """Return the compact spinner cycle used at startup."""
 
     return _DEFAULT_FRAMES
 
@@ -69,7 +69,7 @@ class ConsoleSpinner:
     def start(self) -> None:
         if not self.enabled or self._thread is not None:
             return
-        self._thread = threading.Thread(target=self._spin, name="silica_x_spinner", daemon=True)
+        self._thread = threading.Thread(target=self._spin, name="sylica_x_spinner", daemon=True)
         self._thread.start()
 
     def stop(self) -> None:

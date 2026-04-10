@@ -1,19 +1,19 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Silica-X Intelligence Framework
+# Sylica-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Silica-X
+# Repository : https://github.com/voltsparx/Sylica-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root 
 #
-# This file is part of Silica-X and is subject to the terms
+# This file is part of Sylica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
-"""Main runner orchestration for Silica-X."""
+"""Main runner orchestration for Sylica-X."""
 
 from __future__ import annotations
 
@@ -89,15 +89,15 @@ from core.intel.capability_matrix import (
     write_capability_report,
     write_runtime_inventory_snapshot,
 )
-from core.intel.recon_frameworks import (
-    build_bbot_scan_plan,
-    filter_bbot_flags,
-    filter_bbot_modules,
-    filter_bbot_presets,
-    load_amass_reference,
-    load_bbot_reference,
-    load_metasploit_ui_reference,
-    load_temp_framework_inventory,
+from core.intel.recon_sources import (
+    build_surface_recipe_plan,
+    filter_recipe_flags,
+    filter_recipe_modules,
+    filter_recipes,
+    load_console_shell_reference,
+    load_graph_registry_reference,
+    load_recursive_module_reference,
+    load_source_inventory,
 )
 from core.extensions.signal_forge import list_plugin_descriptors, list_plugin_discovery_errors
 from core.collect.platform_schema import PlatformValidationError, load_platforms
@@ -159,7 +159,7 @@ def _prompt_command_catalog() -> list[str]:
         "orchestrate",
         "out-print",
         "out-type",
-        "bbot",
+        "surface-kit",
         "profile",
         "quicktest",
         "remove",
@@ -889,36 +889,36 @@ def _print_framework_inventory(
     limit: int = 25,
     as_json: bool = False,
 ) -> None:
-    inventory = load_temp_framework_inventory()
+    inventory = load_source_inventory()
     selected = str(framework or "all").strip().lower()
 
     payload: dict[str, Any]
-    if selected == "bbot":
-        payload = {"inventory": inventory, "bbot": load_bbot_reference()}
-    elif selected == "amass":
-        payload = {"inventory": inventory, "amass": load_amass_reference()}
-    elif selected == "metasploit-ui":
-        payload = {"inventory": inventory, "metasploit_ui": load_metasploit_ui_reference()}
+    if selected == "recursive-modules":
+        payload = {"inventory": inventory, "recursive_modules": load_recursive_module_reference()}
+    elif selected == "graph-registry":
+        payload = {"inventory": inventory, "graph_registry": load_graph_registry_reference()}
+    elif selected == "console-shell":
+        payload = {"inventory": inventory, "console_shell": load_console_shell_reference()}
     else:
         payload = inventory
 
     if as_json:
-        if selected == "bbot":
+        if selected == "recursive-modules":
             if show_modules:
-                payload = {"framework": "bbot", "modules": filter_bbot_modules(search=search, limit=limit)}
+                payload = {"profile": "recursive-modules", "modules": filter_recipe_modules(search=search, limit=limit)}
             elif show_presets:
-                payload = {"framework": "bbot", "presets": filter_bbot_presets(search=search, limit=limit)}
+                payload = {"profile": "recursive-modules", "recipes": filter_recipes(search=search, limit=limit)}
             elif show_flags:
-                payload = {"framework": "bbot", "flags": filter_bbot_flags(search=search, limit=limit)}
+                payload = {"profile": "recursive-modules", "flags": filter_recipe_flags(search=search, limit=limit)}
             elif show_commands:
-                payload = {"framework": "bbot", "commands": load_bbot_reference().get("commands", [])}
+                payload = {"profile": "recursive-modules", "commands": load_recursive_module_reference().get("commands", [])}
         print(json.dumps(payload, indent=2))
         return
 
-    print(c(f"\n{symbol('major')} Framework Intel", Colors.BLUE))
+    print(c(f"\n{symbol('major')} Source Profile Intel", Colors.BLUE))
     print(c("-" * 36, Colors.BLUE))
 
-    frameworks = inventory.get("frameworks", [])
+    frameworks = inventory.get("profiles", [])
     if selected == "all":
         for row in frameworks:
             if not isinstance(row, dict):
@@ -950,22 +950,22 @@ def _print_framework_inventory(
             print()
         return
 
-    if selected == "bbot":
-        reference = load_bbot_reference()
-        print(c(f"{symbol('feature')} bbot", Colors.CYAN))
+    if selected == "recursive-modules":
+        reference = load_recursive_module_reference()
+        print(c(f"{symbol('feature')} recursive-modules", Colors.CYAN))
         print(c(f"  path: {reference.get('path')}", Colors.WHITE))
         print(c(f"  architecture: {', '.join(reference.get('architecture', []))}", Colors.WHITE))
         print(
             c(
                 f"  stats: modules={reference.get('module_count', 0)} "
-                f"presets={reference.get('preset_count', 0)} flags={reference.get('flag_count', 0)} "
+                f"recipes={reference.get('recipe_count', 0)} flags={reference.get('flag_count', 0)} "
                 f"commands={len(reference.get('commands', []))}",
                 Colors.WHITE,
             )
         )
         if show_commands:
             print()
-            print(c(f"{symbol('major')} BBOT Command Capabilities", Colors.BLUE))
+            print(c(f"{symbol('major')} Source Command Capabilities", Colors.BLUE))
             print(c("-" * 36, Colors.BLUE))
             for row in reference.get("commands", []):
                 if isinstance(row, dict):
@@ -973,9 +973,9 @@ def _print_framework_inventory(
             print()
         if show_presets:
             print()
-            print(c(f"{symbol('major')} BBOT Presets", Colors.BLUE))
+            print(c(f"{symbol('major')} Source Recipes", Colors.BLUE))
             print(c("-" * 36, Colors.BLUE))
-            for row in filter_bbot_presets(search=search, limit=limit):
+            for row in filter_recipes(search=search, limit=limit):
                 print(c(f"{symbol('feature')} {row.get('name')}", Colors.CYAN))
                 print(c(f"  desc: {row.get('description')}", Colors.WHITE))
                 print(c(f"  flags: {', '.join(row.get('flags', [])) or '-'}", Colors.WHITE))
@@ -983,17 +983,17 @@ def _print_framework_inventory(
                 print()
         if show_flags:
             print()
-            print(c(f"{symbol('major')} BBOT Flags", Colors.BLUE))
+            print(c(f"{symbol('major')} Source Flags", Colors.BLUE))
             print(c("-" * 36, Colors.BLUE))
-            for row in filter_bbot_flags(search=search, limit=limit):
+            for row in filter_recipe_flags(search=search, limit=limit):
                 print(c(f"{symbol('feature')} {row.get('name')} ({row.get('count')})", Colors.CYAN))
                 print(c(f"  sample modules: {', '.join(row.get('modules', [])[:8]) or '-'}", Colors.WHITE))
                 print()
         if show_modules:
             print()
-            print(c(f"{symbol('major')} BBOT Modules", Colors.BLUE))
+            print(c(f"{symbol('major')} Source Modules", Colors.BLUE))
             print(c("-" * 36, Colors.BLUE))
-            for row in filter_bbot_modules(search=search, limit=limit):
+            for row in filter_recipe_modules(search=search, limit=limit):
                 print(c(f"{symbol('feature')} {row.get('name')} [{row.get('type')}]", Colors.CYAN))
                 print(c(f"  desc: {row.get('description')}", Colors.WHITE))
                 print(c(f"  flags: {', '.join(row.get('flags', [])) or '-'}", Colors.WHITE))
@@ -1008,9 +1008,9 @@ def _print_framework_inventory(
         print()
         return
 
-    if selected == "amass":
-        reference = load_amass_reference()
-        print(c(f"{symbol('feature')} amass", Colors.CYAN))
+    if selected == "graph-registry":
+        reference = load_graph_registry_reference()
+        print(c(f"{symbol('feature')} graph-registry", Colors.CYAN))
         print(c(f"  path: {reference.get('path')}", Colors.WHITE))
         print(c(f"  architecture: {', '.join(reference.get('architecture', []))}", Colors.WHITE))
         print(
@@ -1034,18 +1034,18 @@ def _print_framework_inventory(
         print()
         return
 
-    reference = load_metasploit_ui_reference()
-    print(c(f"{symbol('feature')} metasploit-ui", Colors.CYAN))
+    reference = load_console_shell_reference()
+    print(c(f"{symbol('feature')} console-shell", Colors.CYAN))
     print(c(f"  path: {reference.get('path')}", Colors.WHITE))
     print(c(f"  architecture: {', '.join(reference.get('architecture', []))}", Colors.WHITE))
     print()
 
 
-def _print_bbot_plan(plan: dict[str, Any]) -> None:
-    preset = plan.get("preset", {}) if isinstance(plan.get("preset"), dict) else {}
-    mapping = plan.get("silica_mapping", {}) if isinstance(plan.get("silica_mapping"), dict) else {}
+def _print_surface_recipe_plan(plan: dict[str, Any]) -> None:
+    preset = plan.get("recipe", {}) if isinstance(plan.get("recipe"), dict) else {}
+    mapping = plan.get("sylica_mapping", {}) if isinstance(plan.get("sylica_mapping"), dict) else {}
 
-    print(c(f"\n{symbol('major')} BBOT Translation Plan", Colors.BLUE))
+    print(c(f"\n{symbol('major')} Surface Kit Plan", Colors.BLUE))
     print(c("-" * 36, Colors.BLUE))
     print(c(f"{symbol('feature')} target={plan.get('target')} preset={preset.get('name')}", Colors.CYAN))
     print(c(f"  preset_desc: {preset.get('description', '-')}", Colors.WHITE))
@@ -1081,7 +1081,7 @@ def _print_bbot_plan(plan: dict[str, Any]) -> None:
     unsupported_modules = plan.get("unsupported_modules_preview", [])
     if isinstance(unsupported_modules, list) and unsupported_modules:
         print(c(f"  unsupported_modules_preview: {', '.join(unsupported_modules)}", Colors.WHITE))
-    print(c(f"  silica_command: {plan.get('execution_preview', '-')}", Colors.CYAN))
+    print(c(f"  sylica_command: {plan.get('execution_preview', '-')}", Colors.CYAN))
     print()
 
 
@@ -1208,7 +1208,7 @@ def _collect_runtime_inventory() -> RuntimeInventorySummary:
             hybrid_architecture=build_hybrid_architecture_snapshot(),
         )
 
-    return run_with_spinner("[*] Loading Silica-X runtime inventory... ", _build)
+    return run_with_spinner("[*] Loading Sylica-X runtime inventory... ", _build)
 
 
 def _print_runtime_loaded_inventory() -> None:
@@ -3398,10 +3398,10 @@ async def _handle_frameworks_command(args: argparse.Namespace) -> int:
     return EXIT_SUCCESS
 
 
-async def _handle_bbot_command(args: argparse.Namespace, state: RunnerState) -> int:
+async def _handle_surface_kit_command(args: argparse.Namespace, state: RunnerState) -> int:
     if getattr(args, "list_modules", False):
         _print_framework_inventory(
-            framework="bbot",
+            framework="recursive-modules",
             show_modules=True,
             search=str(getattr(args, "search", "") or ""),
             limit=_int_from_value(getattr(args, "limit", 25), 25),
@@ -3410,7 +3410,7 @@ async def _handle_bbot_command(args: argparse.Namespace, state: RunnerState) -> 
         return EXIT_SUCCESS
     if getattr(args, "list_presets", False):
         _print_framework_inventory(
-            framework="bbot",
+            framework="recursive-modules",
             show_presets=True,
             search=str(getattr(args, "search", "") or ""),
             limit=_int_from_value(getattr(args, "limit", 25), 25),
@@ -3419,7 +3419,7 @@ async def _handle_bbot_command(args: argparse.Namespace, state: RunnerState) -> 
         return EXIT_SUCCESS
     if getattr(args, "list_flags", False):
         _print_framework_inventory(
-            framework="bbot",
+            framework="recursive-modules",
             show_flags=True,
             search=str(getattr(args, "search", "") or ""),
             limit=_int_from_value(getattr(args, "limit", 25), 25),
@@ -3430,20 +3430,20 @@ async def _handle_bbot_command(args: argparse.Namespace, state: RunnerState) -> 
     domain = str(getattr(args, "domain", "") or "").strip()
     if not domain:
         _print_framework_inventory(
-            framework="bbot",
+            framework="recursive-modules",
             show_commands=True,
             show_presets=True,
             search=str(getattr(args, "search", "") or ""),
             limit=_int_from_value(getattr(args, "limit", 25), 25),
             as_json=bool(getattr(args, "json", False)),
         )
-        print(c(f"{symbol('tip')} Supply a domain to run a translated BBOT-style surface workflow.", Colors.YELLOW))
+        print(c(f"{symbol('tip')} Supply a domain to run a source-derived surface-kit workflow.", Colors.YELLOW))
         return EXIT_SUCCESS
 
     try:
-        plan = build_bbot_scan_plan(
+        plan = build_surface_recipe_plan(
             domain=domain,
-            preset_name=str(getattr(args, "preset", "subdomain-enum") or "subdomain-enum"),
+            recipe_name=str(getattr(args, "preset", "subdomain-enum") or "subdomain-enum"),
             modules=_split_csv_tokens(getattr(args, "module", []) or []),
             require_flags=_split_csv_tokens(getattr(args, "require_flag", []) or []),
             exclude_flags=_split_csv_tokens(getattr(args, "exclude_flag", []) or []),
@@ -3456,12 +3456,12 @@ async def _handle_bbot_command(args: argparse.Namespace, state: RunnerState) -> 
     if getattr(args, "json", False):
         print(json.dumps(plan, indent=2))
     else:
-        _print_bbot_plan(plan)
+        _print_surface_recipe_plan(plan)
 
     if bool(getattr(args, "dry_run", False)):
         return EXIT_SUCCESS
 
-    mapping = plan.get("silica_mapping", {}) if isinstance(plan.get("silica_mapping"), dict) else {}
+    mapping = plan.get("sylica_mapping", {}) if isinstance(plan.get("sylica_mapping"), dict) else {}
     resolved_preset = str(mapping.get("surface_preset", "balanced"))
     resolved_recon_mode = str(mapping.get("recon_mode", "hybrid"))
     timeout_seconds, max_subdomains, _ = _resolve_surface_runtime(
@@ -4124,8 +4124,8 @@ async def _dispatch(args: argparse.Namespace, state: RunnerState, prompt_mode: b
         return await _handle_orchestrate_command(args, state=state)
     if args.command == "frameworks":
         return await _handle_frameworks_command(args)
-    if args.command == "bbot":
-        return await _handle_bbot_command(args, state=state)
+    if args.command == "surface-kit":
+        return await _handle_surface_kit_command(args, state=state)
     if args.command == "live":
         return await _handle_live_command(args, prompt_mode=prompt_mode)
     if args.command == "anonymity":
@@ -4213,7 +4213,7 @@ async def run_prompt_mode(initial_state: RunnerState | None = None) -> int:
         lowered = " ".join(raw_tokens).lower()
         keyword_match = _keyword_to_command(lowered)
         if lowered in PROMPT_KEYWORDS["exit"]:
-            print(c("\nExiting Silica-X.", Colors.RED))
+            print(c("\nExiting Sylica-X.", Colors.RED))
             return EXIT_SUCCESS
         if lowered in PROMPT_KEYWORDS["help"]:
             show_prompt_help()
@@ -4361,7 +4361,7 @@ async def run(argv: Sequence[str] | None = None) -> int:
         print(
             c(
                 "Global flags --about/--explain cannot be combined with a command. "
-                "Run them alone (example: python silica-x.py --about).",
+                "Run them alone (example: python sylica-x.py --about).",
                 Colors.RED,
             )
         )

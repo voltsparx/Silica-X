@@ -1,15 +1,15 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Silica-X Intelligence Framework
+# Sylica-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Silica-X
+# Repository : https://github.com/voltsparx/Sylica-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root 
 #
-# This file is part of Silica-X and is subject to the terms
+# This file is part of Sylica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
@@ -67,7 +67,7 @@ PROMPT_KEYWORDS = {
     "surface": {"surface", "domain", "asset", "infra", "recon", "footprint"},
     "fusion": {"fusion", "full", "combo", "allscan", "stack"},
     "orchestrate": {"orchestrate", "orch", "pipeline", "orchestration"},
-    "bbot": {"bbot"},
+    "surface-kit": {"surface-kit", "kit", "recipes"},
     "frameworks": {"frameworks", "framework", "temp", "sources"},
     "anonymity": {"anonymity", "anon", "privacy", "routing", "tor"},
     "live": {"live", "dashboard", "watch", "monitor"},

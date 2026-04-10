@@ -3,7 +3,7 @@
 ## Status
 
 Current state: design and integration blueprint.  
-This capability is documented and structured for integration, but it is not yet shipped as a default runtime command in `silica-x.py`.
+This capability is documented and structured for integration, but it is not yet shipped as a default runtime command in `sylica-x.py`.
 Target release window: `v9.5` or `v10.0` (subject to implementation completion and validation gates).
 
 Source planning note:
@@ -12,7 +12,7 @@ Source planning note:
 
 ## Goal
 
-Provide an OCR-capable enrichment lane that can extract actionable OSINT signals from local or fetched images and feed those artifacts into existing Silica-X fusion/reporting flows.
+Provide an OCR-capable enrichment lane that can extract actionable OSINT signals from local or fetched images and feed those artifacts into existing Sylica-X fusion/reporting flows.
 
 Primary objectives:
 
