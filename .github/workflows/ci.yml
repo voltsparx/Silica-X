@@ -1,4 +1,4 @@
-name: CI
+name: Sylica-X CI
 
 on:
   push:
@@ -59,6 +59,11 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: |
+            pyproject.toml
+            requirements.txt
+            requirements-dev.txt
 
       - name: Install build tooling
         run: |
@@ -69,4 +74,5 @@ jobs:
         run: python -m build
 
       - name: Check dist metadata
+        shell: bash
         run: python -m twine check dist/*
