@@ -92,6 +92,7 @@ from core.intel.capability_matrix import (
 from core.extensions.signal_forge import list_plugin_descriptors, list_plugin_discovery_errors
 from core.collect.platform_schema import PlatformValidationError, load_platforms
 from core.analyze.profile_summary import error_profile_rows, found_profile_rows, summarize_target_intel
+from core.analyze.surface_map import build_surface_map, build_surface_next_steps
 from core.collect.scanner import scan_username
 from core.domain import BaseEntity
 from core.foundation.session_state import PromptSessionState
@@ -1251,11 +1252,12 @@ def _resolve_profile_runtime(args: argparse.Namespace) -> tuple[int, int, str, i
     return timeout_seconds, max_concurrency, source_profile, max_platform_limit
 
 
-def _resolve_surface_runtime(args: argparse.Namespace) -> tuple[int, int]:
+def _resolve_surface_runtime(args: argparse.Namespace) -> tuple[int, int, str]:
     preset = SURFACE_PRESETS[args.preset]
     timeout_seconds = _int_from_value(args.timeout, preset["timeout"])
     max_subdomains = _int_from_value(args.max_subdomains, preset["max_subdomains"])
-    return timeout_seconds, max_subdomains
+    recon_mode = str(getattr(args, "recon_mode", None) or preset.get("recon_mode", "hybrid"))
+    return timeout_seconds, max_subdomains, recon_mode
 
 
 def _print_extension_control_feedback(
@@ -1797,6 +1799,7 @@ async def run_surface_scan(
     max_subdomains: int,
     include_ct: bool,
     include_rdap: bool,
+    recon_mode: str = "hybrid",
     scan_mode: str = "balanced",
     write_csv: bool = False,
     write_html: bool = False,
@@ -1829,6 +1832,7 @@ async def run_surface_scan(
         return EXIT_FAILURE, None
 
     print(c(f"\n{symbol('action')} Domain surface target: {normalized_domain}\n", Colors.CYAN))
+    print(c(f"{symbol('bullet')} Recon mode: {recon_mode}", Colors.CYAN))
     _print_runtime_guidance_checks(
         mode="surface",
         target=normalized_domain,
@@ -1847,6 +1851,7 @@ async def run_surface_scan(
             include_ct=include_ct,
             include_rdap=include_rdap,
             max_subdomains=max_subdomains,
+            recon_mode=recon_mode,
         )
     except Exception as exc:
         print(c(f"{symbol('warn')} Domain scan failed: {exc}", Colors.RED))
@@ -1858,8 +1863,11 @@ async def run_surface_scan(
         https_headers=domain_result.get("https", {}).get("headers", {}),
         http_redirects_to_https=bool(domain_result.get("http", {}).get("redirects_to_https")),
         certificate_transparency_count=len(domain_result.get("subdomains", [])),
+        active_http_observed=str(domain_result.get("recon_mode", "hybrid")).lower() in {"active", "hybrid"},
     )
     issue_summary = summarize_issues(issues)
+    domain_result["surface_map"] = build_surface_map(domain_result)
+    domain_result["next_steps"] = build_surface_next_steps(domain_result, issue_summary=issue_summary)
     narrative = build_nano_brief(
         domain=normalized_domain,
         domain_result=domain_result,
@@ -2273,7 +2281,7 @@ async def _handle_surface_command(args: argparse.Namespace, state: RunnerState) 
         print(c(f"{symbol('warn')} {error}", Colors.RED))
         return EXIT_FAILURE
 
-    timeout_seconds, max_subdomains = _resolve_surface_runtime(args)
+    timeout_seconds, max_subdomains, recon_mode = _resolve_surface_runtime(args)
     include_ct = True if args.ct is None else bool(args.ct)
     include_rdap = True if args.rdap is None else bool(args.rdap)
 
@@ -2300,6 +2308,7 @@ async def _handle_surface_command(args: argparse.Namespace, state: RunnerState) 
             state=effective_state,
             timeout_seconds=timeout_seconds,
             max_subdomains=max_subdomains,
+            recon_mode=recon_mode,
             scan_mode=args.preset,
             include_ct=include_ct,
             include_rdap=include_rdap,
@@ -2426,6 +2435,7 @@ async def _handle_fusion_command(
             state=effective_state,
             timeout_seconds=surface_preset["timeout"],
             max_subdomains=surface_preset["max_subdomains"],
+            recon_mode=str(getattr(args, "surface_recon_mode", None) or surface_preset.get("recon_mode", "hybrid")),
             scan_mode=args.surface_preset,
             include_ct=True,
             include_rdap=True,
@@ -2718,6 +2728,7 @@ async def _handle_orchestrate_command(args: argparse.Namespace, state: RunnerSta
         if args.max_subdomains is not None
         else SURFACE_PRESETS["balanced"]["max_subdomains"]
     )
+    recon_mode = str(getattr(args, "recon_mode", None) or SURFACE_PRESETS["balanced"].get("recon_mode", "hybrid"))
     include_ct = True if args.ct is None else bool(args.ct)
     include_rdap = True if args.rdap is None else bool(args.rdap)
     min_confidence_value = _float_from_value(args.min_confidence, 0.0)
@@ -2735,6 +2746,7 @@ async def _handle_orchestrate_command(args: argparse.Namespace, state: RunnerSta
         "source_profile": source_profile,
         "max_platforms": max_platforms,
         "max_subdomains": max_subdomains,
+        "recon_mode": recon_mode,
         "include_ct": include_ct,
         "include_rdap": include_rdap,
         "min_confidence": min_confidence,
@@ -3186,6 +3198,7 @@ async def _handle_quicktest_command(args: argparse.Namespace) -> int:
         domain_result.get("https", {}).get("headers", {}),
         bool(domain_result.get("http", {}).get("redirects_to_https")),
         len(domain_result.get("subdomains", [])),
+        active_http_observed=str(domain_result.get("recon_mode", "hybrid")).lower() in {"active", "hybrid"},
     )
     issues = [*profile_issues, *domain_issues]
     issue_summary = summarize_issues(issues)
@@ -3677,6 +3690,7 @@ async def _handle_wizard_command(
             extension_control=extension_control,
             timeout=None,
             max_subdomains=None,
+            recon_mode=str(getattr(args, "surface_recon_mode", None) or SURFACE_PRESETS[surface_preset].get("recon_mode", "hybrid")),
             ct=include_ct,
             rdap=include_rdap,
             html=write_html,
@@ -3701,6 +3715,7 @@ async def _handle_wizard_command(
             proxy=None,
             profile_preset=profile_preset,
             surface_preset=surface_preset,
+            surface_recon_mode=str(getattr(args, "surface_recon_mode", None) or SURFACE_PRESETS[surface_preset].get("recon_mode", "hybrid")),
             extension_control=extension_control,
             csv=write_csv,
             html=write_html,

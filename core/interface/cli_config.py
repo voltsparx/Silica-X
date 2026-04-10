@@ -20,6 +20,7 @@ from __future__ import annotations
 from typing import TypedDict
 
 from core.collect.scanner import DEFAULT_MAX_CONCURRENCY, DEFAULT_TIMEOUT_SECONDS
+from core.foundation.recon_modes import RECON_MODES
 
 
 class ProfilePreset(TypedDict):
@@ -32,6 +33,7 @@ class ProfilePreset(TypedDict):
 class SurfacePreset(TypedDict):
     timeout: int
     max_subdomains: int
+    recon_mode: str
 
 
 PROFILE_PRESETS: dict[str, ProfilePreset] = {
@@ -50,10 +52,13 @@ PROFILE_PRESETS: dict[str, ProfilePreset] = {
 }
 
 SURFACE_PRESETS: dict[str, SurfacePreset] = {
-    "quick": {"timeout": 10, "max_subdomains": 60},
-    "balanced": {"timeout": 20, "max_subdomains": 250},
-    "deep": {"timeout": 30, "max_subdomains": 700},
+    "quick": {"timeout": 10, "max_subdomains": 60, "recon_mode": "passive"},
+    "balanced": {"timeout": 20, "max_subdomains": 250, "recon_mode": "hybrid"},
+    "deep": {"timeout": 30, "max_subdomains": 700, "recon_mode": "hybrid"},
+    "max": {"timeout": 40, "max_subdomains": 1200, "recon_mode": "hybrid"},
 }
+
+SURFACE_RECON_MODES: tuple[str, ...] = RECON_MODES
 
 EXTENSION_CONTROL_MODES = ("auto", "manual", "hybrid")
 
@@ -79,4 +84,3 @@ PROMPT_KEYWORDS = {
     "help": {"help", "-h", "--help"},
     "exit": {"exit", "quit"},
 }
-

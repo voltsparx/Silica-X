@@ -119,6 +119,8 @@ class TestRunnerCli(unittest.TestCase):
                 "quick",
                 "--max-subdomains",
                 "100",
+                "--recon-mode",
+                "passive",
                 "--no-ct",
                 "--html",
                 "--info-template",
@@ -129,6 +131,7 @@ class TestRunnerCli(unittest.TestCase):
         self.assertEqual(args.domain, "example.com")
         self.assertEqual(args.preset, "quick")
         self.assertEqual(args.max_subdomains, 100)
+        self.assertEqual(args.recon_mode, "passive")
         self.assertFalse(args.ct)
         self.assertTrue(args.html)
         self.assertEqual(args.info_template, "surface-risk")
@@ -145,6 +148,8 @@ class TestRunnerCli(unittest.TestCase):
                 "quick",
                 "--surface-preset",
                 "deep",
+                "--surface-recon-mode",
+                "active",
                 "--html",
                 "--plugin",
                 "threat_conductor",
@@ -157,6 +162,7 @@ class TestRunnerCli(unittest.TestCase):
         self.assertEqual(args.domain, "example.com")
         self.assertEqual(args.profile_preset, "quick")
         self.assertEqual(args.surface_preset, "deep")
+        self.assertEqual(args.surface_recon_mode, "active")
         self.assertTrue(args.html)
         self.assertEqual(args.plugin, ["threat_conductor"])
         self.assertEqual(args.filter, ["exposure_tier_matrix"])

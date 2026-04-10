@@ -113,11 +113,13 @@ def assess_domain_exposure(
     https_headers: dict[str, str],
     http_redirects_to_https: bool,
     certificate_transparency_count: int,
+    *,
+    active_http_observed: bool = True,
 ) -> list[dict[str, str]]:
     issues: list[dict[str, str]] = []
     normalized_headers = {k.lower(): v for k, v in https_headers.items()}
 
-    if not http_redirects_to_https:
+    if active_http_observed and not http_redirects_to_https:
         issues.append(
             _issue(
                 scope=domain,
@@ -128,7 +130,7 @@ def assess_domain_exposure(
             )
         )
 
-    if "strict-transport-security" not in normalized_headers:
+    if active_http_observed and "strict-transport-security" not in normalized_headers:
         issues.append(
             _issue(
                 scope=domain,
@@ -139,7 +141,7 @@ def assess_domain_exposure(
             )
         )
 
-    if "content-security-policy" not in normalized_headers:
+    if active_http_observed and "content-security-policy" not in normalized_headers:
         issues.append(
             _issue(
                 scope=domain,
@@ -150,7 +152,7 @@ def assess_domain_exposure(
             )
         )
 
-    if "x-frame-options" not in normalized_headers:
+    if active_http_observed and "x-frame-options" not in normalized_headers:
         issues.append(
             _issue(
                 scope=domain,
@@ -161,7 +163,7 @@ def assess_domain_exposure(
             )
         )
 
-    server_banner = normalized_headers.get("server")
+    server_banner = normalized_headers.get("server") if active_http_observed else None
     if server_banner:
         issues.append(
             _issue(
@@ -173,7 +175,7 @@ def assess_domain_exposure(
             )
         )
 
-    x_powered_by = normalized_headers.get("x-powered-by")
+    x_powered_by = normalized_headers.get("x-powered-by") if active_http_observed else None
     if x_powered_by:
         issues.append(
             _issue(

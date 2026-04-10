@@ -101,10 +101,11 @@ def build_nano_brief(
     if domain_result:
         subdomain_count = len(domain_result.get("subdomains", []))
         address_count = len(domain_result.get("resolved_addresses", []))
+        recon_mode = str(domain_result.get("recon_mode", "hybrid")).strip().lower() or "hybrid"
         lines.append(
             f"Domain surface telemetry captured {subdomain_count} subdomain candidate"
             f" {_plural(subdomain_count, 'entry')} and {address_count} resolved"
-            f" {_plural(address_count, 'address')}."
+            f" {_plural(address_count, 'address')} using {recon_mode} reconnaissance."
         )
 
     if shared_bios or shared_emails or shared_phones:

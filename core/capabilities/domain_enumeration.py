@@ -42,6 +42,7 @@ class DomainEnumerationCapability(Capability):
         include_ct = bool(context.get("include_ct", True))
         include_rdap = bool(context.get("include_rdap", True))
         max_subdomains = max(10, int(context.get("max_subdomains", 250)))
+        recon_mode = str(context.get("recon_mode", "hybrid")).strip().lower() or "hybrid"
 
         entities = await self._adapter.collect(
             domain=target,
@@ -49,6 +50,7 @@ class DomainEnumerationCapability(Capability):
             include_ct=include_ct,
             include_rdap=include_rdap,
             max_subdomains=max_subdomains,
+            recon_mode=recon_mode,
         )
         return list(entities)
 

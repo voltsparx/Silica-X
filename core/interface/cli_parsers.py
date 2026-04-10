@@ -20,7 +20,7 @@ from __future__ import annotations
 import argparse
 from typing import NoReturn
 
-from core.interface.cli_config import EXTENSION_CONTROL_MODES, PROFILE_PRESETS, SURFACE_PRESETS
+from core.interface.cli_config import EXTENSION_CONTROL_MODES, PROFILE_PRESETS, SURFACE_PRESETS, SURFACE_RECON_MODES
 
 MODULE_SORT_FIELDS = [
     "file",
@@ -412,6 +412,12 @@ def _add_surface_args(parser: argparse.ArgumentParser) -> None:
         default=None,
         help="Maximum CT-derived subdomains to retain.",
     )
+    parser.add_argument(
+        "--recon-mode",
+        choices=list(SURFACE_RECON_MODES),
+        default=None,
+        help="Surface reconnaissance lane: passive, active, or hybrid.",
+    )
     _add_toggle_flags(parser, "ct", "Certificate Transparency lookup")
     _add_toggle_flags(parser, "rdap", "RDAP ownership lookup")
     _add_toggle_flags(
@@ -456,6 +462,12 @@ def _add_fusion_args(parser: argparse.ArgumentParser) -> None:
         choices=sorted(SURFACE_PRESETS.keys()),
         default="balanced",
         help="Preset for surface phase.",
+    )
+    parser.add_argument(
+        "--surface-recon-mode",
+        choices=list(SURFACE_RECON_MODES),
+        default=None,
+        help="Recon lane for the fusion surface phase: passive, active, or hybrid.",
     )
     _add_toggle_flags(
         parser,
@@ -539,6 +551,12 @@ def _add_orchestrate_args(parser: argparse.ArgumentParser) -> None:
         help="Maximum CT-derived subdomains for domain collection.",
     )
     parser.add_argument(
+        "--recon-mode",
+        choices=list(SURFACE_RECON_MODES),
+        default=None,
+        help="Surface reconnaissance lane for surface/fusion orchestration.",
+    )
+    parser.add_argument(
         "--min-confidence",
         type=float,
         default=0.25,
@@ -602,6 +620,12 @@ def _add_wizard_args(parser: argparse.ArgumentParser) -> None:
         choices=sorted(SURFACE_PRESETS.keys()),
         default=None,
         help="Default surface preset inside wizard workflow.",
+    )
+    parser.add_argument(
+        "--surface-recon-mode",
+        choices=list(SURFACE_RECON_MODES),
+        default=None,
+        help="Default reconnaissance lane for wizard surface workflows.",
     )
     parser.add_argument(
         "--out-type",
@@ -841,4 +865,3 @@ def build_prompt_parser(*, default_dashboard_port: int) -> InteractiveArgumentPa
     _add_wizard_args(wizard_parser)
 
     return parser
-

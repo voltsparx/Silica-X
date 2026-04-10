@@ -35,6 +35,7 @@ class DomainSurfaceAdapter:
         include_ct: bool,
         include_rdap: bool,
         max_subdomains: int,
+        recon_mode: str = "hybrid",
     ) -> list[DomainEntity | AssetEntity | IpEntity]:
         normalized_domain = normalize_domain(domain)
         if not normalized_domain:
@@ -46,6 +47,7 @@ class DomainSurfaceAdapter:
             include_ct=include_ct,
             include_rdap=include_rdap,
             max_subdomains=max_subdomains,
+            recon_mode=recon_mode,
         )
 
         timestamp = datetime.now(tz=timezone.utc)
@@ -63,6 +65,10 @@ class DomainSurfaceAdapter:
             "https": https_data,
             "http": http_data,
             "rdap": payload.get("rdap", {}),
+            "recon_mode": str(payload.get("recon_mode", "hybrid")),
+            "collector_status": dict(payload.get("collector_status", {})),
+            "surface_map": dict(payload.get("surface_map", {})),
+            "next_steps": list(payload.get("next_steps", [])),
             "scan_notes": list(payload.get("scan_notes", [])),
             "robots_txt_present": bool(payload.get("robots_txt_present")),
             "security_txt_present": bool(payload.get("security_txt_present")),

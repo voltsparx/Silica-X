@@ -517,6 +517,7 @@ def display_domain_results(
     print(c(f"{symbol('bullet')} HTTPS status: {https_data.get('status')} final={https_data.get('final_url')}", Colors.GREY))
     print(c(f"{symbol('bullet')} HTTP status: {http_data.get('status')} final={http_data.get('final_url')}", Colors.GREY))
     print(c(f"{symbol('bullet')} HTTP->HTTPS redirect: {http_data.get('redirects_to_https')}", Colors.GREY))
+    print(c(f"{symbol('bullet')} Recon mode: {domain_result.get('recon_mode', 'hybrid')}", Colors.GREY))
 
     subdomains = domain_result.get("subdomains", [])
     if subdomains:
@@ -534,6 +535,44 @@ def display_domain_results(
         print(c(f"{symbol('tip')} Scan notes:", Colors.YELLOW))
         for note in domain_result["scan_notes"]:
             print(c(f"{symbol('bullet')} {note}", Colors.YELLOW))
+    collector_status = domain_result.get("collector_status", {})
+    if isinstance(collector_status, dict):
+        print(c(f"\n{symbol('major')} Recon Collector Status", Colors.BLUE))
+        print(c("-" * 36, Colors.BLUE))
+        for key, value in collector_status.items():
+            if not isinstance(value, dict):
+                continue
+            print(
+                c(
+                    f"{symbol('bullet')} {key}: lane={value.get('lane')} "
+                    f"status={value.get('status')} detail={value.get('detail')}",
+                    Colors.GREY,
+                )
+            )
+    surface_map = domain_result.get("surface_map", {})
+    if isinstance(surface_map, dict):
+        priority_summary = surface_map.get("priority_summary", {}) if isinstance(surface_map.get("priority_summary"), dict) else {}
+        source_summary = surface_map.get("source_summary", {}) if isinstance(surface_map.get("source_summary"), dict) else {}
+        print(c(f"\n{symbol('major')} Attack Surface Map", Colors.BLUE))
+        print(c("-" * 36, Colors.BLUE))
+        print(c(f"{symbol('action')} score={surface_map.get('attack_surface_score', 0)}", Colors.CYAN))
+        print(c(f"{symbol('bullet')} source_summary={source_summary}", Colors.GREY))
+        print(
+            c(
+                f"{symbol('bullet')} prioritized={_preview(list(priority_summary.get('prioritized_hosts', []) or []), limit=10)}",
+                Colors.GREY,
+            )
+        )
+    next_steps = domain_result.get("next_steps", [])
+    if isinstance(next_steps, list) and next_steps:
+        print(c(f"\n{symbol('major')} Recommended Next Steps", Colors.GREEN))
+        print(c("-" * 36, Colors.GREEN))
+        for row in next_steps[:6]:
+            if not isinstance(row, dict):
+                continue
+            print(c(f"{symbol('action')} [{row.get('priority', 'P3')}] {row.get('title', 'Action')}", Colors.GREEN))
+            print(c(f"  {symbol('bullet')} why: {row.get('rationale', '-')}", Colors.GREY))
+            print(c(f"  {symbol('tip')} hint: {row.get('command_hint', '-')}", Colors.CYAN))
 
     if issues is not None:
         _print_issue_block(issues)
@@ -637,10 +676,31 @@ def _render_cli_report(payload: dict) -> str:
     if domain_result:
         lines.append("[Domain Surface]")
         lines.append(f"- target: {domain_result.get('target', '-')}")
+        lines.append(f"- recon_mode: {domain_result.get('recon_mode', 'hybrid')}")
         lines.append(
             f"- resolved_addresses: {', '.join(domain_result.get('resolved_addresses', []) or []) or 'none'}"
         )
         lines.append(f"- subdomains: {len(domain_result.get('subdomains', []) or [])}")
+        surface_map = domain_result.get("surface_map", {}) if isinstance(domain_result.get("surface_map"), dict) else {}
+        if surface_map:
+            lines.append(f"- attack_surface_score: {surface_map.get('attack_surface_score', 0)}")
+            lines.append(f"- source_summary: {surface_map.get('source_summary', {})}")
+            priority_summary = surface_map.get("priority_summary", {})
+            if isinstance(priority_summary, dict):
+                lines.append(
+                    "- prioritized_hosts: "
+                    f"{', '.join(priority_summary.get('prioritized_hosts', []) or []) or 'none'}"
+                )
+        next_steps = domain_result.get("next_steps", [])
+        if isinstance(next_steps, list) and next_steps:
+            lines.append("- recon_next_steps:")
+            for row in next_steps[:4]:
+                if not isinstance(row, dict):
+                    continue
+                lines.append(
+                    f"  - [{row.get('priority', 'P3')}] {row.get('title', 'Action')}: "
+                    f"{row.get('rationale', '-')}"
+                )
         lines.append("")
 
     correlation = payload.get("correlation", {}) or {}
@@ -952,4 +1012,3 @@ def save_results(
     if return_payload:
         return str(json_path or run_log or ""), payload
     return str(json_path or run_log or "")
-

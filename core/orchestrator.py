@@ -249,6 +249,7 @@ class Orchestrator:
             "include_ct": bool(self.config.get("include_ct", True)),
             "include_rdap": bool(self.config.get("include_rdap", True)),
             "max_subdomains": int(self.config.get("max_subdomains", 250)),
+            "recon_mode": str(self.config.get("recon_mode", "hybrid")).strip().lower() or "hybrid",
             "depth": int(self.config.get("depth", self.policy.enrichment_depth)),
             "profile_target": str(self.config.get("profile_target", self.target)).strip(),
             "surface_target": str(self.config.get("surface_target", self.target)).strip(),

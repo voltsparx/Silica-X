@@ -296,11 +296,37 @@ def _render_domain_section(domain_result: dict | None) -> str:
     https_data = domain_result.get("https", {})
     http_data = domain_result.get("http", {})
     rdap = domain_result.get("rdap", {})
+    collector_status = domain_result.get("collector_status", {}) if isinstance(domain_result.get("collector_status"), dict) else {}
+    collector_items = "".join(
+        "<li>"
+        f"<strong>{html.escape(str(key))}</strong>: "
+        f"lane={html.escape(str(value.get('lane', '-')))} "
+        f"status={html.escape(str(value.get('status', '-')))} "
+        f"detail={html.escape(str(value.get('detail', '-')))}"
+        "</li>"
+        for key, value in collector_status.items()
+        if isinstance(value, dict)
+    ) or "<li>None</li>"
+    surface_map = domain_result.get("surface_map", {}) if isinstance(domain_result.get("surface_map"), dict) else {}
+    source_summary = surface_map.get("source_summary", {}) if isinstance(surface_map.get("source_summary"), dict) else {}
+    priority_summary = surface_map.get("priority_summary", {}) if isinstance(surface_map.get("priority_summary"), dict) else {}
+    next_steps = domain_result.get("next_steps", []) if isinstance(domain_result.get("next_steps"), list) else []
+    next_step_items = "".join(
+        "<li>"
+        f"[{html.escape(str(row.get('priority', 'P3')))}] "
+        f"{html.escape(str(row.get('title', 'Action')))}"
+        f"<br><span class='muted'>{html.escape(str(row.get('rationale', '-')))}</span>"
+        f"<br><span class='muted'>Hint: {html.escape(str(row.get('command_hint', '-')))}</span>"
+        "</li>"
+        for row in next_steps[:6]
+        if isinstance(row, dict)
+    ) or "<li>None</li>"
 
     return (
         "<section class='panel'>"
         "<h3>Domain Surface Intelligence</h3>"
         f"<p><strong>Target:</strong> {html.escape(domain_result.get('target', ''))}</p>"
+        f"<p><strong>Recon Mode:</strong> {html.escape(str(domain_result.get('recon_mode', 'hybrid')))}</p>"
         f"<p><strong>Resolved Addresses:</strong> {html.escape(', '.join(domain_result.get('resolved_addresses', [])) or 'None')}</p>"
         f"<p><strong>HTTPS:</strong> status={html.escape(str(https_data.get('status')))} "
         f"final={html.escape(str(https_data.get('final_url')))}</p>"
@@ -308,10 +334,18 @@ def _render_domain_section(domain_result: dict | None) -> str:
         f"final={html.escape(str(http_data.get('final_url')))} "
         f"redirects_to_https={html.escape(str(http_data.get('redirects_to_https')))}</p>"
         f"<p><strong>RDAP Handle:</strong> {html.escape(str(rdap.get('handle') or '-'))}</p>"
+        f"<p><strong>Attack Surface Score:</strong> {html.escape(str(surface_map.get('attack_surface_score', 0)))} "
+        f"| <strong>Source Summary:</strong> {html.escape(str(source_summary))}</p>"
         "<h4>Subdomain Candidates</h4>"
         f"<ul>{subdomain_items}</ul>"
+        "<h4>Prioritized Hosts</h4>"
+        f"<div>{_render_chip_list(list(priority_summary.get('prioritized_hosts', []) or []), max_items=18)}</div>"
+        "<h4>Collector Status</h4>"
+        f"<ul>{collector_items}</ul>"
         "<h4>Collector Notes</h4>"
         f"<ul>{notes}</ul>"
+        "<h4>Recommended Next Steps</h4>"
+        f"<ul>{next_step_items}</ul>"
         "</section>"
     )
 
@@ -883,4 +917,3 @@ def generate_html(
     report_file = html_report_path(target_key, stamp=output_stamp)
     report_file.write_text(report_html, encoding="utf-8")
     return str(report_file)
-

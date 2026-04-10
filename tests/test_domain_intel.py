@@ -62,15 +62,41 @@ class TestDomainIntel(unittest.IsolatedAsyncioTestCase):
                 include_ct=True,
                 include_rdap=True,
                 max_subdomains=50,
+                recon_mode="hybrid",
             )
             elapsed = time.perf_counter() - started
 
         self.assertLess(elapsed, 0.5)
         self.assertEqual(result["subdomains"], ["a.example.com", "b.example.com"])
-        self.assertEqual(result["rdap"], {"handle": "HANDLE-1"})
+        self.assertEqual(result["rdap"]["handle"], "HANDLE-1")
+        self.assertEqual(result["rdap"]["name_servers"], [])
+
+    async def test_surface_passive_mode_skips_active_collectors(self):
+        with (
+            patch(
+                "core.collect.domain_intel._load_ct_subdomains",
+                AsyncMock(return_value=(["api.example.com"], None)),
+            ),
+            patch(
+                "core.collect.domain_intel._load_rdap",
+                AsyncMock(return_value=({"handle": "HANDLE-1", "nameservers": [{"ldhName": "ns1.example.com"}]}, None)),
+            ),
+        ):
+            result = await scan_domain_surface(
+                domain="example.com",
+                timeout_seconds=2,
+                include_ct=True,
+                include_rdap=True,
+                max_subdomains=10,
+                recon_mode="passive",
+            )
+
+        self.assertEqual(result["recon_mode"], "passive")
+        self.assertEqual(result["resolved_addresses"], [])
+        self.assertEqual(result["collector_status"]["dns"]["status"], "skipped")
+        self.assertEqual(result["collector_status"]["ct"]["status"], "ok")
+        self.assertEqual(result["rdap"]["name_servers"], ["ns1.example.com"])
 
 
 if __name__ == "__main__":
     unittest.main()
-
-
