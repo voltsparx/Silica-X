@@ -24,9 +24,6 @@ Multi-engine OSINT orchestration for profile intelligence, domain-surface reconn
 >  
 > It combines policy-driven execution, plugin/filter control, and explainable scoring into one operator flow, with rich outputs across CLI, JSON, CSV, HTML, and logs. <br>
 > Its runtime and console patterns were shaped by reverse engineering multiple reconnaissance tools into a native Sylica-X architecture, rather than exposing those tools directly in the codebase. <br>
-<p align="center">
-  <img src="https://raw.githubusercontent.com/voltsparx/Sylica-X/refs/heads/main/docs/images/ui/sylica-x-menu-v9.2.png" alt="Sylica-X Menu" width="600px"><br>
-</p>
 
 > I doubt the pic not looking perfect...also gotta fix the version
 
