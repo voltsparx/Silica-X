@@ -1,4 +1,4 @@
-# Silica-X v9.3.0 "Lattice" Commit Plan
+# Silica-X v9.3.0 "Ember" Commit Plan
 
 Use this grouping to keep history readable and simplify rollback/cherry-pick paths.
 
@@ -62,6 +62,6 @@ Suggested files:
 
 After commits and CI green:
 
-1. `git tag -a v9.3.0 -m "Silica-X v9.3.0 Lattice"`
+1. `git tag -a v9.3.0 -m "Silica-X v9.3.0 Ember"`
 2. `git push origin <branch> --follow-tags`
 3. Create GitHub release using `docs/release-notes-v9.3.0-lattice.md`

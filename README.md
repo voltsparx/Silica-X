@@ -1,6 +1,6 @@
 # 📡Silica-X v9.3.0
 
-<strong>Release Theme: Lattice</strong><br>
+<strong>Release Theme: Ember</strong><br>
 Multi-engine OSINT orchestration for profile intelligence, domain-surface reconnaissance, and fused correlation reporting.
 
 
@@ -10,7 +10,7 @@ Multi-engine OSINT orchestration for profile intelligence, domain-surface reconn
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-v9.3.0-0A66C2?style=for-the-badge" alt="Version v9.3.0">
-  <img src="https://img.shields.io/badge/theme-Lattice-1F7A8C?style=for-the-badge" alt="Theme Lattice">
+  <img src="https://img.shields.io/badge/theme-Ember-F47C20?style=for-the-badge" alt="Theme Ember">
   <img src="https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python Versions">
   <img src="https://img.shields.io/badge/status-unstable-4C956C?style=for-the-badge" alt="Status Unstable">
   <img src="https://img.shields.io/badge/tests-165%2F165%20passing-2E8B57?style=for-the-badge" alt="Tests Passing">
@@ -113,9 +113,9 @@ For full command reference, see [Usage Guide](docs/Usage.txt).
 * [Recon Source Integration](docs/recon-source-integration.md)
 * [Capability Scan Report](docs/sylica-capability-scan.md)
 * [OCR/Image Infrastructure Plan](docs/ocr-image-scan-infrastructure.md)
-* [Release Checklist v9.3.0 Lattice](docs/release-checklist-v9.3.0-lattice.md)
-* [Release Notes v9.3.0 Lattice](docs/release-notes-v9.3.0-lattice.md)
-* [Release Commit Plan v9.3.0 Lattice](docs/release-commit-plan-v9.3.0-lattice.md)
+* [Release Checklist v9.3.0 Ember](docs/release-checklist-v9.3.0-lattice.md)
+* [Release Notes v9.3.0 Ember](docs/release-notes-v9.3.0-lattice.md)
+* [Release Commit Plan v9.3.0 Ember](docs/release-commit-plan-v9.3.0-lattice.md)
 * [Code of Conduct](CODE_OF_CONDUCT.md)
 
 ---

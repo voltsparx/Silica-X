@@ -1,4 +1,4 @@
-Silica-X v9.3.0 (Theme: Lattice) Usage Guide
+Silica-X v9.3.0 (Theme: Ember) Usage Guide
 ==========================================
 
 1) Installation
@@ -323,7 +323,7 @@ Prompt format:
 - Plugin inventory view separates crypto modules under a dedicated `Cryptography Plugin Set` section.
 
 
-6) New Plugins and Filters (v9.3.0 Lattice Expansion)
+6) New Plugins and Filters (v9.3.0 Ember Expansion)
 ----------------------------------------------------
 New plugins:
 - account_recovery_exposure_probe (profile, fusion)

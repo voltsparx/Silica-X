@@ -1,6 +1,6 @@
 # Plugin Intel Views
 
-Release: v9.3.0 (Theme: Lattice)
+Release: v9.3.0 (Theme: Ember)
 
 Sylica-native plugin inventory and usage guidance.
 

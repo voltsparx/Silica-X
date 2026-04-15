@@ -1,4 +1,4 @@
-# Silica-X v9.3.0 "Lattice" Update Notes
+# Silica-X v9.3.0 "Ember" Update Notes
 
 ## Engine Architecture Upgrade
 

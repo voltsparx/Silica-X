@@ -109,12 +109,12 @@ def render_html_report(target: str, mode: str, fused_data: dict[str, Any], advis
   <meta charset=\"utf-8\" />
   <title>Silica-X Orchestrator Report</title>
   <style>
-    body {{ font-family: \"Segoe UI\", sans-serif; margin: 24px; background: #f7f9fc; color: #0e1a2b; }}
-    .card {{ border: 1px solid #d7e0ec; background: #fff; border-radius: 10px; padding: 14px; margin-bottom: 12px; }}
+    body {{ font-family: \"Segoe UI\", sans-serif; margin: 24px; background: #fff6ee; color: #2c1608; }}
+    .card {{ border: 1px solid #f0bf97; background: #fffdfb; border-radius: 10px; padding: 14px; margin-bottom: 12px; box-shadow: 0 8px 24px rgba(168, 88, 21, 0.08); }}
     table {{ width: 100%; border-collapse: collapse; }}
-    th, td {{ border-bottom: 1px solid #e1e8f0; padding: 8px; text-align: left; vertical-align: top; }}
-    th {{ background: #f1f5fb; }}
-    .muted {{ color: #58657a; }}
+    th, td {{ border-bottom: 1px solid #f1d6bf; padding: 8px; text-align: left; vertical-align: top; }}
+    th {{ background: #fff0e0; color: #7a3f12; }}
+    .muted {{ color: #8d6445; }}
   </style>
 </head>
 <body>
@@ -155,4 +155,3 @@ def render_html_report(target: str, mode: str, fused_data: dict[str, Any], advis
 </body>
 </html>
 """.strip()
-

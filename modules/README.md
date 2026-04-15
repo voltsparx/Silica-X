@@ -1,6 +1,6 @@
 # Modules Catalog
 
-Release: v9.3.0 (Theme: Lattice)
+Release: v9.3.0 (Theme: Ember)
 
 Generated index for module-like capabilities discovered under `intel-sources/`.
 

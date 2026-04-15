@@ -1,10 +1,10 @@
-# Silica-X v9.3.0 "Lattice" Release Checklist
+# Silica-X v9.3.0 "Ember" Release Checklist
 
 Date: 2026-03-14
 
 ## 1) Release Gate
 
-- [x] Versioned branding aligned to `v9.3.0` and theme `Lattice` in primary docs.
+- [x] Versioned branding aligned to `v9.3.0` and theme `Ember` in primary docs.
 - [x] Core usage docs updated (`README.md`, `docs/Usage.txt`).
 - [x] OCR roadmap note clearly marked as future-scope (`v9.5`/`v10.0` planning lane).
 - [x] New plugin/filter/quicktest flows documented.

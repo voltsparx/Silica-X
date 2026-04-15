@@ -13,7 +13,7 @@
   "sylica": {
     "project": "Silica-X",
     "version": "9.3.0",
-    "theme": "Lattice",
+    "theme": "Ember",
     "component": "intel_pack"
   },
   "schema_version": "1.0",

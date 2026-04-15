@@ -2,7 +2,7 @@
   "sylica": {
     "project": "Silica-X",
     "version": "9.3.0",
-    "theme": "Lattice",
+    "theme": "Ember",
     "component": "intel_pack"
   },
   "generated_at_utc": "2026-03-14T09:38:31Z",

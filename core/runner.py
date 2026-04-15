@@ -1344,7 +1344,7 @@ def launch_live_dashboard(
             error_table_rows = ""
             error_color_map = {
                 "ERROR": "#ff6b6b",
-                "BLOCKED": "#f39c12",
+                "BLOCKED": "#ff9a3d",
             }
             for item in error_rows:
                 status = str(item.get("status", "ERROR"))
@@ -1390,13 +1390,13 @@ def launch_live_dashboard(
             <head>
               <title>{html.escape(PROJECT_NAME)} Live - {html.escape(display_target)}</title>
               <style>
-                body {{ font-family: "Trebuchet MS", "Segoe UI", sans-serif; background:#0b1118; color:#e8edf2; padding:20px; }}
-                .panel {{ background:#111a24; border:1px solid #2a3a4d; border-radius:12px; padding:14px; margin-top:12px; }}
+                body {{ font-family: "Trebuchet MS", "Segoe UI", sans-serif; background:#140d08; color:#fff1e4; padding:20px; }}
+                .panel {{ background:#23150d; border:1px solid #6a4327; border-radius:12px; padding:14px; margin-top:12px; }}
                 table {{ width:100%; border-collapse: collapse; }}
-                th, td {{ border:1px solid #2a3a4d; padding:8px; text-align:left; }}
-                th {{ background:#172330; }}
-                a {{ color:#42a5f5; text-decoration:none; }}
-                .muted {{ color:#9aa7b6; }}
+                th, td {{ border:1px solid #6a4327; padding:8px; text-align:left; }}
+                th {{ background:#311d12; color:#ffd6af; }}
+                a {{ color:#ffb15e; text-decoration:none; }}
+                .muted {{ color:#d1b295; }}
               </style>
             </head>
             <body>

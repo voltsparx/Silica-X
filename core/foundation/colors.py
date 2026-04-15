@@ -32,14 +32,14 @@ class Colors:
     GREY = "\033[38;5;245m"
     DARK_GREY = "\033[38;5;240m"
 
-    YELLOW = "\033[38;5;226m"
-    CYAN = "\033[38;5;51m"
-    BLUE = "\033[38;5;39m"
-    MAGENTA = "\033[38;5;201m"
+    YELLOW = "\033[38;5;221m"
+    CYAN = "\033[38;5;215m"
+    BLUE = "\033[38;5;208m"
+    MAGENTA = "\033[38;5;209m"
 
-    GREEN = "\033[38;5;46m"
+    GREEN = "\033[38;5;214m"
     RED = "\033[38;5;196m"
-    ORANGE = "\033[38;5;208m"
+    ORANGE = "\033[38;5;202m"
 
     # Backward-compatible aliases
     GRAY = GREY

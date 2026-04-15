@@ -1,6 +1,6 @@
 # Sylica Capability Scan
 
-Release: v9.3.0 (Theme: Lattice)
+Release: v9.3.0 (Theme: Ember)
 
 Source packs scanned: 8
 

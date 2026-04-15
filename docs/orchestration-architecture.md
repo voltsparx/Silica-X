@@ -1,6 +1,6 @@
 # Orchestration Architecture (Layered)
 
-Release: v9.3.0 (Theme: Lattice)
+Release: v9.3.0 (Theme: Ember)
 
 Silica-X now includes an additive layered architecture aligned with `structure.txt`.
 

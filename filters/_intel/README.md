@@ -1,6 +1,6 @@
 # Filter Intel Views
 
-Release: v9.3.0 (Theme: Lattice)
+Release: v9.3.0 (Theme: Ember)
 
 Sylica-native filter inventory and triage guidance.
 

@@ -102,10 +102,10 @@ def _crypto_profile_html(data: object) -> str:
 
 def _status_badge(status: str) -> str:
     color_map = {
-        "FOUND": "#20d981",
+        "FOUND": "#ff8a3d",
         "NOT FOUND": "#8a8f98",
-        "BLOCKED": "#f5b949",
-        "INVALID_USERNAME": "#f5b949",
+        "BLOCKED": "#ffb454",
+        "INVALID_USERNAME": "#ffb454",
         "ERROR": "#ff6d7a",
     }
     color = color_map.get(status, "#8a8f98")
@@ -712,14 +712,14 @@ def generate_html(
       <title>{html.escape(PROJECT_NAME)} v{html.escape(VERSION)} Report - {html.escape(target_display)}</title>
       <style>
         :root {{
-          --bg:#070b12;
-          --panel:#101927;
-          --panel-2:#162438;
-          --text:#edf3fb;
-          --muted:#a0b0c2;
-          --accent:#27d89a;
-          --accent-2:#5ea9ff;
-          --line:#2c4258;
+          --bg:#140c07;
+          --panel:#24140b;
+          --panel-2:#311b0f;
+          --text:#fff3e8;
+          --muted:#d7bba1;
+          --accent:#ff8a3d;
+          --accent-2:#ffb15e;
+          --line:#6e4425;
           --shadow:0 14px 40px rgba(0, 0, 0, 0.42);
         }}
         * {{ box-sizing: border-box; }}
@@ -728,15 +728,15 @@ def generate_html(
           font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
           color: var(--text);
           background:
-            radial-gradient(circle at 12% -6%, rgba(39,216,154,0.24) 0%, rgba(39,216,154,0) 35%),
-            radial-gradient(circle at 88% -15%, rgba(94,169,255,0.24) 0%, rgba(94,169,255,0) 40%),
-            linear-gradient(145deg, #070b12 0%, #0a111a 45%, #070b12 100%);
+            radial-gradient(circle at 12% -6%, rgba(255,138,61,0.28) 0%, rgba(255,138,61,0) 35%),
+            radial-gradient(circle at 88% -15%, rgba(255,177,94,0.24) 0%, rgba(255,177,94,0) 40%),
+            linear-gradient(145deg, #140c07 0%, #1a1008 45%, #120904 100%);
           min-height: 100vh;
           padding: 20px;
         }}
         .shell {{ max-width: 1300px; margin: 0 auto; }}
         .header {{
-          background: linear-gradient(130deg, rgba(39,216,154,0.17), rgba(94,169,255,0.14));
+          background: linear-gradient(130deg, rgba(255,138,61,0.18), rgba(255,177,94,0.12));
           border: 1px solid var(--line);
           border-radius: 18px;
           padding: 20px 22px;
@@ -787,7 +787,7 @@ def generate_html(
         .metric-value {{ font-size: 1.34rem; font-weight: 800; margin-top: 4px; }}
         .metric-hint {{ color: var(--muted); font-size: 0.78rem; margin-top: 4px; }}
         .panel {{
-          background: linear-gradient(180deg, rgba(18,31,48,0.88), rgba(16,25,39,0.95));
+          background: linear-gradient(180deg, rgba(42,24,13,0.9), rgba(30,17,10,0.97));
           border: 1px solid var(--line);
           border-radius: 14px;
           padding: 14px;
@@ -810,8 +810,8 @@ def generate_html(
           letter-spacing: 0.03em;
         }}
         .badge-inline {{
-          background: rgba(94,169,255,0.22);
-          border: 1px solid rgba(94,169,255,0.45);
+          background: rgba(255,177,94,0.16);
+          border: 1px solid rgba(255,177,94,0.4);
           color: var(--text);
           margin-left: 8px;
           padding: 2px 8px;
@@ -841,7 +841,7 @@ def generate_html(
           font-size: 0.92rem;
         }}
         th {{
-          color: #c4d3e4;
+          color: #ffd7b0;
           background: rgba(255,255,255,0.03);
           position: sticky;
           top: 0;
@@ -858,7 +858,7 @@ def generate_html(
         }}
         summary {{
           cursor: pointer;
-          color: #c7dbef;
+          color: #ffd2a1;
           font-weight: 600;
         }}
         pre {{
@@ -870,12 +870,12 @@ def generate_html(
           border: 1px solid rgba(255,255,255,0.12);
           border-radius: 8px;
           padding: 8px;
-          color: #d6e4f3;
+          color: #ffe1c3;
           font-size: 0.8rem;
         }}
         .brief {{
-          background: rgba(39,216,154,0.09);
-          border: 1px solid rgba(39,216,154,0.38);
+          background: rgba(255,138,61,0.1);
+          border: 1px solid rgba(255,138,61,0.4);
           border-left: 4px solid var(--accent);
           border-radius: 8px;
           padding: 10px 12px;
