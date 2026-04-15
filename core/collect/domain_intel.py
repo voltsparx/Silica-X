@@ -204,6 +204,14 @@ def _note_if_error(notes: list[str], label: str, error: str | None) -> None:
         notes.append(f"{label}: {error}")
 
 
+def _string_list(value: object) -> list[str]:
+    """Normalize a loose JSON-like collection into a list of strings."""
+
+    if isinstance(value, (list, tuple, set)):
+        return [str(item) for item in value]
+    return []
+
+
 def _collector_row(*, lane: str, enabled: bool, status: str, detail: str = "") -> dict[str, str]:
     return {
         "lane": lane,
@@ -351,7 +359,7 @@ async def scan_domain_surface(
                 detail="rdap lookup disabled",
             )
         wordlist_guidance = build_surface_wordlist_guidance(subdomains)
-        matched_priority_labels = list(wordlist_guidance.get("matched_priority_labels", []))
+        matched_priority_labels = _string_list(wordlist_guidance.get("matched_priority_labels", []))
         if matched_priority_labels:
             scan_notes.append(
                 "surface priority labels observed: " + ", ".join(matched_priority_labels[:12])
@@ -416,7 +424,7 @@ async def scan_domain_surface(
         "https": _http_artifact_payload(https_artifact),
         "http": _http_artifact_payload(http_artifact),
         "subdomains": subdomains,
-        "prioritized_subdomains": list(wordlist_guidance.get("prioritized_subdomains", [])),
+        "prioritized_subdomains": _string_list(wordlist_guidance.get("prioritized_subdomains", [])),
         "surface_wordlists": wordlist_guidance,
         "rdap": rdap_payload,
         "collector_status": collector_status,

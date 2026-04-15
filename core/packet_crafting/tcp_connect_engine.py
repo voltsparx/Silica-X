@@ -18,7 +18,7 @@
 from __future__ import annotations
 
 from core.packet_crafting.base import PacketCraftingEngine
-from core.packet_crafting.models import PacketCraftingBundle, PacketCraftingRequest
+from core.packet_crafting.models import CraftedPacketArtifact, PacketCraftingBundle, PacketCraftingRequest
 
 
 class TcpConnectPacketCraftingEngine(PacketCraftingEngine):
@@ -34,7 +34,7 @@ class TcpConnectPacketCraftingEngine(PacketCraftingEngine):
         """Craft SYN, ACK, and RST handshake templates for read-only validation planning."""
 
         scapy_catalog = self._scapy()
-        artifacts = []
+        artifacts: list[CraftedPacketArtifact] = []
         for service_inquiry_port in self._validated_ports(service_inquiry):
             sequence_number = self._sequence_number(service_inquiry, service_inquiry_port)
             syn_packet = scapy_catalog.IP(dst=service_inquiry.authorized_host) / scapy_catalog.TCP(

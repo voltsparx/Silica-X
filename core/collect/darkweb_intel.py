@@ -160,7 +160,7 @@ async def collect_darkweb_signals(
     connector: aiohttp.BaseConnector | None = None
     if proxy_url and proxy_url.lower().startswith("socks"):
         try:
-            from aiohttp_socks import ProxyConnector  # type: ignore
+            from aiohttp_socks import ProxyConnector
         except Exception:
             notes.append("Tor SOCKS routing was requested, but aiohttp_socks is not installed, so live Ahmia fetches were skipped.")
         else:

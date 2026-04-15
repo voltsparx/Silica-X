@@ -148,7 +148,7 @@ def _extract_image_metadata(media_bytes: bytes) -> tuple[int | None, int | None,
                 "format": str(getattr(image_handle, "format", "") or ""),
                 "mode": str(getattr(image_handle, "mode", "") or ""),
             }
-            exif = getattr(image_handle, "getexif", lambda: {})()
+            exif: Any = getattr(image_handle, "getexif", lambda: {})()
             if exif:
                 tag_map = {}
                 for tag_id, value in exif.items():
@@ -161,17 +161,22 @@ def _extract_image_metadata(media_bytes: bytes) -> tuple[int | None, int | None,
 
 
 def _run_ocr(media_bytes: bytes) -> tuple[str, str]:
+    easyocr_module: Any | None
+    pillow_image_module: Any | None
     try:
-        import easyocr  # type: ignore
+        import easyocr
         from PIL import Image
     except Exception:
-        easyocr = None  # type: ignore[assignment]
-        Image = None  # type: ignore[assignment]
+        easyocr_module = None
+        pillow_image_module = None
+    else:
+        easyocr_module = easyocr
+        pillow_image_module = Image
 
-    if easyocr is not None and Image is not None:
+    if easyocr_module is not None and pillow_image_module is not None:
         try:
-            reader = easyocr.Reader(["en"], gpu=False, verbose=False)
-            with Image.open(io.BytesIO(media_bytes)) as image_handle:
+            reader = easyocr_module.Reader(["en"], gpu=False, verbose=False)
+            with pillow_image_module.open(io.BytesIO(media_bytes)) as image_handle:
                 results = reader.readtext(image_handle)
             text = " ".join(str(row[1]).strip() for row in results if len(row) >= 2).strip()
             if text:
@@ -179,15 +184,18 @@ def _run_ocr(media_bytes: bytes) -> tuple[str, str]:
         except Exception:
             pass
 
+    pytesseract_module: Any | None
     try:
-        import pytesseract  # type: ignore
+        import pytesseract
         from PIL import Image
     except Exception:
         return "", "none"
+    else:
+        pytesseract_module = pytesseract
 
     try:
         with Image.open(io.BytesIO(media_bytes)) as image_handle:
-            text = str(pytesseract.image_to_string(image_handle) or "").strip()
+            text = str(pytesseract_module.image_to_string(image_handle) or "").strip()
         return text[:1200], "pytesseract" if text else "none"
     except Exception:
         return "", "none"

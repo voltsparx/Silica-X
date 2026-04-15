@@ -18,7 +18,7 @@
 from __future__ import annotations
 
 from core.packet_crafting.base import PacketCraftingEngine
-from core.packet_crafting.models import PacketCraftingBundle, PacketCraftingRequest
+from core.packet_crafting.models import CraftedPacketArtifact, PacketCraftingBundle, PacketCraftingRequest
 
 
 class UdpPacketCraftingEngine(PacketCraftingEngine):
@@ -34,7 +34,7 @@ class UdpPacketCraftingEngine(PacketCraftingEngine):
         """Craft UDP inquiry packets without sending application payloads or state-changing traffic."""
 
         scapy_catalog = self._scapy()
-        artifacts = []
+        artifacts: list[CraftedPacketArtifact] = []
         for service_inquiry_port in self._validated_ports(service_inquiry):
             scapy_packet = scapy_catalog.IP(dst=service_inquiry.authorized_host) / scapy_catalog.UDP(
                 sport=int(service_inquiry.source_port),

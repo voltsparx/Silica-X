@@ -19,19 +19,20 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from importlib import import_module
+from typing import Any
 
 
 @dataclass(frozen=True)
 class ScapyLayerCatalog:
     """Expose the Scapy packet layers required by the packet-crafting engines."""
 
-    Ether: type[object]
-    ARP: type[object]
-    IP: type[object]
-    TCP: type[object]
-    UDP: type[object]
-    ICMP: type[object]
-    Raw: type[object] | None
+    Ether: Any
+    ARP: Any
+    IP: Any
+    TCP: Any
+    UDP: Any
+    ICMP: Any
+    Raw: Any | None
 
 
 def load_scapy_layer_catalog() -> ScapyLayerCatalog:

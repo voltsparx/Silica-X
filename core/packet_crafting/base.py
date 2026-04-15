@@ -25,7 +25,11 @@ from core.packet_crafting.models import (
     PacketCraftingEngineDescriptor,
     PacketCraftingRequest,
 )
-from core.packet_crafting.scapy_support import load_scapy_layer_catalog, summarize_packet_layers
+from core.packet_crafting.scapy_support import (
+    ScapyLayerCatalog,
+    load_scapy_layer_catalog,
+    summarize_packet_layers,
+)
 
 
 class PacketCraftingEngine(ABC):
@@ -52,7 +56,7 @@ class PacketCraftingEngine(ABC):
     def craft_packets(self, service_inquiry: PacketCraftingRequest) -> PacketCraftingBundle:
         """Craft read-only packet templates for an authorized host or network."""
 
-    def _scapy(self) -> object:
+    def _scapy(self) -> ScapyLayerCatalog:
         """Load Scapy lazily so packet crafting stays explicit and optional."""
 
         return load_scapy_layer_catalog()
