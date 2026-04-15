@@ -481,12 +481,13 @@ def build_surface_recipe_plan(
     require_flags: list[str] | None = None,
     exclude_flags: list[str] | None = None,
     recon_mode: str | None = None,
+    reference_root: str | Path | None = None,
 ) -> dict[str, Any]:
     normalized_domain = normalize_domain(domain)
     if not normalized_domain:
         raise ValueError("Invalid domain for the surface kit plan.")
 
-    reference = load_recursive_module_reference()
+    reference = load_recursive_module_reference(reference_root)
     recipe = next((row for row in reference.get("recipes", []) if row.get("name") == recipe_name), None)
     if not isinstance(recipe, dict):
         raise ValueError(f"Unknown surface recipe: {recipe_name}")
@@ -585,8 +586,13 @@ def build_surface_recipe_plan(
     }
 
 
-def filter_recipe_modules(*, search: str = "", limit: int = 25) -> list[dict[str, Any]]:
-    reference = load_recursive_module_reference()
+def filter_recipe_modules(
+    *,
+    search: str = "",
+    limit: int = 25,
+    reference_root: str | Path | None = None,
+) -> list[dict[str, Any]]:
+    reference = load_recursive_module_reference(reference_root)
     rows = []
     for row in reference.get("modules", []):
         if not isinstance(row, dict):
@@ -604,8 +610,13 @@ def filter_recipe_modules(*, search: str = "", limit: int = 25) -> list[dict[str
     return rows[: max(1, int(limit))]
 
 
-def filter_recipes(*, search: str = "", limit: int = 25) -> list[dict[str, Any]]:
-    reference = load_recursive_module_reference()
+def filter_recipes(
+    *,
+    search: str = "",
+    limit: int = 25,
+    reference_root: str | Path | None = None,
+) -> list[dict[str, Any]]:
+    reference = load_recursive_module_reference(reference_root)
     rows = [
         row
         for row in reference.get("recipes", [])
@@ -624,8 +635,13 @@ def filter_recipes(*, search: str = "", limit: int = 25) -> list[dict[str, Any]]
     return rows[: max(1, int(limit))]
 
 
-def filter_recipe_flags(*, search: str = "", limit: int = 25) -> list[dict[str, Any]]:
-    reference = load_recursive_module_reference()
+def filter_recipe_flags(
+    *,
+    search: str = "",
+    limit: int = 25,
+    reference_root: str | Path | None = None,
+) -> list[dict[str, Any]]:
+    reference = load_recursive_module_reference(reference_root)
     rows = [
         row
         for row in reference.get("flags", [])
