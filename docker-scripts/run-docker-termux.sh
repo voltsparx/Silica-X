@@ -18,7 +18,7 @@ RUNNER_STOP=0
 RUNNER_STOP_DOCKER=0
 RUNNER_SHOW_CONTEXTS=0
 RUNNER_DIAGNOSE=0
-RUNNER_SERVICE="sylica-x"
+RUNNER_SERVICE="silica-x"
 RUNNER_PROFILE=""
 RUNNER_PYTHON_VERSION=""
 RUNNER_CONTEXT=""
@@ -58,18 +58,18 @@ Runner options (reserved for this script):
   --runner-show-contexts     List Docker contexts and exit.
   --runner-diagnose          Run non-interactive environment diagnostics and exit.
   --runner-context <name>    Use a specific Docker context.
-  --runner-use-tor-service   Force Tor service container (sylica-x-tor).
-  --runner-service <name>    Override compose service (default: sylica-x).
+  --runner-use-tor-service   Force Tor service container (silica-x-tor).
+  --runner-service <name>    Override compose service (default: silica-x).
   --runner-profile <name>    Override compose profile (default: auto).
   --runner-python-version <v>  Override Docker build arg PYTHON_VERSION (e.g., 3.13).
   --runner-no-install        Never install missing Docker components.
   --runner-prompt            Force Sylica prompt mode (ignore sylica-args).
 
 Sylica args:
-  Any argument not prefixed with --runner- is passed to sylica-x.
-  If no sylica args are passed, sylica-x starts in prompt mode.
+  Any argument not prefixed with --runner- is passed to silica-x.
+  If no sylica args are passed, silica-x starts in prompt mode.
   If sylica args include --tor (without --no-tor), this script auto-selects
-  service 'sylica-x-tor' and profile 'tor' unless you override it.
+  service 'silica-x-tor' and profile 'tor' unless you override it.
 
 Termux note:
   Android/Termux generally uses Docker CLI with a remote Docker daemon.
@@ -216,13 +216,13 @@ configure_mode_and_service() {
   fi
 
   if [[ "$RUNNER_FORCE_TOR_SERVICE" -eq 1 ]]; then
-    RUNNER_SERVICE="sylica-x-tor"
+    RUNNER_SERVICE="silica-x-tor"
     if [[ "$RUNNER_PROFILE_SET" -eq 0 ]]; then
       RUNNER_PROFILE="tor"
     fi
   fi
 
-  if [[ "$RUNNER_SERVICE" == "sylica-x-tor" && "$RUNNER_PROFILE_SET" -eq 0 && -z "$RUNNER_PROFILE" ]]; then
+  if [[ "$RUNNER_SERVICE" == "silica-x-tor" && "$RUNNER_PROFILE_SET" -eq 0 && -z "$RUNNER_PROFILE" ]]; then
     RUNNER_PROFILE="tor"
   fi
 
@@ -238,7 +238,7 @@ configure_mode_and_service() {
       fi
     done
     if [[ "$wants_tor" -eq 1 && "$disables_tor" -eq 0 ]]; then
-      RUNNER_SERVICE="sylica-x-tor"
+      RUNNER_SERVICE="silica-x-tor"
       if [[ "$RUNNER_PROFILE_SET" -eq 0 ]]; then
         RUNNER_PROFILE="tor"
       fi
@@ -664,12 +664,12 @@ run_sylica() {
   fi
 
   if [[ "${#SYLICA_ARGS[@]}" -eq 0 ]]; then
-    info "Starting Sylica-X in prompt mode via Docker service: $RUNNER_SERVICE"
+    info "Starting Silica-X in prompt mode via Docker service: $RUNNER_SERVICE"
     compose_exec run --rm "$RUNNER_SERVICE"
     return
   fi
 
-  info "Running Sylica-X via Docker service: $RUNNER_SERVICE"
+  info "Running Silica-X via Docker service: $RUNNER_SERVICE"
   compose_exec run --rm "$RUNNER_SERVICE" "${SYLICA_ARGS[@]}"
 }
 

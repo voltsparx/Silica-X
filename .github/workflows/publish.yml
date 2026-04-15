@@ -1,4 +1,4 @@
-name: Sylica-X Release Build
+name: Silica-X Release Build
 
 on:
   release:

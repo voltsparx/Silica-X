@@ -1,6 +1,6 @@
 # Recon Intelligence Tranche
 
-This tranche implements the highest-signal items from the self-assessment notes as native Sylica-X surface workflow features.
+This tranche implements the highest-signal items from the self-assessment notes as native Silica-X surface workflow features.
 
 ## What Changed
 
@@ -45,4 +45,4 @@ The implementation was informed by the local study trees under `temp/`:
 - Graph-and-registry source trees
   Inspired the emphasis on fast attack-surface enumeration and active/passive separation.
 
-No foreign framework code was copied into the runtime path. The result is modeled and implemented as part of Sylica-X itself.
+No foreign framework code was copied into the runtime path. The result is modeled and implemented as part of Silica-X itself.

@@ -1,15 +1,15 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Sylica-X Intelligence Framework
+# Silica-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Sylica-X
+# Repository : https://github.com/voltsparx/Silica-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root
 #
-# This file is part of Sylica-X and is subject to the terms
+# This file is part of Silica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
@@ -23,7 +23,7 @@ from pathlib import Path
 from typing import Iterable
 
 
-CONFIG_FILENAME = ".sylica-x-config"
+CONFIG_FILENAME = ".silica-x-config"
 DEFAULT_OUTPUT_TYPES = ("cli", "html", "csv", "json")
 ALLOWED_OUTPUT_TYPES = set(DEFAULT_OUTPUT_TYPES)
 

@@ -1,15 +1,15 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Sylica-X Intelligence Framework
+# Silica-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Sylica-X
+# Repository : https://github.com/voltsparx/Silica-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root
 #
-# This file is part of Sylica-X and is subject to the terms
+# This file is part of Silica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
@@ -69,7 +69,7 @@ class ConsoleSpinner:
     def start(self) -> None:
         if not self.enabled or self._thread is not None:
             return
-        self._thread = threading.Thread(target=self._spin, name="sylica_x_spinner", daemon=True)
+        self._thread = threading.Thread(target=self._spin, name="silica_x_spinner", daemon=True)
         self._thread.start()
 
     def stop(self) -> None:

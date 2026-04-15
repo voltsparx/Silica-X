@@ -12,7 +12,7 @@
   "priority": "harden",
   "action": "Increase non-blocking collectors and connector reuse.",
   "sylica": {
-    "project": "Sylica-X",
+    "project": "Silica-X",
     "version": "9.3.0",
     "theme": "Lattice",
     "component": "intel_pack"

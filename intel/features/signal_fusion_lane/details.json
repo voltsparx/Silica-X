@@ -12,7 +12,7 @@
   "priority": "harden",
   "action": "Expand connector orchestration to leverage high-value multi-source collectors safely.",
   "sylica": {
-    "project": "Sylica-X",
+    "project": "Silica-X",
     "version": "9.3.0",
     "theme": "Lattice",
     "component": "intel_pack"

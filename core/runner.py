@@ -1,19 +1,19 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Sylica-X Intelligence Framework
+# Silica-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Sylica-X
+# Repository : https://github.com/voltsparx/Silica-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root 
 #
-# This file is part of Sylica-X and is subject to the terms
+# This file is part of Silica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
-"""Main runner orchestration for Sylica-X."""
+"""Main runner orchestration for Silica-X."""
 
 from __future__ import annotations
 
@@ -1216,7 +1216,7 @@ def _collect_runtime_inventory() -> RuntimeInventorySummary:
             hybrid_architecture=build_hybrid_architecture_snapshot(),
         )
 
-    return run_with_spinner("[*] Loading Sylica-X runtime inventory... ", _build)
+    return run_with_spinner("[*] Loading Silica-X runtime inventory... ", _build)
 
 
 def _print_runtime_loaded_inventory() -> None:
@@ -4373,7 +4373,7 @@ async def run_prompt_mode(initial_state: RunnerState | None = None) -> int:
         lowered = " ".join(raw_tokens).lower()
         keyword_match = _keyword_to_command(lowered)
         if lowered in PROMPT_KEYWORDS["exit"]:
-            print(c("\nExiting Sylica-X.", Colors.RED))
+            print(c("\nExiting Silica-X.", Colors.RED))
             return EXIT_SUCCESS
         if lowered in PROMPT_KEYWORDS["help"]:
             show_prompt_help()
@@ -4521,7 +4521,7 @@ async def run(argv: Sequence[str] | None = None) -> int:
         print(
             c(
                 "Global flags --about/--explain cannot be combined with a command. "
-                "Run them alone (example: python sylica-x.py --about).",
+                "Run them alone (example: python silica-x.py --about).",
                 Colors.RED,
             )
         )

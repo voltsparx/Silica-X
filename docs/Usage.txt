@@ -1,10 +1,10 @@
-Sylica-X v9.3.0 (Theme: Lattice) Usage Guide
+Silica-X v9.3.0 (Theme: Lattice) Usage Guide
 ==========================================
 
 1) Installation
 ---------------
-git clone https://github.com/voltsparx/Sylica-X.git
-cd Sylica-X
+git clone https://github.com/voltsparx/Silica-X.git
+cd Silica-X
 pip install -r requirements.txt
 
 Optional dev tooling:
@@ -20,13 +20,13 @@ OCR roadmap note:
 2) Launch Modes
 ---------------
 Interactive prompt mode (default):
-python sylica-x.py
+python silica-x.py
 
 Explicit prompt mode:
-python sylica-x.py prompt
+python silica-x.py prompt
 
 Direct command mode:
-python sylica-x.py <command> [flags]
+python silica-x.py <command> [flags]
 
 Prompt-mode startup shows loaded inventory:
 - plugin/filter count
@@ -128,7 +128,7 @@ Execution mode aliases (v9.3.0):
     <tr><td><code>python -m pytest -q</code></td><td>PASS</td><td>165 tests passed (latest run 2026-03-14).</td></tr>
     <tr><td><code>python -m ruff check .</code></td><td>PASS</td><td>No lint failures.</td></tr>
     <tr><td><code>python -m mypy</code></td><td>PASS</td><td>No type errors found (repository scope).</td></tr>
-    <tr><td><code>python -m compileall -q core filters plugins tests sylica-x.py</code></td><td>PASS</td><td>Compile smoke passed.</td></tr>
+    <tr><td><code>python -m compileall -q core filters plugins tests silica-x.py</code></td><td>PASS</td><td>Compile smoke passed.</td></tr>
     <tr><td>CLI command matrix + quicktest aliases + prompt scripted smoke</td><td>PASS</td><td>All tested commands returned exit code 0.</td></tr>
     <tr><td>Profile/surface/fusion/orchestrate command-path checks via <code>--list-plugins/--list-filters</code> + <code>anonymity --check</code></td><td>PASS</td><td>All returned exit code 0 without network collection.</td></tr>
     <tr><td><code>live</code> command</td><td>SKIPPED</td><td>Long-running server mode by design.</td></tr>
@@ -258,7 +258,7 @@ Wizard capability flags:
   --sync-modules
 
 Seeded wizard example:
-python sylica-x.py wizard --profile-phase --surface-phase --fusion-phase --usernames alice,bob --domain example.com --profile-preset deep --surface-preset balanced --extension-control hybrid --plugin threat_conductor --filter triage_priority_filter --html --csv --ct --rdap
+python silica-x.py wizard --profile-phase --surface-phase --fusion-phase --usernames alice,bob --domain example.com --profile-preset deep --surface-preset balanced --extension-control hybrid --plugin threat_conductor --filter triage_priority_filter --html --csv --ct --rdap
 
 
 4) Prompt Commands
@@ -357,11 +357,11 @@ Current runtime extension inventory:
   - crypto_xor_attachment
   - crypto_rot13_attachment
 - discover/list:
-  python sylica-x.py plugins --scope all
+  python silica-x.py plugins --scope all
   (crypto plugins appear under "Cryptography Plugin Set")
 - execute by name:
-  python sylica-x.py profile alice --plugin crypto_aes_attachment --html
-  python sylica-x.py fusion alice example.com --plugin crypto_xor_attachment --filter signal_lane_fusion --html
+  python silica-x.py profile alice --plugin crypto_aes_attachment --html
+  python silica-x.py fusion alice example.com --plugin crypto_xor_attachment --filter signal_lane_fusion --html
 - reporting behavior:
   CLI/HTML include crypto configuration labels and payload/source summaries.
   strict-mode behavior is tied to scan depth (deep/max = stricter handling).
@@ -419,45 +419,45 @@ CSV enrichment:
 10) Example Workflows
 ---------------------
 Framework description:
-python sylica-x.py --about
+python silica-x.py --about
 
 Explain guide:
-python sylica-x.py --explain
+python silica-x.py --explain
 
 Tor diagnostics:
-python sylica-x.py anonymity --check
+python silica-x.py anonymity --check
 
 Profile scan with explicit selectors:
-python sylica-x.py profile alice --plugin threat_conductor,account_recovery_exposure_probe --filter triage_priority_filter,contact_quality_filter --html --csv
+python silica-x.py profile alice --plugin threat_conductor,account_recovery_exposure_probe --filter triage_priority_filter,contact_quality_filter --html --csv
 
 Surface scan with lifecycle and transport:
-python sylica-x.py surface example.com --plugin rdap_lifecycle_inspector,surface_transport_stability_probe --filter subdomain_attack_path_filter,evidence_consistency_filter --html
+python silica-x.py surface example.com --plugin rdap_lifecycle_inspector,surface_transport_stability_probe --filter subdomain_attack_path_filter,evidence_consistency_filter --html
 
 Fusion scan with rich extension stack:
-python sylica-x.py fusion alice example.com --plugin signal_fusion_core,link_outbound_risk_profiler --filter triage_priority_filter,link_hygiene_filter --html --csv
+python silica-x.py fusion alice example.com --plugin signal_fusion_core,link_outbound_risk_profiler --filter triage_priority_filter,link_hygiene_filter --html --csv
 
 List plugins and filters:
-python sylica-x.py plugins --scope all
-python sylica-x.py filters --scope all
+python silica-x.py plugins --scope all
+python silica-x.py filters --scope all
 
 Recent targets:
-python sylica-x.py history --limit 25
+python silica-x.py history --limit 25
 
 Quicktest:
-python sylica-x.py quicktest
-python sylica-x.py quicktest --list-templates
-python sylica-x.py quicktest --template atlas-mercier --json
+python silica-x.py quicktest
+python silica-x.py quicktest --list-templates
+python silica-x.py quicktest --template atlas-mercier --json
 
 
 11) Docker
 ----------
 Standard container:
-docker compose -f docker/docker-compose.yml run --rm sylica-x help
-docker compose -f docker/docker-compose.yml run --rm sylica-x profile alice --html
+docker compose -f docker/docker-compose.yml run --rm silica-x help
+docker compose -f docker/docker-compose.yml run --rm silica-x profile alice --html
 
 Tor-enabled profile:
-docker compose -f docker/docker-compose.yml --profile tor run --rm sylica-x-tor anonymity --check
-docker compose -f docker/docker-compose.yml --profile tor run --rm sylica-x-tor profile alice --tor --html
+docker compose -f docker/docker-compose.yml --profile tor run --rm silica-x-tor anonymity --check
+docker compose -f docker/docker-compose.yml --profile tor run --rm silica-x-tor profile alice --tor --html
 
 Runner scripts (guided setup + launch):
 - Linux:
@@ -509,7 +509,7 @@ Type checking:
 python -m mypy
 
 Bytecode compile check:
-python -m compileall -q core filters plugins tests sylica-x.py
+python -m compileall -q core filters plugins tests silica-x.py
 
 Current verified snapshot:
 - tests: 165 passed (latest run 2026-03-14)

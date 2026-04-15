@@ -1,15 +1,15 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Sylica-X Intelligence Framework
+# Silica-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Sylica-X
+# Repository : https://github.com/voltsparx/Silica-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root 
 #
-# This file is part of Sylica-X and is subject to the terms
+# This file is part of Silica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
@@ -842,11 +842,11 @@ def build_module_catalog(
         "- `filter-modules.json`: filter-like subset",
         "",
         "Refresh from CLI:",
-        "- `python sylica-x.py modules --sync`",
+        "- `python silica-x.py modules --sync`",
         "",
         "Advanced query examples:",
-        "- `python sylica-x.py modules --search dns --sort-by power_score --descending`",
-        "- `python sylica-x.py modules --kind plugin --tag identity --min-score 55`",
+        "- `python silica-x.py modules --search dns --sort-by power_score --descending`",
+        "- `python silica-x.py modules --kind plugin --tag identity --min-score 55`",
         "",
     ]
     (out_root / "README.md").write_text("\n".join(readme_lines), encoding="utf-8")

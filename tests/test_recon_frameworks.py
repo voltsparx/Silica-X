@@ -40,7 +40,7 @@ class TestReconFrameworks(unittest.TestCase):
         self.assertEqual(mapping.get("recon_mode"), "passive")
         self.assertEqual(mapping.get("surface_preset"), "deep")
         self.assertTrue(mapping.get("include_ct"))
-        self.assertIn("sylica-x.py surface example.com", str(payload.get("execution_preview", "")))
+        self.assertIn("silica-x.py surface example.com", str(payload.get("execution_preview", "")))
 
     def test_load_graph_registry_reference_discovers_commands(self):
         payload = load_graph_registry_reference()

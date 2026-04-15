@@ -24,7 +24,7 @@ $RunnerStop = $false
 $RunnerStopDocker = $false
 $RunnerShowContexts = $false
 $RunnerDiagnose = $false
-$RunnerService = 'sylica-x'
+$RunnerService = 'silica-x'
 $RunnerProfile = ''
 $RunnerPythonVersion = ''
 $RunnerContext = ''
@@ -66,18 +66,18 @@ Runner options (reserved for this script):
   --runner-show-contexts     List Docker contexts and exit.
   --runner-diagnose          Run non-interactive environment diagnostics and exit.
   --runner-context <name>    Use a specific Docker context.
-  --runner-use-tor-service   Force Tor service container (sylica-x-tor).
-  --runner-service <name>    Override compose service (default: sylica-x).
+  --runner-use-tor-service   Force Tor service container (silica-x-tor).
+  --runner-service <name>    Override compose service (default: silica-x).
   --runner-profile <name>    Override compose profile (default: auto).
   --runner-python-version <v>  Override Docker build arg PYTHON_VERSION (e.g., 3.13).
   --runner-no-install        Never install missing Docker components.
   --runner-prompt            Force Sylica prompt mode (ignore sylica-args).
 
 Sylica args:
-  Any argument not prefixed with --runner- is passed to sylica-x.
-  If no sylica args are passed, sylica-x starts in prompt mode.
+  Any argument not prefixed with --runner- is passed to silica-x.
+  If no sylica args are passed, silica-x starts in prompt mode.
   If sylica args include --tor (without --no-tor), this script auto-selects
-  service 'sylica-x-tor' and profile 'tor' unless you override it.
+  service 'silica-x-tor' and profile 'tor' unless you override it.
 
 Examples:
   .\docker-scripts\$ScriptName
@@ -213,13 +213,13 @@ function Configure-ModeAndService {
   }
 
   if ($RunnerForceTorService) {
-    $script:RunnerService = 'sylica-x-tor'
+    $script:RunnerService = 'silica-x-tor'
     if (-not $RunnerProfileSet) {
       $script:RunnerProfile = 'tor'
     }
   }
 
-  if ($RunnerService -eq 'sylica-x-tor' -and -not $RunnerProfileSet -and [string]::IsNullOrWhiteSpace($RunnerProfile)) {
+  if ($RunnerService -eq 'silica-x-tor' -and -not $RunnerProfileSet -and [string]::IsNullOrWhiteSpace($RunnerProfile)) {
     $script:RunnerProfile = 'tor'
   }
 
@@ -234,7 +234,7 @@ function Configure-ModeAndService {
       }
     }
     if ($wantsTor -and -not $disablesTor) {
-      $script:RunnerService = 'sylica-x-tor'
+      $script:RunnerService = 'silica-x-tor'
       if (-not $RunnerProfileSet) {
         $script:RunnerProfile = 'tor'
       }
@@ -794,9 +794,9 @@ function Run-Sylica {
   $runArgs.Add($RunnerService)
 
   if ($SylicaArgs.Count -eq 0) {
-    Write-InfoLine "Starting Sylica-X in prompt mode via Docker service: $RunnerService"
+    Write-InfoLine "Starting Silica-X in prompt mode via Docker service: $RunnerService"
   } else {
-    Write-InfoLine "Running Sylica-X via Docker service: $RunnerService"
+    Write-InfoLine "Running Silica-X via Docker service: $RunnerService"
     foreach ($arg in $SylicaArgs) {
       $runArgs.Add($arg)
     }

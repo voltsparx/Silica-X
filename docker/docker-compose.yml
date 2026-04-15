@@ -26,16 +26,16 @@ x-sylica-common: &sylica-common
     start_period: 10s
 
 services:
-  sylica-x:
+  silica-x:
     <<: *sylica-common
     build:
       context: ..
       dockerfile: docker/Dockerfile
       args:
         PYTHON_VERSION: ${SYLICA_PYTHON_VERSION:-3.13}
-    container_name: sylica-x
+    container_name: silica-x
 
-  sylica-x-tor:
+  silica-x-tor:
     <<: *sylica-common
     profiles: ["tor"]
     build:
@@ -43,4 +43,4 @@ services:
       dockerfile: docker/Dockerfile.tor
       args:
         PYTHON_VERSION: ${SYLICA_PYTHON_VERSION:-3.13}
-    container_name: sylica-x-tor
+    container_name: silica-x-tor

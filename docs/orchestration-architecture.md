@@ -2,7 +2,7 @@
 
 Release: v9.3.0 (Theme: Lattice)
 
-Sylica-X now includes an additive layered architecture aligned with `structure.txt`.
+Silica-X now includes an additive layered architecture aligned with `structure.txt`.
 
 ## Core Flow
 

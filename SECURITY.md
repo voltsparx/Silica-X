@@ -2,7 +2,7 @@
 
 ## 1. Supported Versions
 
-The latest stable version of Sylica-X receives security updates.  
+The latest stable version of Silica-X receives security updates.  
 Older versions may not be actively maintained.
 
 Please ensure you are using the most recent release before reporting issues.
@@ -11,7 +11,7 @@ Please ensure you are using the most recent release before reporting issues.
 
 ## 2. Responsible Use
 
-Sylica-X is an intelligence and OSINT framework intended for:
+Silica-X is an intelligence and OSINT framework intended for:
 
 - Personal research
 - Educational purposes
@@ -26,7 +26,7 @@ Unauthorized use, abuse, or illegal activity is strictly discouraged and not sup
 
 ## 3. Reporting Vulnerabilities
 
-If you discover a security vulnerability in Sylica-X itself, please report it responsibly.
+If you discover a security vulnerability in Silica-X itself, please report it responsibly.
 
 Contact:
 - voltsparx@gmail.com
@@ -54,18 +54,18 @@ Upon receiving a report:
 
 ## 5. Scope
 
-This policy applies to vulnerabilities in the Sylica-X framework codebase.
+This policy applies to vulnerabilities in the Silica-X framework codebase.
 
 It does not apply to:
 - Third-party tools
 - External services
-- Targets analyzed using Sylica-X
+- Targets analyzed using Silica-X
 
 ---
 
 ## 6. Legal Notice
 
-Sylica-X is provided "as is" without warranty.
+Silica-X is provided "as is" without warranty.
 
 The maintainers are not responsible for misuse of the software.  
 Users are solely responsible for ensuring lawful and ethical usage.

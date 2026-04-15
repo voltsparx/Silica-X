@@ -124,7 +124,7 @@ _NATIVE_CAPABILITIES: dict[str, str] = {
 _PARTIAL_CAPABILITIES: dict[str, str] = {
     "tech-detect": "Technology hints are inferred through HTTP behavior and headers, not a full fingerprint stack",
     "spider": "Recursive web discovery is represented as follow-up guidance, not crawler parity",
-    "web-screenshots": "Sylica-X validates web targets but does not capture screenshots natively",
+    "web-screenshots": "Silica-X validates web targets but does not capture screenshots natively",
     "baddns": "DNS takeover review is represented as prioritization hints, not dedicated takeover modules",
     "portscan": "Packet-crafting engines exist for ARP, SYN, TCP connect, UDP, FIN, NULL, XMAS, and OS fingerprint research, but live execution parity is still being integrated",
     "service-enum": "Read-only packet crafting and banner-intelligence controls exist, but full protocol fingerprint execution remains an incremental buildout",
@@ -541,7 +541,7 @@ def build_surface_recipe_plan(
     command_preview = shlex.join(
         [
             "python",
-            "sylica-x.py",
+            "silica-x.py",
             "surface",
             normalized_domain,
             "--preset",
@@ -578,9 +578,9 @@ def build_surface_recipe_plan(
         },
         "execution_preview": command_preview,
         "notes": [
-            "This is a native Sylica-X translation of source-derived recipe intent, not a foreign engine port.",
-            "Supported coverage maps into Sylica-X passive, active, and hybrid surface collection lanes.",
-            "Unsupported module families remain analyst follow-up areas until dedicated Sylica-X engines are added.",
+            "This is a native Silica-X translation of source-derived recipe intent, not a foreign engine port.",
+            "Supported coverage maps into Silica-X passive, active, and hybrid surface collection lanes.",
+            "Unsupported module families remain analyst follow-up areas until dedicated Silica-X engines are added.",
         ],
     }
 

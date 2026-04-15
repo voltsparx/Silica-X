@@ -1,27 +1,27 @@
 # Recon Source Integration
 
-Sylica-X includes a native source-study layer for local recon architecture references under `temp/`.
+Silica-X includes a native source-study layer for local recon architecture references under `temp/`.
 
 Current command surface:
 
-- `python sylica-x.py frameworks`
+- `python silica-x.py frameworks`
   - Shows which local source profiles were discovered under `temp/`
-- `python sylica-x.py frameworks --framework recursive-modules --modules`
+- `python silica-x.py frameworks --framework recursive-modules --modules`
   - Lists modules parsed from the recursive-module source profile
-- `python sylica-x.py frameworks --framework recursive-modules --presets`
+- `python silica-x.py frameworks --framework recursive-modules --presets`
   - Lists recipes parsed from the recursive-module source profile
-- `python sylica-x.py frameworks --framework graph-registry --commands`
+- `python silica-x.py frameworks --framework graph-registry --commands`
   - Shows command families and engine layout from the graph-registry source profile
-- `python sylica-x.py surface-kit example.com --preset subdomain-enum --dry-run`
-  - Builds a source-derived plan and shows the native Sylica-X command it maps to
-- `python sylica-x.py surface-kit example.com --preset web-basic`
-  - Executes the translated Sylica-X surface workflow
+- `python silica-x.py surface-kit example.com --preset subdomain-enum --dry-run`
+  - Builds a source-derived plan and shows the native Silica-X command it maps to
+- `python silica-x.py surface-kit example.com --preset web-basic`
+  - Executes the translated Silica-X surface workflow
 
 What this is:
 
 - A local source-study and translation layer
 - A way to understand what the studied recon architectures provide to operators
-- A native Sylica-X execution bridge for the source recipes that overlap with Sylica-X surface capabilities
+- A native Silica-X execution bridge for the source recipes that overlap with Silica-X surface capabilities
 
 What this is not:
 

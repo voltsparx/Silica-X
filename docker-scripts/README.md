@@ -8,7 +8,7 @@ These scripts wrap `docker/docker-compose.yml` and provide guided setup for:
 - Docker daemon startup checks
 - Docker Compose availability checks
 - Basic host resource checks (RAM + disk)
-- Prompt-safe argument forwarding to Sylica-X
+- Prompt-safe argument forwarding to Silica-X
 - Clean shutdown of Sylica containers (and optional Docker host stop)
 - Runtime upgrade controls (`--runner-upgrade`, `--runner-pull`, `--runner-no-cache`)
 - Host Docker/Desktop upgrade control (`--runner-upgrade-host`)
@@ -98,7 +98,7 @@ Script-only flags are namespaced with `--runner-`:
 - `--runner-no-install`
 - `--runner-prompt`
 
-All non-`--runner-*` args are forwarded to `sylica-x.py`.
+All non-`--runner-*` args are forwarded to `silica-x.py`.
 No forwarded args starts Sylica prompt mode.
 
 ## Shutdown Behavior

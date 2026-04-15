@@ -1,15 +1,15 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Sylica-X Intelligence Framework
+# Silica-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Sylica-X
+# Repository : https://github.com/voltsparx/Silica-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root 
 #
-# This file is part of Sylica-X and is subject to the terms
+# This file is part of Silica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
@@ -319,7 +319,7 @@ def _add_surface_kit_args(parser: argparse.ArgumentParser) -> None:
         "domain",
         nargs="?",
         default="",
-        help="Domain to translate into a source-derived Sylica-X surface run.",
+        help="Domain to translate into a source-derived Silica-X surface run.",
     )
     _add_toggle_flags(parser, "tor", "Tor routing")
     _add_toggle_flags(parser, "proxy", "HTTP proxy routing")
@@ -338,19 +338,19 @@ def _add_surface_kit_args(parser: argparse.ArgumentParser) -> None:
         "--require-flag",
         action="append",
         default=[],
-        help="Require source flags when building the native Sylica-X plan.",
+        help="Require source flags when building the native Silica-X plan.",
     )
     parser.add_argument(
         "--exclude-flag",
         action="append",
         default=[],
-        help="Exclude source flags when building the native Sylica-X plan.",
+        help="Exclude source flags when building the native Silica-X plan.",
     )
     parser.add_argument(
         "--recon-mode",
         choices=list(SURFACE_RECON_MODES),
         default=None,
-        help="Override the translated Sylica-X recon mode.",
+        help="Override the translated Silica-X recon mode.",
     )
     parser.add_argument(
         "--list-modules",
@@ -370,7 +370,7 @@ def _add_surface_kit_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Show the translated Sylica-X execution plan without running a scan.",
+        help="Show the translated Silica-X execution plan without running a scan.",
     )
     parser.add_argument(
         "--json",
@@ -885,7 +885,7 @@ def build_root_parser(
     default_dashboard_port: int,
 ) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="sylica-x.py",
+        prog="silica-x.py",
         description=f"{project_name} v{version} OSINT runner (flags + prompt + keyword system).",
     )
     parser.add_argument(
@@ -938,7 +938,7 @@ def build_root_parser(
 
     surface_kit_parser = subparsers.add_parser(
         "surface-kit",
-        help="Use local source-study recipes to plan or run a native Sylica-X surface workflow.",
+        help="Use local source-study recipes to plan or run a native Silica-X surface workflow.",
     )
     _add_surface_kit_args(surface_kit_parser)
 
@@ -1012,7 +1012,7 @@ def build_root_parser(
     subparsers.add_parser(
         "capability-pack",
         aliases=["intel"],
-        help="Generate Sylica-X capability-pack folders and report artifacts.",
+        help="Generate Silica-X capability-pack folders and report artifacts.",
     )
 
     wizard_parser = subparsers.add_parser(

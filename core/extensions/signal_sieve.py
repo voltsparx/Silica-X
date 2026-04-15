@@ -1,15 +1,15 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Sylica-X Intelligence Framework
+# Silica-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Sylica-X
+# Repository : https://github.com/voltsparx/Silica-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root 
 #
-# This file is part of Sylica-X and is subject to the terms
+# This file is part of Silica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
@@ -77,7 +77,7 @@ def _normalize_spec(module_name: str, raw: dict[str, Any]) -> FilterSpec:
         description=description,
         scopes=valid_scopes,
         version=str(raw.get("version") or "1.0"),
-        author=str(raw.get("author") or "Sylica-X"),
+        author=str(raw.get("author") or "Silica-X"),
         aliases=aliases,
     )
 

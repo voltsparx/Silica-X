@@ -21,7 +21,7 @@ class TestHybridArchitecture(unittest.TestCase):
 
     def test_hybrid_architecture_snapshot_is_native_to_sylica(self):
         snapshot = build_hybrid_architecture_snapshot()
-        self.assertEqual(snapshot["identity"], "sylica-x-hybrid")
+        self.assertEqual(snapshot["identity"], "silica-x-hybrid")
         self.assertEqual(len(snapshot["lanes"]), 4)
         self.assertEqual(len(snapshot["engines"]), 5)
         inspiration_ids = {row["id"] for row in snapshot["inspiration"]}
@@ -42,7 +42,7 @@ class TestHybridArchitecture(unittest.TestCase):
             filter_scope_counts={"profile": 1, "surface": 1, "fusion": 2},
             hybrid_architecture=hybrid,
         )
-        self.assertEqual(snapshot["hybrid_architecture"]["identity"], "sylica-x-hybrid")
+        self.assertEqual(snapshot["hybrid_architecture"]["identity"], "silica-x-hybrid")
         self.assertEqual(snapshot["inventory"]["modules"], 11)
 
     def test_spinner_frames_match_console_cycle(self):

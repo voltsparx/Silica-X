@@ -1,1 +1,1 @@
-"""Platform manifest data package for Sylica-X."""
+"""Platform manifest data package for Silica-X."""

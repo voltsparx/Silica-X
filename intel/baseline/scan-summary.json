@@ -29,7 +29,7 @@
     "test_coverage": 5
   },
   "sylica": {
-    "project": "Sylica-X",
+    "project": "Silica-X",
     "version": "9.3.0",
     "theme": "Lattice",
     "component": "intel_pack"

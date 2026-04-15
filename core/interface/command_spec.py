@@ -1,15 +1,15 @@
 # ------------------------------------------------------------------------------
 # SPDX-License-Identifier: Proprietary
 #
-# Sylica-X Intelligence Framework
+# Silica-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Sylica-X
+# Repository : https://github.com/voltsparx/Silica-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root
 #
-# This file is part of Sylica-X and is subject to the terms
+# This file is part of Silica-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ------------------------------------------------------------------------------
 
@@ -158,7 +158,7 @@ def surface_scan_type_specs() -> tuple[SurfaceScanTypeSpec, ...]:
 
 
 def normalize_surface_scan_type(value: str | None) -> str | None:
-    """Normalize operator scan-type aliases into supported Sylica-X scan directives."""
+    """Normalize operator scan-type aliases into supported Silica-X scan directives."""
 
     key = str(value or "").strip().lower().replace("_", "-")
     if not key:
