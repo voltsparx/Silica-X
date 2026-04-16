@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project | Silica-X</title>
+<meta name="description" content="Project context, maintainer, usage boundaries, and roadmap signals for Silica-X.">
+<link rel="canonical" href="https://voltsparx.github.io/Silica-X/project.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/core/base.css">
+<link rel="stylesheet" href="css/layout/topbar.css">
+<link rel="stylesheet" href="css/layout/sidebar.css">
+<link rel="stylesheet" href="css/layout/content.css">
+<link rel="stylesheet" href="css/components/workflow.css">
+<link rel="stylesheet" href="css/components/modules.css">
+<link rel="stylesheet" href="css/components/development.css">
+<link rel="stylesheet" href="css/layout/responsive.css">
+<link rel="icon" href="web_assets/media/silica-x-favicon.ico" sizes="any">
+</head>
+<body data-page="project.html" data-default-section="author">
+<header id="topbar">
+  <a id="topbar-brand" href="index.html">
+    <img src="web_assets/media/silica-x-web.png" alt="Silica-X logo">
+    <span id="topbar-brand-text">
+      <span id="topbar-name">Silica-X</span>
+      <span id="topbar-tagline">OSINT orchestration and correlation framework</span>
+    </span>
+  </a>
+  <div id="topbar-version">v9.3.0 · Python 3.11+ · Ember</div>
+  <div class="topbar-search">
+    <input id="docs-search-input" type="search" placeholder="Search the docs">
+    <div id="docs-search-results" class="topbar-search-results" hidden></div>
+  </div>
+  <div id="topbar-links">
+    <a href="development.html#release-radar">Release radar</a>
+    <a href="workflow.html#how">Architecture</a>
+    <a href="https://github.com/voltsparx/Silica-X" target="_blank" rel="noreferrer">GitHub</a>
+    <div class="contact-wrap">
+      <button id="contact-toggle" class="contact-toggle" type="button" aria-expanded="false">Contact</button>
+      <div id="contact-popover" class="contact-popover" hidden>
+        <a href="mailto:voltsparx@gmail.com">voltsparx@gmail.com</a>
+        <a href="https://github.com/voltsparx" target="_blank" rel="noreferrer">github.com/voltsparx</a>
+      </div>
+    </div>
+    <button id="menu-toggle" type="button">Menu</button>
+  </div>
+</header>
+
+<nav id="sidebar" aria-label="Documentation navigation">
+  <div class="sidebar-kicker">Project</div>
+  <h2 class="sidebar-title">Project Context</h2>
+  <p class="sidebar-note">This page keeps the public framing honest: what the project is called, who maintains it, how it should be used, and what signals point to future direction.</p>
+  <div id="sidebar-tabs" class="sidebar-tabs"></div>
+  <div id="sidebar-nav"></div>
+</nav>
+<button id="sidebar-backdrop" type="button" aria-label="Close navigation"></button>
+
+<main id="main">
+  <header class="page-intro">
+    <div class="eyebrow">Project</div>
+    <h1 class="page-title">Silica-X is the public name; the repo still carries a few internal naming seams</h1>
+    <p class="page-copy">Across the README, pyproject, and header comments, the project presents itself as Silica-X. Some internal paths and generated artifacts still use <span class="mono">sylica</span> spellings, but the public identity, package metadata, and repository URL all point to Silica-X.</p>
+  </header>
+
+  <section id="author" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Project context</div>
+        <h2 class="section-title">Maintainer, repository, and usage boundaries</h2>
+      </div>
+    </div>
+    <div class="grid-2">
+      <article class="panel">
+        <h3 class="panel-title">Maintainer and repository</h3>
+        <ul class="simple-list">
+          <li><span class="list-label">Author</span>voltsparx</li>
+          <li><span class="list-label">Contact</span><a href="mailto:voltsparx@gmail.com">voltsparx@gmail.com</a></li>
+          <li><span class="list-label">Repository</span><a href="https://github.com/voltsparx/Silica-X" target="_blank" rel="noreferrer">github.com/voltsparx/Silica-X</a></li>
+          <li><span class="list-label">Package name</span><span class="mono">silica-x</span></li>
+        </ul>
+      </article>
+      <article class="panel">
+        <h3 class="panel-title">Legal and scope posture</h3>
+        <div class="card-copy">
+          <p>The repository’s README and security-facing docs explicitly restrict the framework to legal and authorized use. The project does not present itself as a tool for harassment, stalking, or unauthorized collection, and the website keeps that same boundary.</p>
+        </div>
+      </article>
+    </div>
+    <div class="link-grid section-block">
+      <a class="card" href="https://raw.githubusercontent.com/voltsparx/Silica-X/main/SECURITY.md" target="_blank" rel="noreferrer">
+        <h3 class="card-title">Security Policy</h3>
+        <div class="card-copy"><p>How the project frames security and responsible handling.</p></div>
+      </a>
+      <a class="card" href="https://raw.githubusercontent.com/voltsparx/Silica-X/main/CODE_OF_CONDUCT.md" target="_blank" rel="noreferrer">
+        <h3 class="card-title">Code of Conduct</h3>
+        <div class="card-copy"><p>Community and maintenance expectations.</p></div>
+      </a>
+      <a class="card" href="https://raw.githubusercontent.com/voltsparx/Silica-X/main/LICENSE" target="_blank" rel="noreferrer">
+        <h3 class="card-title">License</h3>
+        <div class="card-copy"><p>The repository metadata currently identifies the project as proprietary.</p></div>
+      </a>
+    </div>
+  </section>
+
+  <section id="signals" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Roadmap signals</div>
+        <h2 class="section-title">What the repo looks strong at today, and what still looks clearly in-progress</h2>
+      </div>
+    </div>
+    <div class="grid-2">
+      <article class="panel">
+        <h3 class="panel-title">Current strengths</h3>
+        <ul class="simple-list">
+          <li><span class="list-label">Unified workflow surface</span>Profile, surface, fusion, and orchestrate all live under one CLI and prompt model.</li>
+          <li><span class="list-label">Extension depth</span>Plugins, filters, scope counts, catalogs, and source-study features make the runtime unusually layered for a local framework.</li>
+          <li><span class="list-label">Engineering discipline</span>Tests, typing, linting, packaging checks, and inventory reports give the repo credibility beyond feature lists.</li>
+        </ul>
+      </article>
+      <article class="panel">
+        <h3 class="panel-title">Visible next steps</h3>
+        <ul class="simple-list">
+          <li><span class="list-label">Richer teaching surfaces</span>Internal planning notes talk about stronger in-framework learning and explanation layers.</li>
+          <li><span class="list-label">Deeper vulnerability and intel lanes</span>Some self-assessment notes point toward expanded vuln mapping, breach/darkweb context, and attack-surface scoring.</li>
+          <li><span class="list-label">More interactive reporting</span>Several notes suggest the HTML experience still has room to grow.</li>
+        </ul>
+      </article>
+    </div>
+    <div class="quote-card section-block">
+      <blockquote>The project already reads like a framework trying to unify operator experience, intelligence depth, and engineering rigor instead of choosing only one of those goals.</blockquote>
+      <cite>Repository reading distilled into website copy</cite>
+    </div>
+  </section>
+</main>
+
+<footer class="footer shell">
+  <div class="footer-grid">
+    <div><div class="footer-title">Silica-X</div><div>Project context and roadmap signals.</div></div>
+    <div><div class="footer-title">Docs</div><a class="footer-link" href="index.html">Overview</a></div>
+    <div><div class="footer-title">Development</div><a class="footer-link" href="development.html#release-radar">Release radar</a></div>
+    <div><div class="footer-title">Repository</div><a class="footer-link" href="https://github.com/voltsparx/Silica-X" target="_blank" rel="noreferrer">GitHub</a></div>
+  </div>
+</footer>
+
+<script src="js/core/site-data.js"></script>
+<script src="js/core/helpers.js"></script>
+<script src="js/features/sidebar.js"></script>
+<script src="js/features/search.js"></script>
+<script src="js/features/workflow-visual.js"></script>
+<script src="js/features/development-feed.js"></script>
+<script src="js/bootstrap/app.js"></script>
+</body>
+</html>

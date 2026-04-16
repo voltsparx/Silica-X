@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reporting | Silica-X</title>
+<meta name="description" content="Output formats, storage layout, history commands, and verification posture for Silica-X.">
+<link rel="canonical" href="https://voltsparx.github.io/Silica-X/reporting.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/core/base.css">
+<link rel="stylesheet" href="css/layout/topbar.css">
+<link rel="stylesheet" href="css/layout/sidebar.css">
+<link rel="stylesheet" href="css/layout/content.css">
+<link rel="stylesheet" href="css/components/workflow.css">
+<link rel="stylesheet" href="css/components/modules.css">
+<link rel="stylesheet" href="css/components/development.css">
+<link rel="stylesheet" href="css/layout/responsive.css">
+<link rel="icon" href="web_assets/media/silica-x-favicon.ico" sizes="any">
+</head>
+<body data-page="reporting.html" data-default-section="outputs">
+<header id="topbar">
+  <a id="topbar-brand" href="index.html">
+    <img src="web_assets/media/silica-x-web.png" alt="Silica-X logo">
+    <span id="topbar-brand-text">
+      <span id="topbar-name">Silica-X</span>
+      <span id="topbar-tagline">OSINT orchestration and correlation framework</span>
+    </span>
+  </a>
+  <div id="topbar-version">v9.3.0 · Python 3.11+ · Ember</div>
+  <div class="topbar-search">
+    <input id="docs-search-input" type="search" placeholder="Search the docs">
+    <div id="docs-search-results" class="topbar-search-results" hidden></div>
+  </div>
+  <div id="topbar-links">
+    <a href="cli-reference.html#commands">CLI</a>
+    <a href="development.html#development-home">Development</a>
+    <a href="https://github.com/voltsparx/Silica-X" target="_blank" rel="noreferrer">GitHub</a>
+    <div class="contact-wrap">
+      <button id="contact-toggle" class="contact-toggle" type="button" aria-expanded="false">Contact</button>
+      <div id="contact-popover" class="contact-popover" hidden>
+        <a href="mailto:voltsparx@gmail.com">voltsparx@gmail.com</a>
+        <a href="https://github.com/voltsparx" target="_blank" rel="noreferrer">github.com/voltsparx</a>
+      </div>
+    </div>
+    <button id="menu-toggle" type="button">Menu</button>
+  </div>
+</header>
+
+<nav id="sidebar" aria-label="Documentation navigation">
+  <div class="sidebar-kicker">Reports</div>
+  <h2 class="sidebar-title">Outputs and Verification</h2>
+  <p class="sidebar-note">Silica-X produces human-readable artifacts, automation-friendly exports, and runtime inventory snapshots that help keep the framework inspectable.</p>
+  <div id="sidebar-tabs" class="sidebar-tabs"></div>
+  <div id="sidebar-nav"></div>
+</nav>
+<button id="sidebar-backdrop" type="button" aria-label="Close navigation"></button>
+
+<main id="main">
+  <header class="page-intro">
+    <div class="eyebrow">Artifacts</div>
+    <h1 class="page-title">Silica-X treats reporting as a first-class layer</h1>
+    <p class="page-copy">The framework does not stop at terminal output. It writes structured artifacts, logs, and inventory snapshots so runs are easier to review, compare, and automate against.</p>
+  </header>
+
+  <section id="outputs" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Output formats</div>
+        <h2 class="section-title">Human view, machine view, and audit trail</h2>
+      </div>
+    </div>
+    <div class="grid-3">
+      <article class="card">
+        <h3 class="card-title">CLI</h3>
+        <div class="card-copy">
+          <p>Immediate operator-friendly output for prompt mode and direct command runs.</p>
+        </div>
+      </article>
+      <article class="card">
+        <h3 class="card-title">JSON</h3>
+        <div class="card-copy">
+          <p>Structured data for later processing, history listing, and machine pipelines.</p>
+        </div>
+      </article>
+      <article class="card">
+        <h3 class="card-title">CSV</h3>
+        <div class="card-copy">
+          <p>Convenient tabular export for spreadsheets and analyst triage workflows.</p>
+        </div>
+      </article>
+      <article class="card">
+        <h3 class="card-title">HTML</h3>
+        <div class="card-copy">
+          <p>Browser-friendly report output and a companion to the live dashboard mode.</p>
+        </div>
+      </article>
+      <article class="card">
+        <h3 class="card-title">Logs</h3>
+        <div class="card-copy">
+          <p>Run logs and framework-level logging for debugging or audit context.</p>
+        </div>
+      </article>
+      <article class="card">
+        <h3 class="card-title">Capability-pack intel</h3>
+        <div class="card-copy">
+          <p>Generated runtime snapshots under <span class="mono">intel/</span>, <span class="mono">plugins/_intel/</span>, and related folders help the project inspect itself.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="storage" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Storage layout</div>
+        <h2 class="section-title">The artifact tree is configurable, but these directories are the default mental model</h2>
+      </div>
+    </div>
+    <div class="directory-tree">
+      <div class="directory-row"><div class="directory-name mono">output/json/</div><div>JSON result files, typically named with sanitized target plus a timestamp suffix.</div></div>
+      <div class="directory-row"><div class="directory-name mono">output/html/</div><div>HTML reports for browser review.</div></div>
+      <div class="directory-row"><div class="directory-name mono">output/cli/</div><div>Saved CLI text reports.</div></div>
+      <div class="directory-row"><div class="directory-name mono">output/csv/</div><div>CSV exports when requested.</div></div>
+      <div class="directory-row"><div class="directory-name mono">output/logs/</div><div>Per-run logs and framework log output.</div></div>
+    </div>
+    <div class="callout callout-info section-block">
+      <div class="callout-title">Output root is not hardcoded forever</div>
+      Use <span class="mono">out-type</span>, <span class="mono">out-print</span>, and <span class="mono">default-out-print</span> to change formats or artifact roots for the current session and persisted defaults.
+    </div>
+  </section>
+
+  <section id="history" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">History and inventory</div>
+        <h2 class="section-title">The project exposes commands for looking backward, not only scanning forward</h2>
+      </div>
+    </div>
+    <div class="grid-2">
+      <article class="panel">
+        <h3 class="panel-title">History commands</h3>
+        <ul class="simple-list">
+          <li><span class="list-label">history</span>Lists scanned targets discovered from saved output artifacts.</li>
+          <li><span class="list-label">targets / scans</span>Alias surfaces for artifact-oriented listing behavior.</li>
+          <li><span class="list-label">live</span>Opens a browser-based view on top of stored results.</li>
+        </ul>
+      </article>
+      <article class="panel">
+        <h3 class="panel-title">Inventory artifacts</h3>
+        <ul class="simple-list">
+          <li><span class="list-label">runtime-inventory</span>The repo ships <span class="mono">intel/runtime-inventory.json</span> with plugin, filter, platform, and module counts.</li>
+          <li><span class="list-label">capability-pack</span>The <span class="mono">capability-pack</span> / <span class="mono">intel</span> command generates structured project self-intel artifacts.</li>
+          <li><span class="list-label">plugin/filter intel</span>Generated views live under <span class="mono">plugins/_intel/</span> and <span class="mono">filters/_intel/</span>.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section id="testing" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Verification</div>
+        <h2 class="section-title">The repo leans heavily on tests and static checks</h2>
+      </div>
+    </div>
+    <div class="roadmap-strip">
+      <div class="roadmap-pill">pytest</div>
+      <div class="roadmap-pill">ruff</div>
+      <div class="roadmap-pill">mypy</div>
+      <div class="roadmap-pill">compileall smoke</div>
+      <div class="roadmap-pill">package build + twine check</div>
+      <div class="roadmap-pill">entrypoint smoke</div>
+    </div>
+    <article class="code-block section-block">
+      <div class="code-head">
+        <span class="code-dot"></span>
+        <span class="code-dot"></span>
+        <span class="code-dot"></span>
+        <span class="code-lang">shell</span>
+      </div>
+      <pre class="code-body"><span class="cmd">python -m pytest -q</span>
+<span class="cmd">python -m ruff check .</span>
+<span class="cmd">python -m mypy</span>
+<span class="cmd">python -m compileall -q core filters modules plugins platforms wordlists silica_x tests silica-x.py</span>
+<span class="cmd">python -m silica_x --about</span>
+<span class="cmd">python silica-x.py --about</span></pre>
+    </article>
+    <div class="callout callout-warn section-block">
+      <div class="callout-title">Current quality snapshot</div>
+      The README currently reports 165 tests passing, Ruff clean, mypy clean, package smoke checks, and runtime inventory generation with zero inventory error counts.
+    </div>
+  </section>
+</main>
+
+<footer class="footer shell">
+  <div class="footer-grid">
+    <div><div class="footer-title">Silica-X</div><div>Outputs, history, and verification docs.</div></div>
+    <div><div class="footer-title">Next</div><a class="footer-link" href="development.html#development-home">Development</a></div>
+    <div><div class="footer-title">Runtime</div><a class="footer-link" href="modes.html#live-dashboard">Live mode</a></div>
+    <div><div class="footer-title">Project</div><a class="footer-link" href="project.html#signals">Roadmap signals</a></div>
+  </div>
+</footer>
+
+<script src="js/core/site-data.js"></script>
+<script src="js/core/helpers.js"></script>
+<script src="js/features/sidebar.js"></script>
+<script src="js/features/search.js"></script>
+<script src="js/features/workflow-visual.js"></script>
+<script src="js/features/development-feed.js"></script>
+<script src="js/bootstrap/app.js"></script>
+</body>
+</html>
+

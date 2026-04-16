@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overview | Silica-X</title>
+<meta name="description" content="Silica-X is a multi-engine OSINT framework for profile intelligence, domain-surface reconnaissance, and fused correlation reporting.">
+<link rel="canonical" href="https://voltsparx.github.io/Silica-X/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Silica-X">
+<meta property="og:title" content="Overview | Silica-X">
+<meta property="og:description" content="Static project docs for the Silica-X OSINT framework.">
+<meta property="og:url" content="https://voltsparx.github.io/Silica-X/">
+<meta property="og:image" content="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docs/website/web_assets/media/silica-x-web.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Overview | Silica-X">
+<meta name="twitter:description" content="Multi-engine OSINT orchestration for profile, surface, fusion, and orchestration workflows.">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docs/website/web_assets/media/silica-x-web.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/core/base.css">
+<link rel="stylesheet" href="css/layout/topbar.css">
+<link rel="stylesheet" href="css/layout/sidebar.css">
+<link rel="stylesheet" href="css/layout/content.css">
+<link rel="stylesheet" href="css/components/workflow.css">
+<link rel="stylesheet" href="css/components/modules.css">
+<link rel="stylesheet" href="css/components/development.css">
+<link rel="stylesheet" href="css/layout/responsive.css">
+<link rel="icon" href="web_assets/media/silica-x-favicon.ico" sizes="any">
+</head>
+<body data-page="index.html" data-default-section="home">
+<header id="topbar">
+  <a id="topbar-brand" href="index.html">
+    <img src="web_assets/media/silica-x-web.png" alt="Silica-X logo">
+    <span id="topbar-brand-text">
+      <span id="topbar-name">Silica-X</span>
+      <span id="topbar-tagline">OSINT orchestration and correlation framework</span>
+    </span>
+  </a>
+  <div id="topbar-version">v9.3.0 · Python 3.11+ · Ember</div>
+  <div class="topbar-search">
+    <input id="docs-search-input" type="search" placeholder="Search the docs">
+    <div id="docs-search-results" class="topbar-search-results" hidden></div>
+  </div>
+  <div id="topbar-links">
+    <a href="workflow.html#pipeline">Architecture</a>
+    <a href="cli-reference.html#commands">CLI</a>
+    <a href="https://github.com/voltsparx/Silica-X" target="_blank" rel="noreferrer">GitHub</a>
+    <div class="contact-wrap">
+      <button id="contact-toggle" class="contact-toggle" type="button" aria-expanded="false">Contact</button>
+      <div id="contact-popover" class="contact-popover" hidden>
+        <a href="mailto:voltsparx@gmail.com">voltsparx@gmail.com</a>
+        <a href="https://github.com/voltsparx" target="_blank" rel="noreferrer">github.com/voltsparx</a>
+      </div>
+    </div>
+    <button id="menu-toggle" type="button">Menu</button>
+  </div>
+</header>
+
+<nav id="sidebar" aria-label="Documentation navigation">
+  <div class="sidebar-kicker">Docs Control</div>
+  <h2 class="sidebar-title">Silica-X Website</h2>
+  <p class="sidebar-note">A static docs shell built from the repo itself: workflows, commands, runtime design, outputs, and project signals.</p>
+  <div id="sidebar-tabs" class="sidebar-tabs" role="tablist" aria-label="Documentation groups"></div>
+  <div id="sidebar-nav"></div>
+</nav>
+<button id="sidebar-backdrop" type="button" aria-label="Close navigation"></button>
+
+<main id="main">
+  <section id="home" class="page-section section-anchor">
+    <div class="hero-grid">
+      <article class="hero-card">
+        <div class="eyebrow">Release Theme: Ember</div>
+        <h1 class="hero-title">Silica-X</h1>
+        <p class="hero-subtitle">Multi-engine OSINT orchestration for profile intelligence, domain-surface reconnaissance, fused correlation, and structured reporting.</p>
+        <p class="hero-copy">Silica-X is a Python framework that brings several investigation lanes into one operator flow. It can scan usernames across platforms, inspect domain surface exposure, combine those signals in a fusion run, and drive a policy-led orchestration pipeline that turns raw findings into usable artifacts.</p>
+        <div class="badge-row">
+          <span class="badge is-accent">4 main workflows</span>
+          <span class="badge">70 platforms</span>
+          <span class="badge">20 plugins</span>
+          <span class="badge">17 filters</span>
+          <span class="badge">567 modules in catalog</span>
+          <span class="badge">165 tests passing</span>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="getting-started.html#install">Start Here</a>
+          <a class="btn btn-secondary" href="workflow.html#pipeline">See the Pipeline</a>
+          <a class="btn btn-ghost" href="cli-reference.html#commands">CLI Reference</a>
+        </div>
+      </article>
+      <article class="hero-card hero-logo-card">
+        <div class="hero-logo-frame">
+          <img src="web_assets/media/silica-x-web.png" alt="Silica-X mark">
+        </div>
+        <div>
+          <div class="card-title">What the repo says today</div>
+          <p class="hero-logo-note">The codebase centers on prompt and flag workflows, a scope-aware plugin and filter layer, engine-level execution control, correlation, confidence scoring, and output generation to CLI, JSON, CSV, HTML, and logs.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="stats-grid section-block">
+      <article class="metric-card"><span class="metric-value">4</span><span class="metric-label">Primary workflows: profile, surface, fusion, orchestrate</span></article>
+      <article class="metric-card"><span class="metric-value">5</span><span class="metric-label">Native engine lanes listed in hybrid architecture docs</span></article>
+      <article class="metric-card"><span class="metric-value">3</span><span class="metric-label">Supported Python versions in CI: 3.11, 3.12, 3.13</span></article>
+      <article class="metric-card"><span class="metric-value">0</span><span class="metric-label">Inventory error counts in the current runtime snapshot</span></article>
+      <article class="metric-card"><span class="metric-value">1</span><span class="metric-label">Unified docs shell for the project website under <span class="mono">docs/website</span></span></article>
+    </div>
+  </section>
+
+  <section id="core-idea" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">What it actually is</div>
+        <h2 class="section-title">Silica-X is not one scanner. It is a runtime that coordinates several intelligence lanes.</h2>
+      </div>
+    </div>
+    <div class="card-grid">
+      <article class="card">
+        <div class="icon-chip">01</div>
+        <h3 class="card-title">Profile Intelligence</h3>
+        <div class="card-copy">
+          <p>Username and public-profile collection across a large platform set, followed by analysis passes such as contact extraction, identity overlap, activity hints, and link enrichment.</p>
+        </div>
+      </article>
+      <article class="card">
+        <div class="icon-chip">02</div>
+        <h3 class="card-title">Surface Reconnaissance</h3>
+        <div class="card-copy">
+          <p>Domain normalization, CT and RDAP-aware surface collection, subdomain classification, security.txt review, transport posture checks, and domain governance signals.</p>
+        </div>
+      </article>
+      <article class="card">
+        <div class="icon-chip">03</div>
+        <h3 class="card-title">Fusion and Correlation</h3>
+        <div class="card-copy">
+          <p>Profile and domain evidence can be combined into a fused run so entities, issues, and patterns are correlated instead of staying in separate output buckets.</p>
+        </div>
+      </article>
+      <article class="card">
+        <div class="icon-chip">04</div>
+        <h3 class="card-title">Operator-Facing Runtime</h3>
+        <div class="card-copy">
+          <p>Prompt mode, wizard mode, history, explain surfaces, live results view, source-study translation commands, and configurable output roots all live in the same CLI surface.</p>
+        </div>
+      </article>
+      <article class="card">
+        <div class="icon-chip">05</div>
+        <h3 class="card-title">Extension Layer</h3>
+        <div class="card-copy">
+          <p>Plugins and filters are auto-discovered and scope-aware. They enrich raw findings, suppress noise, add prioritization, and surface risk signals that matter to an analyst.</p>
+        </div>
+      </article>
+      <article class="card">
+        <div class="icon-chip">06</div>
+        <h3 class="card-title">Structured Artifact Output</h3>
+        <div class="card-copy">
+          <p>The reporting layer renders results for humans and automation alike through CLI, JSON, CSV, HTML, and persistent logs under a configurable output tree.</p>
+        </div>
+      </article>
+    </div>
+    <div class="callout callout-info section-block">
+      <div class="callout-title">Repository-accurate framing</div>
+      Silica-X already ships profile, surface, fusion, orchestration, plugin/filter discovery, explain surfaces, Docker wrappers, and typed test automation. Some deeper ideas in planning notes, like broader vulnerability mapping and richer teaching layers, are still roadmap material rather than current runtime claims.
+    </div>
+  </section>
+
+  <section id="how-it-works" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Execution flow</div>
+        <h2 class="section-title">From operator command to fused report in six stages</h2>
+      </div>
+    </div>
+    <div class="pipeline-grid">
+      <div id="home-workflow-rail" class="workflow-rail" aria-label="Silica-X workflow stages"></div>
+      <div id="home-workflow-detail"></div>
+    </div>
+    <div class="grid-2 section-block">
+      <article class="panel">
+        <h3 class="panel-title">Layer guarantees from the architecture docs</h3>
+        <ul class="simple-list">
+          <li><span class="list-label">Orchestrator stays tool-agnostic.</span>It selects policy and engines, then coordinates capability execution.</li>
+          <li><span class="list-label">Capabilities speak entities.</span>Adapters normalize raw collection output so later stages do not depend on tool-specific dictionaries.</li>
+          <li><span class="list-label">Reporting is presentation-only.</span>Fusion and intelligence decide meaning first; reporting renders afterward.</li>
+        </ul>
+      </article>
+      <article class="panel">
+        <h3 class="panel-title">Hybrid runtime lanes</h3>
+        <ul class="simple-list">
+          <li><span class="list-label">Console dispatch</span>Banner, prompt rhythm, help flow, and command recovery.</li>
+          <li><span class="list-label">Registry session</span>Plugins, filters, modules, presets, selectors, and runtime inventory thinking.</li>
+          <li><span class="list-label">Event flow and fusion graph</span>Execution handoff, correlation, confidence, and analyst reporting.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section id="quickstart-30" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Quick start</div>
+        <h2 class="section-title">Source install is the cleanest current path</h2>
+      </div>
+    </div>
+    <article class="code-block">
+      <div class="code-head">
+        <span class="code-dot"></span>
+        <span class="code-dot"></span>
+        <span class="code-dot"></span>
+        <span class="code-lang">shell</span>
+      </div>
+      <pre class="code-body"><span class="cmd">git clone</span> <span class="arg">https://github.com/voltsparx/Silica-X.git</span>
+<span class="cmd">cd</span> <span class="arg">Silica-X</span>
+<span class="cmd">pip install</span> <span class="arg">-r requirements.txt</span>
+<span class="cmd">python</span> <span class="arg">silica-x.py</span>
+<span class="muted"># then try:</span>
+help
+show plugins
+profile alice
+surface example.com
+fusion alice example.com</pre>
+    </article>
+    <div class="section-links">
+      <a class="section-link" href="getting-started.html#install">Installation details</a>
+      <a class="section-link" href="cli-reference.html#commands">Command reference</a>
+      <a class="section-link" href="download.html#download-home">Docker runner path</a>
+    </div>
+  </section>
+
+  <section id="fit-check" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Fit check</div>
+        <h2 class="section-title">When Silica-X makes sense and when it does not</h2>
+      </div>
+    </div>
+    <div class="grid-3">
+      <article class="card">
+        <h3 class="card-title">Use it if</h3>
+        <div class="card-copy">
+          <p>You want profile intelligence, domain-surface visibility, plugin/filter enrichment, and fused reporting inside one local Python framework.</p>
+        </div>
+      </article>
+      <article class="card">
+        <h3 class="card-title">Skip it if</h3>
+        <div class="card-copy">
+          <p>You only need a tiny single-purpose scanner and do not care about structured artifacts, prompt UX, or cross-lane analysis.</p>
+        </div>
+      </article>
+      <article class="card">
+        <h3 class="card-title">Keep in mind</h3>
+        <div class="card-copy">
+          <p>Some roadmap ideas appear in repo notes, but the website sticks to what the current codebase and docs support today.</p>
+        </div>
+      </article>
+    </div>
+    <div class="callout callout-warn section-block">
+      <div class="callout-title">Authorized use only</div>
+      The repository explicitly frames Silica-X for legal and authorized investigations. Use it only on systems and identities you own or have explicit permission to assess.
+    </div>
+  </section>
+</main>
+
+<footer class="footer shell">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-title">Silica-X</div>
+      <div>v9.3.0 · Ember · Python 3.11+</div>
+      <div class="tiny" style="margin-top: 0.5rem;">Multi-engine OSINT orchestration for profile, surface, fusion, and reporting workflows.</div>
+    </div>
+    <div>
+      <div class="footer-title">Start</div>
+      <a class="footer-link" href="getting-started.html#install">Installation</a>
+      <a class="footer-link" href="workflow.html#how">How it works</a>
+      <a class="footer-link" href="modes.html#prompt-mode">Runtime modes</a>
+    </div>
+    <div>
+      <div class="footer-title">Reference</div>
+      <a class="footer-link" href="cli-reference.html#commands">Commands</a>
+      <a class="footer-link" href="reporting.html#outputs">Outputs</a>
+      <a class="footer-link" href="development.html#development-home">Development</a>
+    </div>
+    <div>
+      <div class="footer-title">Project</div>
+      <a class="footer-link" href="project.html#author">Project context</a>
+      <a class="footer-link" href="https://github.com/voltsparx/Silica-X" target="_blank" rel="noreferrer">GitHub repository</a>
+      <a class="footer-link" href="https://raw.githubusercontent.com/voltsparx/Silica-X/main/LICENSE" target="_blank" rel="noreferrer">License</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/core/site-data.js"></script>
+<script src="js/core/helpers.js"></script>
+<script src="js/features/sidebar.js"></script>
+<script src="js/features/search.js"></script>
+<script src="js/features/workflow-visual.js"></script>
+<script src="js/features/development-feed.js"></script>
+<script src="js/bootstrap/app.js"></script>
+</body>
+</html>
+

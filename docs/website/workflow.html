@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workflow | Silica-X</title>
+<meta name="description" content="Understand the Silica-X mental model, execution pipeline, and plugin/filter/module architecture.">
+<link rel="canonical" href="https://voltsparx.github.io/Silica-X/workflow.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/core/base.css">
+<link rel="stylesheet" href="css/layout/topbar.css">
+<link rel="stylesheet" href="css/layout/sidebar.css">
+<link rel="stylesheet" href="css/layout/content.css">
+<link rel="stylesheet" href="css/components/workflow.css">
+<link rel="stylesheet" href="css/components/modules.css">
+<link rel="stylesheet" href="css/components/development.css">
+<link rel="stylesheet" href="css/layout/responsive.css">
+<link rel="icon" href="web_assets/media/silica-x-favicon.ico" sizes="any">
+</head>
+<body data-page="workflow.html" data-default-section="how">
+<header id="topbar">
+  <a id="topbar-brand" href="index.html">
+    <img src="web_assets/media/silica-x-web.png" alt="Silica-X logo">
+    <span id="topbar-brand-text">
+      <span id="topbar-name">Silica-X</span>
+      <span id="topbar-tagline">OSINT orchestration and correlation framework</span>
+    </span>
+  </a>
+  <div id="topbar-version">v9.3.0 · Python 3.11+ · Ember</div>
+  <div class="topbar-search">
+    <input id="docs-search-input" type="search" placeholder="Search the docs">
+    <div id="docs-search-results" class="topbar-search-results" hidden></div>
+  </div>
+  <div id="topbar-links">
+    <a href="index.html">Overview</a>
+    <a href="cli-reference.html#commands">CLI</a>
+    <a href="https://github.com/voltsparx/Silica-X" target="_blank" rel="noreferrer">GitHub</a>
+    <div class="contact-wrap">
+      <button id="contact-toggle" class="contact-toggle" type="button" aria-expanded="false">Contact</button>
+      <div id="contact-popover" class="contact-popover" hidden>
+        <a href="mailto:voltsparx@gmail.com">voltsparx@gmail.com</a>
+        <a href="https://github.com/voltsparx" target="_blank" rel="noreferrer">github.com/voltsparx</a>
+      </div>
+    </div>
+    <button id="menu-toggle" type="button">Menu</button>
+  </div>
+</header>
+
+<nav id="sidebar" aria-label="Documentation navigation">
+  <div class="sidebar-kicker">Architecture</div>
+  <h2 class="sidebar-title">Workflow and Runtime Model</h2>
+  <p class="sidebar-note">This page turns the repo docs and entrypoints into a clearer mental model for how Silica-X actually works.</p>
+  <div id="sidebar-tabs" class="sidebar-tabs"></div>
+  <div id="sidebar-nav"></div>
+</nav>
+<button id="sidebar-backdrop" type="button" aria-label="Close navigation"></button>
+
+<main id="main">
+  <header class="page-intro">
+    <div class="eyebrow">Architecture</div>
+    <h1 class="page-title">Think in workflows, policies, entities, and reporting layers</h1>
+    <p class="page-copy">Silica-X combines classic scanner behavior with a more layered runtime model. The repo’s own docs describe a policy-driven orchestrator, scope-aware extensions, entity normalization, and fused reporting. This page condenses that into a simpler operator view.</p>
+  </header>
+
+  <section id="how" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Mental model</div>
+        <h2 class="section-title">Four ways into the framework</h2>
+      </div>
+    </div>
+    <div class="card-grid">
+      <article class="card">
+        <h3 class="card-title">Profile</h3>
+        <div class="card-copy">
+          <p>Scan usernames and public identity surfaces across the supported platform set, then enrich with plugins, filters, and profile-focused analysis helpers.</p>
+        </div>
+      </article>
+      <article class="card">
+        <h3 class="card-title">Surface</h3>
+        <div class="card-copy">
+          <p>Inspect domain exposure using CT, RDAP, subdomain classification, transport posture, disclosure clues, and domain-specific plugins.</p>
+        </div>
+      </article>
+      <article class="card">
+        <h3 class="card-title">Fusion</h3>
+        <div class="card-copy">
+          <p>Run profile and surface together so evidence from usernames, domains, and contact artifacts can be compared and scored in one output.</p>
+        </div>
+      </article>
+      <article class="card">
+        <h3 class="card-title">Orchestrate</h3>
+        <div class="card-copy">
+          <p>Use the layered orchestration pipeline to let execution policy decide capabilities, filters, engine selection, fusion, and reporting flow.</p>
+        </div>
+      </article>
+      <article class="card">
+        <h3 class="card-title">Source-study layer</h3>
+        <div class="card-copy">
+          <p>The <span class="mono">frameworks</span> and <span class="mono">surface-kit</span> commands expose local source-study references and translate some of that intent into native Silica-X workflows.</p>
+        </div>
+      </article>
+      <article class="card">
+        <h3 class="card-title">Hybrid runtime</h3>
+        <div class="card-copy">
+          <p>The hybrid architecture docs describe console dispatch, registry-session behavior, event flow, and fusion graph ideas as first-class Silica-X concepts.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="pipeline" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Pipeline</div>
+        <h2 class="section-title">The layered execution path in practice</h2>
+      </div>
+    </div>
+    <div class="pipeline-grid">
+      <div id="workflow-visual-rail" class="workflow-rail" aria-label="Execution pipeline"></div>
+      <div id="workflow-visual-detail"></div>
+    </div>
+    <div class="grid-2 section-block">
+      <article class="panel">
+        <h3 class="panel-title">Guarantees called out in the docs</h3>
+        <ul class="simple-list">
+          <li><span class="list-label">Policy first</span><span class="mono">core.execution_policy.load_execution_policy()</span> decides enabled capabilities, filters, engine, timeout, and worker limits.</li>
+          <li><span class="list-label">Entities over raw dictionaries</span>The orchestrator and fusion layers are meant to reason over normalized entities from <span class="mono">core/domain/entities.py</span>.</li>
+          <li><span class="list-label">Presentation comes last</span>The reporting layer exists to render fused results, not to define intelligence logic itself.</li>
+        </ul>
+      </article>
+      <article class="panel">
+        <h3 class="panel-title">Runtime consequences</h3>
+        <ul class="simple-list">
+          <li><span class="list-label">Engine health matters</span>The runtime tracks structured execution results including success, failed, timeout, and execution time.</li>
+          <li><span class="list-label">Correlation is explicit</span>Fusion is a named stage, not an accidental side effect buried in collectors.</li>
+          <li><span class="list-label">History is available</span>Outputs and inventory snapshots make the framework inspectable after the run finishes.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section id="modules" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Extension system</div>
+        <h2 class="section-title">Plugins, filters, modules, and source-intel are separate layers</h2>
+      </div>
+    </div>
+    <div class="grid-3">
+      <article class="card">
+        <h3 class="card-title">Plugins</h3>
+        <div class="card-copy">
+          <p>20 core plugins plus 3 cryptography plugins are currently discoverable. They enrich scans with identity fusion, contact mapping, media intel, header hardening, takeover risk, signal fusion, threat scoring, and related capabilities.</p>
+        </div>
+      </article>
+      <article class="card">
+        <h3 class="card-title">Filters</h3>
+        <div class="card-copy">
+          <p>17 filters refine outputs by reducing noise, ranking risk, classifying PII, assessing disclosure posture, and prioritizing subdomains, takeover candidates, or triage order.</p>
+        </div>
+      </article>
+      <article class="card">
+        <h3 class="card-title">Module catalog</h3>
+        <div class="card-copy">
+          <p>The module catalog lives separately under <span class="mono">modules/</span> and the runtime inventory currently reports 567 cataloged modules. That makes the project capable of reasoning about a broader source universe than just directly loaded plugins.</p>
+        </div>
+      </article>
+    </div>
+    <div class="grid-2 section-block">
+      <article class="panel">
+        <h3 class="panel-title">Scope-aware behavior</h3>
+        <div class="card-copy">
+          <p>Plugins and filters are not blind global addons. They declare supported scopes such as profile, surface, and fusion, and the runtime inventory tracks coverage counts for those scopes.</p>
+          <div class="pill-row">
+            <span class="pill">plugins: profile 13</span>
+            <span class="pill">plugins: surface 12</span>
+            <span class="pill">plugins: fusion 18</span>
+            <span class="pill">filters: profile 14</span>
+            <span class="pill">filters: surface 9</span>
+            <span class="pill">filters: fusion 17</span>
+          </div>
+        </div>
+      </article>
+      <article class="panel">
+        <h3 class="panel-title">Naming note</h3>
+        <div class="card-copy">
+          <p>The project is publicly named <strong>Silica-X</strong>, but some internal paths, comments, and generated artifacts still use <span class="mono">sylica</span> spellings. The website keeps the public project name while acknowledging that internal naming is still converging.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer class="footer shell">
+  <div class="footer-grid">
+    <div><div class="footer-title">Silica-X</div><div>Layered runtime docs and pipeline view.</div></div>
+    <div><div class="footer-title">Next</div><a class="footer-link" href="cli-reference.html#commands">Commands</a></div>
+    <div><div class="footer-title">Reports</div><a class="footer-link" href="reporting.html#history">History and inventory</a></div>
+    <div><div class="footer-title">Project</div><a class="footer-link" href="development.html#development-home">Development</a></div>
+  </div>
+</footer>
+
+<script src="js/core/site-data.js"></script>
+<script src="js/core/helpers.js"></script>
+<script src="js/features/sidebar.js"></script>
+<script src="js/features/search.js"></script>
+<script src="js/features/workflow-visual.js"></script>
+<script src="js/features/development-feed.js"></script>
+<script src="js/bootstrap/app.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,104 @@
+@media (max-width: 1220px) {
+  .stats-grid,
+  .dev-status-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .grid-3,
+  .card-grid,
+  .metric-grid,
+  .download-grid,
+  .link-grid,
+  .command-grid,
+  .mode-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1080px) {
+  #topbar {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  #topbar-version {
+    display: none;
+  }
+
+  #topbar-links > a,
+  #topbar-links .contact-wrap {
+    display: none;
+  }
+
+  #menu-toggle {
+    display: inline-flex;
+  }
+
+  #sidebar {
+    z-index: 45;
+    left: 1rem;
+    width: min(84vw, 320px);
+    transform: translateX(calc(-100% - 2rem));
+    transition: transform 200ms ease;
+  }
+
+  #main {
+    padding-left: 1.2rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-grid,
+  .grid-2,
+  .split-feature,
+  .pipeline-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-grid,
+  .stats-grid,
+  .dev-status-grid,
+  .grid-3,
+  .card-grid,
+  .metric-grid,
+  .download-grid,
+  .link-grid,
+  .command-grid,
+  .mode-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  #topbar {
+    grid-template-columns: 1fr auto;
+    gap: 0.85rem;
+  }
+
+  .topbar-search {
+    grid-column: 1 / -1;
+    max-width: none;
+  }
+
+  .hero-card,
+  .panel,
+  .card,
+  .callout,
+  .table-card,
+  .stage-detail,
+  .feed-card,
+  .metric-card,
+  .download-card {
+    padding: 1.1rem;
+  }
+
+  .directory-row,
+  .table-mini-row {
+    grid-template-columns: 1fr;
+    gap: 0.45rem;
+  }
+
+  .cta-row,
+  .section-links {
+    flex-direction: column;
+  }
+}

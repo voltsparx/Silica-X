@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Development | Silica-X</title>
+<meta name="description" content="Repository health, architecture slices, release signals, and live GitHub activity for Silica-X.">
+<link rel="canonical" href="https://voltsparx.github.io/Silica-X/development.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/core/base.css">
+<link rel="stylesheet" href="css/layout/topbar.css">
+<link rel="stylesheet" href="css/layout/sidebar.css">
+<link rel="stylesheet" href="css/layout/content.css">
+<link rel="stylesheet" href="css/components/workflow.css">
+<link rel="stylesheet" href="css/components/modules.css">
+<link rel="stylesheet" href="css/components/development.css">
+<link rel="stylesheet" href="css/layout/responsive.css">
+<link rel="icon" href="web_assets/media/silica-x-favicon.ico" sizes="any">
+</head>
+<body data-page="development.html" data-default-section="development-home">
+<header id="topbar">
+  <a id="topbar-brand" href="index.html">
+    <img src="web_assets/media/silica-x-web.png" alt="Silica-X logo">
+    <span id="topbar-brand-text">
+      <span id="topbar-name">Silica-X</span>
+      <span id="topbar-tagline">OSINT orchestration and correlation framework</span>
+    </span>
+  </a>
+  <div id="topbar-version">v9.3.0 · Python 3.11+ · Ember</div>
+  <div class="topbar-search">
+    <input id="docs-search-input" type="search" placeholder="Search the docs">
+    <div id="docs-search-results" class="topbar-search-results" hidden></div>
+  </div>
+  <div id="topbar-links">
+    <a href="reporting.html#testing">Verification</a>
+    <a href="project.html#signals">Roadmap</a>
+    <a href="https://github.com/voltsparx/Silica-X" target="_blank" rel="noreferrer">GitHub</a>
+    <div class="contact-wrap">
+      <button id="contact-toggle" class="contact-toggle" type="button" aria-expanded="false">Contact</button>
+      <div id="contact-popover" class="contact-popover" hidden>
+        <a href="mailto:voltsparx@gmail.com">voltsparx@gmail.com</a>
+        <a href="https://github.com/voltsparx" target="_blank" rel="noreferrer">github.com/voltsparx</a>
+      </div>
+    </div>
+    <button id="menu-toggle" type="button">Menu</button>
+  </div>
+</header>
+
+<nav id="sidebar" aria-label="Documentation navigation">
+  <div class="sidebar-kicker">Project</div>
+  <h2 class="sidebar-title">Development Signals</h2>
+  <p class="sidebar-note">Static repo health pulled from the repository and live public GitHub data where the browser can fetch it.</p>
+  <div id="sidebar-tabs" class="sidebar-tabs"></div>
+  <div id="sidebar-nav"></div>
+</nav>
+<button id="sidebar-backdrop" type="button" aria-label="Close navigation"></button>
+
+<main id="main">
+  <header class="page-intro">
+    <div class="eyebrow">Development</div>
+    <h1 class="page-title">The project already behaves like a maintained engineering repo, not only an experiment</h1>
+    <p class="page-copy">Silica-X carries tests, typing, linting, package smoke checks, Docker assets, docs, source-study notes, and a growing internal intel layer. The architecture is ambitious, but the repo also shows a real push toward verification and maintainability.</p>
+  </header>
+
+  <section id="development-home" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Health snapshot</div>
+        <h2 class="section-title">Repository-level indicators visible from the current codebase</h2>
+      </div>
+    </div>
+    <div class="dev-status-grid">
+      <div class="dev-status-item"><span class="dev-status-label">Tests</span><span class="dev-status-value">165 / 165</span></div>
+      <div class="dev-status-item"><span class="dev-status-label">Plugins</span><span class="dev-status-value">20 + 3 crypto</span></div>
+      <div class="dev-status-item"><span class="dev-status-label">Filters</span><span class="dev-status-value">17</span></div>
+      <div class="dev-status-item"><span class="dev-status-label">Platforms</span><span class="dev-status-value">70</span></div>
+    </div>
+    <div class="grid-2 section-block">
+      <article class="panel">
+        <h3 class="panel-title">Engineering slices</h3>
+        <ul class="simple-list">
+          <li><span class="list-label">core/interface</span>Banner, prompt UX, help, explain, parsing, live server helpers.</li>
+          <li><span class="list-label">core/collect</span>Profile, surface, network, media, domain, and source fusion collectors.</li>
+          <li><span class="list-label">core/analyze + core/fusion</span>Footprint maps, exposure, narratives, correlation, confidence, graph building.</li>
+          <li><span class="list-label">core/extensions</span>Plugin manager, signal forge, signal sieve, selector/control plane.</li>
+        </ul>
+      </article>
+      <article class="panel">
+        <h3 class="panel-title">Quality posture</h3>
+        <ul class="simple-list">
+          <li><span class="list-label">CI matrix</span>Python 3.11, 3.12, and 3.13.</li>
+          <li><span class="list-label">Static checks</span>Ruff and mypy run in CI.</li>
+          <li><span class="list-label">Package verification</span>Build, twine metadata checks, and installed-entrypoint smoke tests.</li>
+          <li><span class="list-label">Compilation smoke</span><span class="mono">compileall</span> is part of the CI health story.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section id="repo-activity" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Repository activity</div>
+        <h2 class="section-title">Live GitHub data when available</h2>
+      </div>
+    </div>
+    <article class="panel">
+      <h3 class="panel-title">Repository health</h3>
+      <div id="repo-health" class="section-block"><div class="empty-state">Loading GitHub repository data...</div></div>
+    </article>
+    <article class="panel section-block">
+      <h3 class="panel-title">Recent commits</h3>
+      <div id="commit-feed" class="section-block"><div class="empty-state">Loading recent commit activity...</div></div>
+    </article>
+  </section>
+
+  <section id="release-radar" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Release radar</div>
+        <h2 class="section-title">Raw signals worth watching</h2>
+      </div>
+    </div>
+    <div class="link-grid">
+      <a class="card" href="https://raw.githubusercontent.com/voltsparx/Silica-X/main/README.md" target="_blank" rel="noreferrer">
+        <h3 class="card-title">README</h3>
+        <div class="card-copy"><p>Current release statement, power summary, command tables, and audit snapshot.</p></div>
+      </a>
+      <a class="card" href="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docs/release-notes-v9.3.0-lattice.md" target="_blank" rel="noreferrer">
+        <h3 class="card-title">Release Notes</h3>
+        <div class="card-copy"><p>Detailed v9.3.0 changes and release framing.</p></div>
+      </a>
+      <a class="card" href="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docs/release-checklist-v9.3.0-lattice.md" target="_blank" rel="noreferrer">
+        <h3 class="card-title">Release Checklist</h3>
+        <div class="card-copy"><p>Operational release readiness and checklist view.</p></div>
+      </a>
+      <a class="card" href="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docs/release-commit-plan-v9.3.0-lattice.md" target="_blank" rel="noreferrer">
+        <h3 class="card-title">Commit Plan</h3>
+        <div class="card-copy"><p>Planned release-level commit coordination notes.</p></div>
+      </a>
+      <a class="card" href="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docs/silica-capability-scan.md" target="_blank" rel="noreferrer">
+        <h3 class="card-title">Capability Scan</h3>
+        <div class="card-copy"><p>Project self-assessment and capability reporting signal.</p></div>
+      </a>
+      <a class="card" href="https://raw.githubusercontent.com/voltsparx/Silica-X/main/intel/runtime-inventory.json" target="_blank" rel="noreferrer">
+        <h3 class="card-title">Runtime Inventory</h3>
+        <div class="card-copy"><p>Machine-readable plugin, filter, platform, and module snapshot.</p></div>
+      </a>
+    </div>
+    <article class="panel section-block">
+      <h3 class="panel-title">Published GitHub releases</h3>
+      <div id="release-feed" class="section-block"><div class="empty-state">Loading release data...</div></div>
+    </article>
+  </section>
+</main>
+
+<footer class="footer shell">
+  <div class="footer-grid">
+    <div><div class="footer-title">Silica-X</div><div>Development and release signals.</div></div>
+    <div><div class="footer-title">Next</div><a class="footer-link" href="project.html#author">Project context</a></div>
+    <div><div class="footer-title">Architecture</div><a class="footer-link" href="workflow.html#modules">Extension system</a></div>
+    <div><div class="footer-title">Reports</div><a class="footer-link" href="reporting.html#testing">Verification</a></div>
+  </div>
+</footer>
+
+<script src="js/core/site-data.js"></script>
+<script src="js/core/helpers.js"></script>
+<script src="js/features/sidebar.js"></script>
+<script src="js/features/search.js"></script>
+<script src="js/features/workflow-visual.js"></script>
+<script src="js/features/development-feed.js"></script>
+<script src="js/bootstrap/app.js"></script>
+</body>
+</html>
+

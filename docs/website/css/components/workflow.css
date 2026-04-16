@@ -1,0 +1,76 @@
+.workflow-rail {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.workflow-stage {
+  position: relative;
+  padding: 1rem 1.05rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.035);
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.workflow-stage:hover,
+.workflow-stage:focus-visible,
+.workflow-stage.is-active {
+  transform: translateY(-2px);
+  border-color: rgba(255, 171, 86, 0.28);
+  background: rgba(255, 138, 29, 0.08);
+}
+
+.workflow-stage-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.workflow-stage-index {
+  color: var(--ember-2);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.workflow-stage-title {
+  color: var(--text-0);
+  font-weight: 700;
+}
+
+.workflow-stage-summary {
+  margin-top: 0.55rem;
+  color: var(--text-2);
+}
+
+.stage-detail {
+  padding: 1.25rem;
+}
+
+.stage-detail h3 {
+  font-size: 1.2rem;
+}
+
+.stage-detail p {
+  margin-bottom: 0;
+}
+
+.stage-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+}
+
+.stage-detail-meta .pill {
+  margin-top: 0;
+}
+
+.pipeline-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 1rem;
+}
+

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLI Reference | Silica-X</title>
+<meta name="description" content="Core command surface, aliases, and usage patterns for the Silica-X CLI.">
+<link rel="canonical" href="https://voltsparx.github.io/Silica-X/cli-reference.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/core/base.css">
+<link rel="stylesheet" href="css/layout/topbar.css">
+<link rel="stylesheet" href="css/layout/sidebar.css">
+<link rel="stylesheet" href="css/layout/content.css">
+<link rel="stylesheet" href="css/components/workflow.css">
+<link rel="stylesheet" href="css/components/modules.css">
+<link rel="stylesheet" href="css/components/development.css">
+<link rel="stylesheet" href="css/layout/responsive.css">
+<link rel="icon" href="web_assets/media/silica-x-favicon.ico" sizes="any">
+</head>
+<body data-page="cli-reference.html" data-default-section="commands">
+<header id="topbar">
+  <a id="topbar-brand" href="index.html">
+    <img src="web_assets/media/silica-x-web.png" alt="Silica-X logo">
+    <span id="topbar-brand-text">
+      <span id="topbar-name">Silica-X</span>
+      <span id="topbar-tagline">OSINT orchestration and correlation framework</span>
+    </span>
+  </a>
+  <div id="topbar-version">v9.3.0 · Python 3.11+ · Ember</div>
+  <div class="topbar-search">
+    <input id="docs-search-input" type="search" placeholder="Search the docs">
+    <div id="docs-search-results" class="topbar-search-results" hidden></div>
+  </div>
+  <div id="topbar-links">
+    <a href="workflow.html#pipeline">Pipeline</a>
+    <a href="modes.html#prompt-mode">Modes</a>
+    <a href="https://github.com/voltsparx/Silica-X" target="_blank" rel="noreferrer">GitHub</a>
+    <div class="contact-wrap">
+      <button id="contact-toggle" class="contact-toggle" type="button" aria-expanded="false">Contact</button>
+      <div id="contact-popover" class="contact-popover" hidden>
+        <a href="mailto:voltsparx@gmail.com">voltsparx@gmail.com</a>
+        <a href="https://github.com/voltsparx" target="_blank" rel="noreferrer">github.com/voltsparx</a>
+      </div>
+    </div>
+    <button id="menu-toggle" type="button">Menu</button>
+  </div>
+</header>
+
+<nav id="sidebar" aria-label="Documentation navigation">
+  <div class="sidebar-kicker">Operator</div>
+  <h2 class="sidebar-title">CLI Reference</h2>
+  <p class="sidebar-note">The command families below come directly from the current root help surface and repo docs.</p>
+  <div id="sidebar-tabs" class="sidebar-tabs"></div>
+  <div id="sidebar-nav"></div>
+</nav>
+<button id="sidebar-backdrop" type="button" aria-label="Close navigation"></button>
+
+<main id="main">
+  <header class="page-intro">
+    <div class="eyebrow">Command Surface</div>
+    <h1 class="page-title">The Silica-X CLI mixes scan workflows, runtime controls, and project introspection commands</h1>
+    <p class="page-copy">Silica-X is not only a scanner CLI. It also exposes prompt helpers, source-study views, inventory commands, output controls, history listing, and package-like metadata surfaces. The result is broad, but the main workflows are easy to group once you know what is core and what is support tooling.</p>
+  </header>
+
+  <section id="commands" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Commands</div>
+        <h2 class="section-title">The highest-value command families</h2>
+      </div>
+    </div>
+    <div class="command-grid">
+      <article class="card">
+        <div class="command-card-head"><span class="icon-chip">P</span><div class="command-name">profile</div></div>
+        <div class="command-aliases">aliases: <span class="mono">scan</span>, <span class="mono">persona</span>, <span class="mono">social</span></div>
+        <div class="card-copy"><p>Run public profile and username intelligence across the platform inventory.</p></div>
+        <div class="command-snippet mono">python silica-x.py profile alice --html</div>
+      </article>
+      <article class="card">
+        <div class="command-card-head"><span class="icon-chip">S</span><div class="command-name">surface</div></div>
+        <div class="command-aliases">aliases: <span class="mono">domain</span>, <span class="mono">asset</span></div>
+        <div class="card-copy"><p>Inspect domain attack surface and public exposure lanes.</p></div>
+        <div class="command-snippet mono">python silica-x.py surface example.com --html</div>
+      </article>
+      <article class="card">
+        <div class="command-card-head"><span class="icon-chip">F</span><div class="command-name">fusion</div></div>
+        <div class="command-aliases">aliases: <span class="mono">full</span>, <span class="mono">combo</span></div>
+        <div class="card-copy"><p>Combine profile and surface signals into one run for correlation.</p></div>
+        <div class="command-snippet mono">python silica-x.py fusion alice example.com --csv --html</div>
+      </article>
+      <article class="card">
+        <div class="command-card-head"><span class="icon-chip">O</span><div class="command-name">orchestrate</div></div>
+        <div class="command-aliases">alias: <span class="mono">orch</span></div>
+        <div class="card-copy"><p>Run the policy-driven layered orchestration pipeline directly.</p></div>
+        <div class="command-snippet mono">python silica-x.py orchestrate example.com</div>
+      </article>
+      <article class="card">
+        <div class="command-card-head"><span class="icon-chip">Q</span><div class="command-name">quicktest</div></div>
+        <div class="command-aliases">aliases: <span class="mono">qtest</span>, <span class="mono">smoke</span></div>
+        <div class="card-copy"><p>Run an offline quicktest using a built-in victim template.</p></div>
+        <div class="command-snippet mono">python silica-x.py quicktest</div>
+      </article>
+      <article class="card">
+        <div class="command-card-head"><span class="icon-chip">W</span><div class="command-name">wizard</div></div>
+        <div class="command-aliases">interactive guided workflow</div>
+        <div class="card-copy"><p>Guided multi-scan operator flow for onboarding and structured runs.</p></div>
+        <div class="command-snippet mono">python silica-x.py wizard</div>
+      </article>
+      <article class="card">
+        <div class="command-card-head"><span class="icon-chip">I</span><div class="command-name">plugins / filters</div></div>
+        <div class="command-aliases">runtime introspection</div>
+        <div class="card-copy"><p>Inspect extension discovery, scopes, aliases, and descriptions.</p></div>
+        <div class="command-snippet mono">python silica-x.py plugins --scope all</div>
+      </article>
+      <article class="card">
+        <div class="command-card-head"><span class="icon-chip">M</span><div class="command-name">modules / frameworks</div></div>
+        <div class="command-aliases">catalog and source-study views</div>
+        <div class="card-copy"><p>Inspect module catalogs and local source-study framework references.</p></div>
+        <div class="command-snippet mono">python silica-x.py frameworks --framework recursive-modules --presets</div>
+      </article>
+      <article class="card">
+        <div class="command-card-head"><span class="icon-chip">R</span><div class="command-name">history / live</div></div>
+        <div class="command-aliases">artifact inspection</div>
+        <div class="card-copy"><p>List saved targets and launch a local live dashboard for stored results.</p></div>
+        <div class="command-snippet mono">python silica-x.py history</div>
+      </article>
+    </div>
+  </section>
+
+  <section id="flags" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Flags</div>
+        <h2 class="section-title">Common high-value switches and output controls</h2>
+      </div>
+    </div>
+    <div class="table-mini">
+      <div class="table-mini-row"><div class="table-mini-key"><span class="mono">--html</span> / <span class="mono">--csv</span></div><div>Request additional report artifacts beyond CLI output.</div></div>
+      <div class="table-mini-row"><div class="table-mini-key"><span class="mono">--plugin</span> / <span class="mono">--filter</span></div><div>Explicitly select or constrain extension behavior for a run.</div></div>
+      <div class="table-mini-row"><div class="table-mini-key"><span class="mono">--preset</span></div><div>Use workflow presets where supported for profile or surface runs.</div></div>
+      <div class="table-mini-row"><div class="table-mini-key"><span class="mono">--profile-preset</span> / <span class="mono">--surface-preset</span></div><div>Split preset controls for fusion workflows.</div></div>
+      <div class="table-mini-row"><div class="table-mini-key"><span class="mono">--ct</span> / <span class="mono">--rdap</span></div><div>Surface-oriented enrichment toggles documented in the README examples and tables.</div></div>
+      <div class="table-mini-row"><div class="table-mini-key"><span class="mono">--about</span> / <span class="mono">--explain</span></div><div>Project description and plain-language help surfaces for onboarding.</div></div>
+    </div>
+    <div class="callout callout-info section-block">
+      <div class="callout-title">Output configuration is also command-driven</div>
+      The CLI includes <span class="mono">out-type</span>, <span class="mono">out-print</span>, and <span class="mono">default-out-print</span> so output formats and artifact roots can be controlled at runtime instead of only through environment tweaks.
+    </div>
+  </section>
+
+  <section id="syntax" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Syntax patterns</div>
+        <h2 class="section-title">Three command shapes that matter most</h2>
+      </div>
+    </div>
+    <div class="grid-3">
+      <article class="card">
+        <h3 class="card-title">Direct scan</h3>
+        <div class="command-snippet mono">python silica-x.py profile alice --html</div>
+        <div class="card-copy"><p>Use this for explicit automation or repeatable scripted runs.</p></div>
+      </article>
+      <article class="card">
+        <h3 class="card-title">Prompt first</h3>
+        <div class="command-snippet mono">python silica-x.py</div>
+        <div class="card-copy"><p>Better when you want to discover commands, use aliases, or inspect plugins and filters interactively.</p></div>
+      </article>
+      <article class="card">
+        <h3 class="card-title">Source-study translation</h3>
+        <div class="command-snippet mono">python silica-x.py surface-kit example.com --preset web-basic</div>
+        <div class="card-copy"><p>Useful when you want a native Silica-X run informed by local reference profiles under <span class="mono">temp/</span>.</p></div>
+      </article>
+    </div>
+    <article class="code-block section-block">
+      <div class="code-head">
+        <span class="code-dot"></span>
+        <span class="code-dot"></span>
+        <span class="code-dot"></span>
+        <span class="code-lang">shell</span>
+      </div>
+      <pre class="code-body"><span class="cmd">python silica-x.py --help</span>
+<span class="cmd">python silica-x.py profile</span> <span class="arg">alice --html --plugin threat_conductor</span>
+<span class="cmd">python silica-x.py surface</span> <span class="arg">example.com --ct --rdap --html</span>
+<span class="cmd">python silica-x.py fusion</span> <span class="arg">alice example.com --profile-preset deep --surface-preset balanced</span>
+<span class="cmd">python silica-x.py prompt</span></pre>
+    </article>
+  </section>
+</main>
+
+<footer class="footer shell">
+  <div class="footer-grid">
+    <div><div class="footer-title">Silica-X</div><div>CLI and runtime reference.</div></div>
+    <div><div class="footer-title">Next</div><a class="footer-link" href="modes.html#prompt-mode">Modes</a></div>
+    <div><div class="footer-title">Reports</div><a class="footer-link" href="reporting.html#outputs">Outputs</a></div>
+    <div><div class="footer-title">Project</div><a class="footer-link" href="development.html#repo-activity">Repo activity</a></div>
+  </div>
+</footer>
+
+<script src="js/core/site-data.js"></script>
+<script src="js/core/helpers.js"></script>
+<script src="js/features/sidebar.js"></script>
+<script src="js/features/search.js"></script>
+<script src="js/features/workflow-visual.js"></script>
+<script src="js/features/development-feed.js"></script>
+<script src="js/bootstrap/app.js"></script>
+</body>
+</html>
+

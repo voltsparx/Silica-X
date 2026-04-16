@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Download | Silica-X</title>
+<meta name="description" content="Docker runner scripts, runtime wrappers, and installation path notes for Silica-X.">
+<link rel="canonical" href="https://voltsparx.github.io/Silica-X/download.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/core/base.css">
+<link rel="stylesheet" href="css/layout/topbar.css">
+<link rel="stylesheet" href="css/layout/sidebar.css">
+<link rel="stylesheet" href="css/layout/content.css">
+<link rel="stylesheet" href="css/components/workflow.css">
+<link rel="stylesheet" href="css/components/modules.css">
+<link rel="stylesheet" href="css/components/development.css">
+<link rel="stylesheet" href="css/layout/responsive.css">
+<link rel="icon" href="web_assets/media/silica-x-favicon.ico" sizes="any">
+</head>
+<body data-page="download.html" data-default-section="download-home">
+<header id="topbar">
+  <a id="topbar-brand" href="index.html">
+    <img src="web_assets/media/silica-x-web.png" alt="Silica-X logo">
+    <span id="topbar-brand-text">
+      <span id="topbar-name">Silica-X</span>
+      <span id="topbar-tagline">OSINT orchestration and correlation framework</span>
+    </span>
+  </a>
+  <div id="topbar-version">v9.3.0 · Python 3.11+ · Ember</div>
+  <div class="topbar-search">
+    <input id="docs-search-input" type="search" placeholder="Search the docs">
+    <div id="docs-search-results" class="topbar-search-results" hidden></div>
+  </div>
+  <div id="topbar-links">
+    <a href="getting-started.html#install">Install</a>
+    <a href="workflow.html#modules">Extensions</a>
+    <a href="https://github.com/voltsparx/Silica-X" target="_blank" rel="noreferrer">GitHub</a>
+    <div class="contact-wrap">
+      <button id="contact-toggle" class="contact-toggle" type="button" aria-expanded="false">Contact</button>
+      <div id="contact-popover" class="contact-popover" hidden>
+        <a href="mailto:voltsparx@gmail.com">voltsparx@gmail.com</a>
+        <a href="https://github.com/voltsparx" target="_blank" rel="noreferrer">github.com/voltsparx</a>
+      </div>
+    </div>
+    <button id="menu-toggle" type="button">Menu</button>
+  </div>
+</header>
+
+<nav id="sidebar" aria-label="Documentation navigation">
+  <div class="sidebar-kicker">Downloads</div>
+  <h2 class="sidebar-title">Docker and Runtime Wrappers</h2>
+  <p class="sidebar-note">This page points to the repository as the source of truth for Docker runner scripts instead of duplicating them inside the website.</p>
+  <div id="sidebar-tabs" class="sidebar-tabs"></div>
+  <div id="sidebar-nav"></div>
+</nav>
+<button id="sidebar-backdrop" type="button" aria-label="Close navigation"></button>
+
+<main id="main">
+  <header class="page-intro">
+    <div class="eyebrow">Download Hub</div>
+    <h1 class="page-title">Use the repo-hosted runner scripts and keep the website light</h1>
+    <p class="page-copy">The repository already ships Docker runner scripts for Linux, macOS, Windows, and Termux. This page links directly to those maintained files so the docs site never drifts away from the runtime wrapper logic.</p>
+  </header>
+
+  <section id="download-home" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Overview</div>
+        <h2 class="section-title">What the Docker scripts wrap</h2>
+      </div>
+    </div>
+    <div class="grid-3">
+      <article class="card">
+        <h3 class="card-title">Compose runtime</h3>
+        <div class="card-copy">
+          <p>The scripts wrap <span class="mono">docker/docker-compose.yml</span> and provide a safer, guided handoff into Silica-X commands.</p>
+        </div>
+      </article>
+      <article class="card">
+        <h3 class="card-title">Host checks</h3>
+        <div class="card-copy">
+          <p>They check Docker installation, daemon availability, Compose support, and some basic resource readiness before launching the runtime.</p>
+        </div>
+      </article>
+      <article class="card">
+        <h3 class="card-title">Runner extras</h3>
+        <div class="card-copy">
+          <p>Upgrade flags, diagnostics, context switching, Tor-service controls, and no-cache rebuild flows are all handled at the wrapper layer.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="download-scripts" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Scripts</div>
+        <h2 class="section-title">Direct links to the maintained wrappers</h2>
+      </div>
+    </div>
+    <div class="download-grid">
+      <article class="download-card">
+        <div class="download-card-head"><span class="icon-chip">L</span><div class="download-name">Linux runner</div></div>
+        <div class="download-snippet mono">docker-scripts/run-docker-linux.sh</div>
+        <div class="cta-row">
+          <a class="btn btn-secondary" href="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docker-scripts/run-docker-linux.sh" target="_blank" rel="noreferrer">Open Raw</a>
+        </div>
+      </article>
+      <article class="download-card">
+        <div class="download-card-head"><span class="icon-chip">M</span><div class="download-name">macOS runner</div></div>
+        <div class="download-snippet mono">docker-scripts/run-docker-macos.sh</div>
+        <div class="cta-row">
+          <a class="btn btn-secondary" href="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docker-scripts/run-docker-macos.sh" target="_blank" rel="noreferrer">Open Raw</a>
+        </div>
+      </article>
+      <article class="download-card">
+        <div class="download-card-head"><span class="icon-chip">W</span><div class="download-name">Windows runner</div></div>
+        <div class="download-snippet mono">docker-scripts/run-docker-windows.ps1</div>
+        <div class="cta-row">
+          <a class="btn btn-secondary" href="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docker-scripts/run-docker-windows.ps1" target="_blank" rel="noreferrer">Open Raw</a>
+        </div>
+      </article>
+      <article class="download-card">
+        <div class="download-card-head"><span class="icon-chip">T</span><div class="download-name">Termux runner</div></div>
+        <div class="download-snippet mono">docker-scripts/run-docker-termux.sh</div>
+        <div class="cta-row">
+          <a class="btn btn-secondary" href="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docker-scripts/run-docker-termux.sh" target="_blank" rel="noreferrer">Open Raw</a>
+        </div>
+      </article>
+      <article class="download-card">
+        <div class="download-card-head"><span class="icon-chip">D</span><div class="download-name">Docker docs</div></div>
+        <div class="download-snippet mono">docker/README.md</div>
+        <div class="cta-row">
+          <a class="btn btn-secondary" href="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docker/README.md" target="_blank" rel="noreferrer">Open Raw</a>
+        </div>
+      </article>
+      <article class="download-card">
+        <div class="download-card-head"><span class="icon-chip">R</span><div class="download-name">Runner docs</div></div>
+        <div class="download-snippet mono">docker-scripts/README.md</div>
+        <div class="cta-row">
+          <a class="btn btn-secondary" href="https://raw.githubusercontent.com/voltsparx/Silica-X/main/docker-scripts/README.md" target="_blank" rel="noreferrer">Open Raw</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="download-usage" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Usage</div>
+        <h2 class="section-title">The wrappers forward normal Silica-X commands after handling runner flags</h2>
+      </div>
+    </div>
+    <article class="code-block">
+      <div class="code-head">
+        <span class="code-dot"></span>
+        <span class="code-dot"></span>
+        <span class="code-dot"></span>
+        <span class="code-lang">shell</span>
+      </div>
+      <pre class="code-body"><span class="cmd">./docker-scripts/run-docker-linux.sh</span>
+<span class="cmd">./docker-scripts/run-docker-linux.sh</span> <span class="arg">profile alice --html</span>
+<span class="cmd">./docker-scripts/run-docker-linux.sh</span> <span class="arg">--runner-use-tor-service profile alice --tor --html</span>
+<span class="cmd">./docker-scripts/run-docker-linux.sh</span> <span class="arg">--runner-diagnose</span>
+<span class="cmd">powershell -ExecutionPolicy Bypass -File</span> <span class="arg">.\docker-scripts\run-docker-windows.ps1 profile alice --html</span></pre>
+    </article>
+    <div class="table-mini section-block">
+      <div class="table-mini-row"><div class="table-mini-key">Runner flags</div><div><span class="mono">--runner-help</span>, <span class="mono">--runner-build</span>, <span class="mono">--runner-pull</span>, <span class="mono">--runner-upgrade</span>, <span class="mono">--runner-diagnose</span>, <span class="mono">--runner-context</span>.</div></div>
+      <div class="table-mini-row"><div class="table-mini-key">Forwarded args</div><div>Everything not prefixed by <span class="mono">--runner-</span> is forwarded to <span class="mono">silica-x.py</span>.</div></div>
+      <div class="table-mini-row"><div class="table-mini-key">Prompt fallback</div><div>If no forwarded arguments are supplied, the wrapper starts the Silica-X prompt mode.</div></div>
+    </div>
+  </section>
+
+  <section id="download-paths" class="page-section section-anchor">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Paths</div>
+        <h2 class="section-title">Where the runtime pieces live</h2>
+      </div>
+    </div>
+    <div class="directory-tree">
+      <div class="directory-row"><div class="directory-name mono">docker/</div><div>Compose files, Dockerfiles, Tor wrappers, and container runtime assets.</div></div>
+      <div class="directory-row"><div class="directory-name mono">docker-scripts/</div><div>Host-native launch scripts for Linux, macOS, Windows, and Termux.</div></div>
+      <div class="directory-row"><div class="directory-name mono">output/</div><div>Runtime artifacts such as HTML, CLI, JSON, CSV, and logs under the configured output root.</div></div>
+      <div class="directory-row"><div class="directory-name mono">docs/website/web_assets/installers/</div><div>Reserved website asset space if mirrored installer copies are ever added later.</div></div>
+    </div>
+    <div class="callout callout-info section-block">
+      <div class="callout-title">Why the website does not duplicate the scripts</div>
+      The docs site links to the repository versions directly so there is one source of truth for runner behavior. That keeps upgrades, diagnostics, and usage examples aligned with the actual wrapper code.
+    </div>
+  </section>
+</main>
+
+<footer class="footer shell">
+  <div class="footer-grid">
+    <div><div class="footer-title">Silica-X</div><div>Repo-hosted Docker wrappers and docs.</div></div>
+    <div><div class="footer-title">Start</div><a class="footer-link" href="getting-started.html#quickstart">First run</a></div>
+    <div><div class="footer-title">Reference</div><a class="footer-link" href="cli-reference.html#syntax">Syntax</a></div>
+    <div><div class="footer-title">Project</div><a class="footer-link" href="project.html#signals">Roadmap signals</a></div>
+  </div>
+</footer>
+
+<script src="js/core/site-data.js"></script>
+<script src="js/core/helpers.js"></script>
+<script src="js/features/sidebar.js"></script>
+<script src="js/features/search.js"></script>
+<script src="js/features/workflow-visual.js"></script>
+<script src="js/features/development-feed.js"></script>
+<script src="js/bootstrap/app.js"></script>
+</body>
+</html>

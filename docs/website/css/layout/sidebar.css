@@ -1,0 +1,122 @@
+#sidebar {
+  position: fixed;
+  top: calc(var(--topbar-height) + 12px);
+  left: max(1rem, calc((100vw - var(--site-width)) / 2));
+  width: var(--sidebar-width);
+  max-height: calc(100vh - var(--topbar-height) - 24px);
+  overflow: auto;
+  padding: 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 26px;
+  background: rgba(10, 15, 22, 0.76);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+}
+
+.sidebar-kicker {
+  color: var(--ember-2);
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.sidebar-title {
+  margin-top: 0.4rem;
+  color: var(--text-0);
+  font-size: 1.15rem;
+}
+
+.sidebar-note {
+  margin: 0.6rem 0 0;
+  color: var(--text-2);
+  font-size: 0.9rem;
+}
+
+.sidebar-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.1rem;
+}
+
+.sidebar-tab {
+  padding: 0.5rem 0.72rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-2);
+  font-size: 0.8rem;
+}
+
+.sidebar-tab.is-active {
+  color: #120a04;
+  background: linear-gradient(135deg, var(--ember), var(--ember-2));
+}
+
+#sidebar-nav {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+
+.sidebar-group {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.sidebar-group-title {
+  color: var(--text-0);
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.sidebar-link {
+  display: block;
+  padding: 0.78rem 0.9rem;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.sidebar-link:hover,
+.sidebar-link:focus-visible {
+  border-color: rgba(255, 171, 86, 0.2);
+}
+
+.sidebar-link.is-current {
+  border-color: rgba(255, 171, 86, 0.26);
+  background: rgba(255, 138, 29, 0.08);
+}
+
+.sidebar-link-title {
+  display: block;
+  color: var(--text-0);
+  font-size: 0.93rem;
+  font-weight: 600;
+}
+
+.sidebar-link-hint {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--text-2);
+  font-size: 0.82rem;
+}
+
+#sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 44;
+  background: rgba(5, 8, 12, 0.56);
+}
+
+body.nav-open #sidebar {
+  transform: translateX(0);
+}
+
+body.nav-open #sidebar-backdrop {
+  display: block;
+}
+

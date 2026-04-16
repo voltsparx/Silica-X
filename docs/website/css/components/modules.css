@@ -1,0 +1,65 @@
+.command-card-head,
+.mode-card-head,
+.download-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.command-name,
+.mode-name,
+.download-name {
+  color: var(--text-0);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.command-aliases {
+  margin-top: 0.7rem;
+  color: var(--text-2);
+  font-size: 0.88rem;
+}
+
+.command-snippet,
+.download-snippet {
+  margin-top: 0.9rem;
+  padding: 0.85rem 0.9rem;
+  border-radius: 14px;
+  background: rgba(8, 12, 18, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  overflow-x: auto;
+}
+
+.table-mini {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.table-mini-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.9fr) minmax(0, 1fr);
+  gap: 1rem;
+  padding: 0.8rem 0.9rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.table-mini-key {
+  color: var(--text-0);
+  font-weight: 600;
+}
+
+.roadmap-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.roadmap-pill {
+  padding: 0.7rem 0.9rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+}
+
