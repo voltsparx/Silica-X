@@ -119,6 +119,9 @@ const DocsState = {
 
 const DocsElements = {
   body: document.body,
+  topbarLogo: document.querySelector("#topbar-brand img"),
+  topbarName: document.getElementById("topbar-name"),
+  topbarVersion: document.getElementById("topbar-version"),
   sidebar: document.getElementById("sidebar"),
   sidebarTabs: document.getElementById("sidebar-tabs"),
   sidebarNav: document.getElementById("sidebar-nav"),
@@ -130,10 +133,10 @@ const DocsElements = {
   workflowDetail: document.getElementById("workflow-visual-detail"),
   homeWorkflowRail: document.getElementById("home-workflow-rail"),
   homeWorkflowDetail: document.getElementById("home-workflow-detail"),
+  homeHeroLogo: document.querySelector(".hero-logo-frame img"),
   contactToggle: document.getElementById("contact-toggle"),
   contactPopover: document.getElementById("contact-popover"),
   repoHealth: document.getElementById("repo-health"),
   commitFeed: document.getElementById("commit-feed"),
   releaseFeed: document.getElementById("release-feed")
 };
-

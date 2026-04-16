@@ -3,5 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initSearch();
   initWorkflowVisuals();
   initContactPopover();
+  EasterEgg.init();
   initDevelopmentFeed();
 });

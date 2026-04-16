@@ -73,10 +73,12 @@ function renderSidebarNav() {
           const currentPageMatch = DocsState.currentPage === entry.page;
           const currentIdMatch = currentSectionId === entry.id;
           const activeClass = currentPageMatch && currentIdMatch ? " is-current" : "";
+          const pageShort = DocsData.pages[entry.page]?.short || entry.page.replace(".html", "");
           return `
             <a class="sidebar-link${activeClass}" href="${pageLink(entry.page, entry.id)}">
               <span class="sidebar-link-title">${escapeHtml(entry.title)}</span>
               <span class="sidebar-link-hint">${escapeHtml(entry.hint)}</span>
+              <span class="sidebar-link-page">${escapeHtml(pageShort)}</span>
             </a>
           `;
         })
@@ -127,4 +129,3 @@ function initContactPopover() {
     }
   });
 }
-

@@ -1,8 +1,12 @@
 #main {
-  width: min(var(--site-width), calc(100vw - var(--sidebar-width)));
-  max-width: none;
-  margin: calc(var(--topbar-height) + 0.6rem) auto 0;
-  padding: 1.8rem 2.2rem 3rem calc(var(--sidebar-width) + 2.2rem);
+  margin: calc(var(--topbar-height) + 0.6rem) 0 0 var(--sidebar-width);
+  padding: 1.8rem 2.2rem 3rem;
+}
+
+#main > * {
+  max-width: min(var(--site-width), calc(100vw - var(--sidebar-width) - 4.4rem));
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .page-intro {
