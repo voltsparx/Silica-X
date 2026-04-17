@@ -167,7 +167,7 @@ async def _fetch_frame_source(
 
 def _sample_video_frames(video_bytes: bytes, *, source_url: str, max_frames: int = 3) -> tuple[list[MediaFrameObservation], str | None]:
     try:
-        import cv2
+        import cv2  # type: ignore[import]
     except Exception:
         return [], "opencv_unavailable"
 
