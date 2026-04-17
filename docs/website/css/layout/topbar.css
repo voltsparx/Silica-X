@@ -28,12 +28,12 @@
 }
 
 #topbar-brand img {
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 10px;
   border: 1px solid rgba(255, 171, 86, 0.22);
-  box-shadow: 0 0 22px rgba(255, 138, 29, 0.16);
+  box-shadow: 0 0 16px rgba(255, 138, 29, 0.12);
 }
 
 #topbar-brand-text {

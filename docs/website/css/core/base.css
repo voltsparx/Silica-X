@@ -44,9 +44,8 @@ body {
   color: var(--text-1);
   font-family: "Sora", sans-serif;
   background:
-    radial-gradient(circle at 18% 8%, rgba(255, 138, 29, 0.17), transparent 24%),
-    radial-gradient(circle at 84% 14%, rgba(115, 212, 255, 0.1), transparent 24%),
-    linear-gradient(90deg, transparent 0 7%, var(--scanline) 7% 7.1%, transparent 7.1% 13%, var(--scanline) 13% 13.1%, transparent 13.1% 100%),
+    radial-gradient(circle at 18% 8%, rgba(255, 138, 29, 0.14), transparent 26%),
+    radial-gradient(circle at 84% 14%, rgba(115, 212, 255, 0.08), transparent 26%),
     linear-gradient(180deg, #071018 0%, #0a131d 38%, #081018 100%);
   background-attachment: fixed;
   overflow-x: hidden;
@@ -62,23 +61,15 @@ body::after {
 }
 
 body::before {
-  background:
-    linear-gradient(90deg, transparent 0 12%, var(--circuit) 12% 12.14%, transparent 12.14% 24%, var(--circuit) 24% 24.14%, transparent 24.14% 100%),
-    linear-gradient(180deg, transparent 0 18%, var(--circuit) 18% 18.14%, transparent 18.14% 38%, var(--circuit) 38% 38.14%, transparent 38.14% 100%),
-    radial-gradient(circle at 12% 18%, var(--circuit-strong) 0 2px, transparent 2px),
-    radial-gradient(circle at 24% 38%, var(--circuit) 0 2px, transparent 2px),
-    radial-gradient(circle at 76% 22%, var(--circuit) 0 2px, transparent 2px),
-    radial-gradient(circle at 88% 68%, var(--circuit-strong) 0 2px, transparent 2px);
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0.34));
-  opacity: 0.92;
+  display: none;
 }
 
 body::after {
   background:
-    radial-gradient(circle at 20% 10%, rgba(255, 138, 29, 0.17), transparent 0 18%),
-    radial-gradient(circle at 80% 80%, rgba(255, 138, 29, 0.1), transparent 0 16%),
-    radial-gradient(circle at 72% 8%, rgba(115, 212, 255, 0.08), transparent 0 14%);
-  filter: blur(36px);
+    radial-gradient(circle at 20% 10%, rgba(255, 138, 29, 0.13), transparent 0 18%),
+    radial-gradient(circle at 80% 80%, rgba(255, 138, 29, 0.08), transparent 0 16%),
+    radial-gradient(circle at 72% 8%, rgba(115, 212, 255, 0.06), transparent 0 14%);
+  filter: blur(40px);
 }
 
 img {
@@ -274,7 +265,7 @@ pre,
 }
 
 .hero-logo-card {
-  padding: 1.5rem;
+  padding: 1.35rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -283,100 +274,35 @@ pre,
 }
 
 .hero-logo-frame {
-  position: relative;
-  isolation: isolate;
   display: grid;
   place-items: center;
+  padding: 1.1rem;
+  min-height: 250px;
   border-radius: calc(var(--radius-md) - 4px);
   overflow: hidden;
   border: 1px solid rgba(255, 171, 86, 0.18);
   background: radial-gradient(circle at center, rgba(255, 138, 29, 0.2), transparent 58%), rgba(255, 255, 255, 0.02);
 }
 
-.hero-logo-frame::before,
-.hero-logo-frame::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 220ms ease, transform 220ms ease, filter 220ms ease;
-}
-
-.hero-logo-frame::before {
-  width: 88px;
-  height: 88px;
-  border-radius: 999px;
-  transform: translate(-50%, -50%) scale(0.76);
-  background:
-    radial-gradient(circle at center, rgba(255, 214, 150, 0.88) 0 11%, rgba(255, 138, 29, 0.48) 28%, rgba(255, 138, 29, 0.14) 52%, transparent 74%);
-  box-shadow:
-    0 0 0 1px rgba(255, 176, 90, 0.16),
-    0 0 20px rgba(255, 138, 29, 0.24);
-  z-index: 0;
-}
-
-.hero-logo-frame::after {
-  width: 80%;
-  height: 80%;
-  transform: translate(-50%, -50%) scale(0.9);
-  background:
-    linear-gradient(90deg, transparent 0 16%, rgba(255, 176, 90, 0.32) 16% 16.8%, transparent 16.8% 34%, rgba(255, 176, 90, 0.18) 34% 34.8%, transparent 34.8% 100%),
-    linear-gradient(180deg, transparent 0 18%, rgba(255, 176, 90, 0.26) 18% 18.8%, transparent 18.8% 42%, rgba(255, 176, 90, 0.16) 42% 42.8%, transparent 42.8% 100%),
-    radial-gradient(circle at 26% 35%, rgba(255, 186, 112, 0.85) 0 2px, transparent 2px),
-    radial-gradient(circle at 72% 64%, rgba(255, 186, 112, 0.65) 0 2px, transparent 2px),
-    radial-gradient(circle at 54% 22%, rgba(255, 186, 112, 0.45) 0 2px, transparent 2px);
-  filter: drop-shadow(0 0 7px rgba(255, 138, 29, 0.16));
-  z-index: 0;
-}
-
 .hero-logo-frame img,
 #topbar-brand img {
-  transition: transform 180ms ease, filter 180ms ease;
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), filter 240ms ease;
 }
 
 .hero-logo-frame img {
   cursor: pointer;
+  width: min(230px, 72%);
+  max-width: 100%;
+  height: auto;
   transform-origin: center;
-  position: relative;
-  z-index: 1;
 }
 
 .hero-logo-frame img.egg-hero-spin {
-  animation: egg-hero-spin 620ms cubic-bezier(0.22, 1, 0.36, 1) 1;
+  animation: egg-hero-spin 560ms cubic-bezier(0.22, 1, 0.36, 1) 1;
 }
 
 .hero-logo-frame img.egg-hero-hidden {
   opacity: 0;
-}
-
-.hero-logo-frame.egg-circuit-live::before,
-.hero-logo-frame.egg-circuit-live::after {
-  opacity: 1;
-}
-
-.hero-logo-frame.egg-circuit-live::before {
-  transform: translate(-50%, -50%) scale(1);
-}
-
-.hero-logo-frame.egg-circuit-live::after {
-  transform: translate(-50%, -50%) scale(1);
-}
-
-.hero-logo-frame.egg-circuit-armed::before,
-.hero-logo-frame.egg-circuit-armed::after {
-  opacity: 1;
-}
-
-.hero-logo-frame.egg-circuit-armed::before {
-  animation: egg-circuit-core 1.1s ease-in-out infinite alternate;
-  filter: drop-shadow(0 0 18px rgba(255, 138, 29, 0.4));
-}
-
-.hero-logo-frame.egg-circuit-armed::after {
-  animation: egg-circuit-grid 1.5s linear infinite;
-  filter: drop-shadow(0 0 14px rgba(255, 138, 29, 0.34));
 }
 
 .egg-ninja-star-shell {
@@ -391,41 +317,31 @@ pre,
   height: 100%;
   transform-origin: center;
   will-change: transform, filter;
-  filter: drop-shadow(0 0 24px rgba(255, 138, 29, 0.42));
+  filter: drop-shadow(0 0 18px rgba(255, 138, 29, 0.32));
 }
 
 .egg-ninja-star.egg-ninja-charge {
-  animation: egg-ninja-charge 180ms linear infinite;
+  animation: egg-ninja-charge 280ms linear infinite;
 }
 
 .egg-logo-pulse {
-  animation: egg-logo-pulse 820ms cubic-bezier(0.16, 1, 0.3, 1) 1;
+  animation: egg-logo-pulse 680ms cubic-bezier(0.22, 1, 0.36, 1) 1;
 }
 
 @keyframes egg-hero-spin {
   0% { transform: rotate(0deg) scale(1); filter: drop-shadow(0 0 0 rgba(255, 138, 29, 0)); }
-  38% { transform: rotate(420deg) scale(1.06); filter: drop-shadow(0 0 14px rgba(255, 138, 29, 0.45)); }
-  100% { transform: rotate(720deg) scale(1); filter: drop-shadow(0 0 0 rgba(255, 138, 29, 0)); }
-}
-
-@keyframes egg-circuit-core {
-  from { transform: translate(-50%, -50%) scale(1); opacity: 0.94; }
-  to { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
-}
-
-@keyframes egg-circuit-grid {
-  from { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
-  to { transform: translate(-50%, -50%) scale(1.04) rotate(12deg); }
+  45% { transform: rotate(210deg) scale(1.03); filter: drop-shadow(0 0 10px rgba(255, 138, 29, 0.28)); }
+  100% { transform: rotate(360deg) scale(1); filter: drop-shadow(0 0 0 rgba(255, 138, 29, 0)); }
 }
 
 @keyframes egg-ninja-charge {
-  from { transform: rotate(0deg) scale(1.02); filter: drop-shadow(0 0 12px rgba(255, 138, 29, 0.34)); }
-  to { transform: rotate(1080deg) scale(1.08); filter: drop-shadow(0 0 30px rgba(255, 138, 29, 0.58)); }
+  from { transform: rotate(0deg) scale(1.01); filter: drop-shadow(0 0 10px rgba(255, 138, 29, 0.26)); }
+  to { transform: rotate(720deg) scale(1.05); filter: drop-shadow(0 0 18px rgba(255, 138, 29, 0.4)); }
 }
 
 @keyframes egg-logo-pulse {
   0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 0 rgba(255, 138, 29, 0)); }
-  35% { transform: scale(1.08) rotate(7deg); filter: drop-shadow(0 0 16px rgba(255, 138, 29, 0.55)); }
+  40% { transform: scale(1.03) rotate(3deg); filter: drop-shadow(0 0 10px rgba(255, 138, 29, 0.32)); }
   100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 0 rgba(255, 138, 29, 0)); }
 }
 
@@ -847,10 +763,7 @@ body.egg-blueprint {
 }
 
 body.egg-blueprint::before {
-  opacity: 1;
-  background:
-    linear-gradient(90deg, transparent 0 10%, rgba(255, 210, 154, 0.085) 10% 10.12%, transparent 10.12% 24%, rgba(255, 210, 154, 0.085) 24% 24.12%, transparent 24.12% 100%),
-    linear-gradient(180deg, transparent 0 16%, rgba(255, 210, 154, 0.085) 16% 16.12%, transparent 16.12% 34%, rgba(255, 210, 154, 0.085) 34% 34.12%, transparent 34.12% 100%);
+  display: none;
 }
 
 body.egg-overdrive::after {

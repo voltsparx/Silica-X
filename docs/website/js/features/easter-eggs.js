@@ -8,7 +8,6 @@ const EasterEgg = (() => {
   let heroTapCount = 0;
   let heroTapTimer = null;
   let heroStarActive = false;
-  let heroCircuitTimer = null;
 
   const secretQueries = {
     fusioncore: () => activateOverdrive("Fusion lane synchronized"),
@@ -63,46 +62,6 @@ const EasterEgg = (() => {
     node.classList.remove("egg-hero-spin");
     void node.offsetWidth;
     node.classList.add("egg-hero-spin");
-  }
-
-  function activateHeroCircuit(node, persistent = false) {
-    const frame = node?.closest(".hero-logo-frame");
-    if (!frame) {
-      return;
-    }
-
-    frame.classList.add("egg-circuit-live");
-
-    if (heroCircuitTimer) {
-      window.clearTimeout(heroCircuitTimer);
-      heroCircuitTimer = null;
-    }
-
-    if (persistent) {
-      frame.classList.add("egg-circuit-armed");
-      return;
-    }
-
-    frame.classList.remove("egg-circuit-armed");
-    heroCircuitTimer = window.setTimeout(() => {
-      frame.classList.remove("egg-circuit-live");
-    }, 900);
-  }
-
-  function releaseHeroCircuit(node) {
-    const frame = node?.closest(".hero-logo-frame");
-    if (!frame) {
-      return;
-    }
-
-    if (heroCircuitTimer) {
-      window.clearTimeout(heroCircuitTimer);
-      heroCircuitTimer = null;
-    }
-
-    window.setTimeout(() => {
-      frame.classList.remove("egg-circuit-live", "egg-circuit-armed");
-    }, 780);
   }
 
   function wait(ms) {
@@ -204,7 +163,6 @@ const EasterEgg = (() => {
 
       heroTapCount += 1;
       spinHeroLogo(DocsElements.homeHeroLogo);
-      activateHeroCircuit(DocsElements.homeHeroLogo);
 
       if (heroTapTimer) {
         window.clearTimeout(heroTapTimer);
@@ -217,7 +175,6 @@ const EasterEgg = (() => {
       if (heroTapCount >= 7) {
         heroTapCount = 0;
         heroStarActive = true;
-        activateHeroCircuit(DocsElements.homeHeroLogo, true);
         void launchHeroStar(DocsElements.homeHeroLogo);
       }
     });
@@ -333,7 +290,6 @@ const EasterEgg = (() => {
     shell.remove();
     node.classList.remove("egg-hero-hidden");
     pulseLogo(node);
-    releaseHeroCircuit(node);
     showToast("Shardstorm complete", "Ricochet pattern collapsed back into the operator mark.");
     heroStarActive = false;
   }
