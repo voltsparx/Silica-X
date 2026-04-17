@@ -2,9 +2,10 @@
 
 ## Status
 
-Current state: design and integration blueprint.  
-This capability is documented and structured for integration, but it is not yet shipped as a default runtime command in `silica-x.py`.
-Target release window: `v9.5` or `v10.0` (subject to implementation completion and validation gates).
+Current state: partially shipped runtime lane plus deeper roadmap.  
+Silica-X now ships public-media reconnaissance plugins for image OCR/metadata, public post-text intelligence, lightweight video endpoint handling, and heuristic stego triage.  
+It is still not shipped as a dedicated default command or wizard phase in `silica-x.py`.
+Remaining expansion target: `v9.5` or `v10.0` for deeper packaging/orchestration work.
 
 Source planning note:
 
@@ -100,3 +101,27 @@ Minimum safeguards:
 5. Add output rendering blocks for OCR-specific sections.
 6. Update `requirements.txt` and `requirements-dev.txt` as needed.
 7. Re-run full smoke suite and refresh documentation snapshots.
+
+## Runtime Plugins Shipped Today
+
+Current runtime plugins:
+
+* `media_intel_core`
+* `media_recon_engine`
+* `post_signal_intel`
+* `stego_signal_probe`
+
+Current runtime scope:
+
+* public image metadata extraction
+* optional OCR on public images
+* public post-text harvesting and signal extraction
+* lightweight video endpoint + thumbnail reconnaissance
+* heuristic stego-suspicion scoring
+
+Still pending:
+
+* local batch OCR package
+* wizard/media phase controls
+* dedicated local image path ingestion UX
+* full frame extraction/video CV pipeline

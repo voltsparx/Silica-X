@@ -131,7 +131,6 @@ def build_explain_text() -> str:
         f"{symbol('bullet')} wizard supports phase toggles, preset selection, extension preflight validation, and seeded/non-seeded execution."
     )
     lines.append(
-        f"{symbol('bullet')} OCR/image infrastructure is documented in docs/ocr-image-scan-infrastructure.md (roadmap track)."
+        f"{symbol('bullet')} Media reconnaissance now ships through runtime plugins; docs/ocr-image-scan-infrastructure.md covers the remaining expansion roadmap."
     )
     return "\n".join(lines)
-

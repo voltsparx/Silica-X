@@ -98,6 +98,7 @@ For full command reference, see [Usage Guide](docs/Usage.txt).
 * 🧹 Pluggable filtering system (`core/extensions/signal_sieve.py` + `filters/`)
 * 🧱 External module catalog system (`modules/catalog.py` + `modules/*.json`)
 * 🌌 Signal fusion connector layer (`core/collect/source_fusion.py` + `signal_*` plugin/filter pair)
+* 🖼️ Public media reconnaissance lane for images, thumbnails, post text, and stego-suspicion triage
 * 🖥️ Prompt mode with keyword shortcuts, context-aware prompt flow, and session defaults
 * 📖 Explain system (`--explain`, `explain`) for command/plugin/filter onboarding
 * 📦 Prompt startup inventory shows loaded plugin/filter/platform/module counts
@@ -111,6 +112,7 @@ For full command reference, see [Usage Guide](docs/Usage.txt).
 * [Usage Guide](docs/Usage.txt)
 * [Orchestration Architecture](docs/orchestration-architecture.md)
 * [Recon Source Integration](docs/recon-source-integration.md)
+* [Media Recon Orchestration](docs/media-recon-orchestration.md)
 * [Capability Scan Report](docs/sylica-capability-scan.md)
 * [OCR/Image Infrastructure Plan](docs/ocr-image-scan-infrastructure.md)
 * [Release Checklist v9.3.0 Ember](docs/release-checklist-v9.3.0-lattice.md)
@@ -208,9 +210,10 @@ Crypto plugin runtime note:
 * `cryptography` is included in `requirements.txt` and required for `crypto_aes_attachment`.
 * `crypto_xor_attachment` and `crypto_rot13_attachment` run without external system binaries.
 
-OCR roadmap dependency note:
+Media/OCR dependency note:
 
-* Planned OCR lane depends on `pytesseract` + `Pillow` and a host Tesseract installation.
+* The shipped public-media lane can use `Pillow` plus optional OCR engines such as `pytesseract` or `easyocr`.
+* `pytesseract` still requires a host Tesseract installation when selected.
 
 ---
 
@@ -477,11 +480,14 @@ Runtime behavior:
 
 ## 🖼️ OCR/Image Infrastructure
 
-OCR/image intelligence is documented as an architecture track and implementation guide (currently roadmap-level, not enabled as a built-in runtime plugin set yet).  
-Planned availability target: `v9.5` or `v10.0`.
+Silica-X now ships a public-media runtime lane through `media_recon_engine`, `post_signal_intel`, `stego_signal_probe`, and `media_intel_core`.  
+That lane is powered by `core/engines/media_recon_engine.py` and covers public image OCR/metadata, post-text intelligence, visual frame profiling, lightweight video handling, and heuristic stego triage.
+
+Full local/batch OCR packaging, dedicated wizard phases, and deeper frame-by-frame video orchestration remain future-scope.
 
 Reference docs:
 
+* [Media Recon Orchestration](docs/media-recon-orchestration.md)
 * [OCR/Image Infrastructure Plan](docs/ocr-image-scan-infrastructure.md)
 * [Self-Structuring Note](self-structuring/ocr-n-image/ocr-n-image-scan-infrastructure.txt)
 
@@ -554,6 +560,7 @@ python silica-x.py anonymity --check
 python silica-x.py templates
 python silica-x.py plugins --scope all
 python silica-x.py filters --scope all
+python silica-x.py profile alice --plugin media_recon_engine --plugin post_signal_intel --plugin stego_signal_probe --html
 python silica-x.py modules --sync --kind plugin --scope profile --limit 30
 python silica-x.py profile alice --info-template contact-discovery --html
 python silica-x.py profile alice --tor --plugin orbit_link_matrix --filter contact_canonicalizer --html
@@ -725,4 +732,4 @@ Generates/refreshes:
 
 ---
 
-⭐ If you find Silica-X useful, consider starring the repository!
+⭐ If you find Silica-X useful, consider starring the repository^^
