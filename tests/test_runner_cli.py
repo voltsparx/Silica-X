@@ -24,6 +24,7 @@ from core.runner import (
     EXIT_FAILURE,
     EXIT_USAGE,
     RunnerState,
+    _confirm_execution,
     _normalize_multi_select_args,
     _split_csv_tokens,
     _keyword_to_command,
@@ -41,6 +42,15 @@ class TestRunnerCli(unittest.TestCase):
         resolved = compute_effective_state(base, tor_override=True, proxy_override=None)
         self.assertTrue(resolved.use_tor)
         self.assertTrue(resolved.use_proxy)
+
+    def test_confirm_execution_allows_noninteractive_eof(self):
+        with patch("builtins.input", side_effect=EOFError):
+            self.assertTrue(_confirm_execution(prompt_mode=False))
+
+    def test_run_ocr_without_sources_returns_usage_instead_of_traceback(self):
+        with patch("builtins.input", side_effect=EOFError):
+            status = asyncio.run(run(["ocr"]))
+        self.assertEqual(status, EXIT_USAGE)
 
     def test_keyword_mapping_supports_prompt_shortcuts(self):
         self.assertEqual(_keyword_to_command("social"), "profile")

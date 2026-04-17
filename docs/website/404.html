@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page Not Found | Silica-X</title>
+<meta http-equiv="refresh" content="4; url=./index.html">
+<link rel="icon" href="web_assets/media/silica-x-favicon.ico" sizes="any">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #120c08;
+    --panel: #23160f;
+    --line: #6f4020;
+    --text: #f7e7d6;
+    --muted: #c8a98c;
+    --accent: #f47c20;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(circle at top, rgba(244, 124, 32, 0.15), transparent 42%),
+      linear-gradient(180deg, #140d09, var(--bg));
+    color: var(--text);
+    font-family: "Segoe UI", sans-serif;
+    padding: 1.5rem;
+  }
+  .panel {
+    width: min(680px, 100%);
+    background: rgba(35, 22, 15, 0.94);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.38);
+  }
+  .kicker {
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.75rem;
+  }
+  h1 {
+    margin: 0.6rem 0 0.75rem;
+    font-size: clamp(2rem, 4vw, 3rem);
+  }
+  p {
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+  <main class="panel">
+    <div class="kicker">Silica-X</div>
+    <h1>That page was not found.</h1>
+    <p>
+      The link may be outdated, or GitHub Pages may still be publishing the latest site build.
+      You will be redirected to the main documentation page shortly.
+    </p>
+    <p>
+      If the full project site itself is unavailable, verify that GitHub Pages is enabled for this
+      repository and set to deploy from GitHub Actions.
+    </p>
+    <p><a href="./index.html">Open the docs home now</a></p>
+  </main>
+</body>
+</html>

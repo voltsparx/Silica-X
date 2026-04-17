@@ -2811,6 +2811,10 @@ async def _handle_ocr_command(args: argparse.Namespace, state: RunnerState, prom
     if args.list_filters:
         _print_filter_inventory(scope="ocr")
         return EXIT_SUCCESS
+    if not list(getattr(args, "paths", []) or []) and not list(getattr(args, "url", []) or []):
+        print(c(f"{symbol('warn')} OCR scan requires at least one local image path or remote image URL.", Colors.RED))
+        print(c(f"{symbol('tip')} Example: silica-x ocr ./capture.png --out-type json,html", Colors.EMBER))
+        return EXIT_USAGE
 
     plugin_ids, filter_ids, _, ok_plan = _resolve_extension_plan_or_fail(
         scope="ocr",

@@ -108,6 +108,14 @@ config
 - [Development](docs/development.md)
 - [Website](docs/website/README.md)
 
+## Website and Pages
+
+Primary Pages URL:
+
+- `https://voltsparx.github.io/Silica-X/`
+
+If that direct URL shows GitHub's "site not found" page, the usual cause is not the website files themselves. It usually means GitHub Pages is not currently serving the project site yet. For this repository, Pages must be enabled with `GitHub Actions` as the source, and the `Silica-X Pages` workflow must complete successfully on `main` or `master`.
+
 ## Safety
 
 - Legal and authorized use only
@@ -123,6 +131,7 @@ python -m pytest -q
 python -m ruff check .
 python -m mypy
 python -m compileall -q core filters modules plugins tests silica-x.py
+python scripts/smoke_suite.py
 ```
 
 Core package naming:
