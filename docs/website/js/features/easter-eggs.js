@@ -8,6 +8,7 @@ const EasterEgg = (() => {
   let heroTapCount = 0;
   let heroTapTimer = null;
   let heroStarActive = false;
+  let heroCircuitTimer = null;
 
   const secretQueries = {
     fusioncore: () => activateOverdrive("Fusion lane synchronized"),
@@ -62,6 +63,52 @@ const EasterEgg = (() => {
     node.classList.remove("egg-hero-spin");
     void node.offsetWidth;
     node.classList.add("egg-hero-spin");
+  }
+
+  function activateHeroCircuit(node, persistent = false) {
+    const frame = node?.closest(".hero-logo-frame");
+    if (!frame) {
+      return;
+    }
+
+    frame.classList.add("egg-circuit-live");
+
+    if (heroCircuitTimer) {
+      window.clearTimeout(heroCircuitTimer);
+      heroCircuitTimer = null;
+    }
+
+    if (persistent) {
+      frame.classList.add("egg-circuit-armed");
+      return;
+    }
+
+    frame.classList.remove("egg-circuit-armed");
+    heroCircuitTimer = window.setTimeout(() => {
+      frame.classList.remove("egg-circuit-live");
+    }, 900);
+  }
+
+  function releaseHeroCircuit(node) {
+    const frame = node?.closest(".hero-logo-frame");
+    if (!frame) {
+      return;
+    }
+
+    if (heroCircuitTimer) {
+      window.clearTimeout(heroCircuitTimer);
+      heroCircuitTimer = null;
+    }
+
+    window.setTimeout(() => {
+      frame.classList.remove("egg-circuit-live", "egg-circuit-armed");
+    }, 780);
+  }
+
+  function wait(ms) {
+    return new Promise((resolve) => {
+      window.setTimeout(resolve, ms);
+    });
   }
 
   function spawnRibbons(count = 18) {
@@ -157,6 +204,7 @@ const EasterEgg = (() => {
 
       heroTapCount += 1;
       spinHeroLogo(DocsElements.homeHeroLogo);
+      activateHeroCircuit(DocsElements.homeHeroLogo);
 
       if (heroTapTimer) {
         window.clearTimeout(heroTapTimer);
@@ -169,7 +217,7 @@ const EasterEgg = (() => {
       if (heroTapCount >= 7) {
         heroTapCount = 0;
         heroStarActive = true;
-        spawnRibbons(28);
+        activateHeroCircuit(DocsElements.homeHeroLogo, true);
         void launchHeroStar(DocsElements.homeHeroLogo);
       }
     });
@@ -182,16 +230,24 @@ const EasterEgg = (() => {
       return;
     }
 
+    const shell = document.createElement("div");
+    shell.className = "egg-ninja-star-shell";
+    shell.style.width = `${startRect.width}px`;
+    shell.style.height = `${startRect.height}px`;
+    shell.style.left = `${startRect.left}px`;
+    shell.style.top = `${startRect.top}px`;
+
     const clone = node.cloneNode(true);
-    clone.className = "egg-ninja-star";
-    clone.style.width = `${startRect.width}px`;
-    clone.style.height = `${startRect.height}px`;
-    clone.style.left = `${startRect.left}px`;
-    clone.style.top = `${startRect.top}px`;
-    DocsElements.body.appendChild(clone);
+    clone.className = "egg-ninja-star egg-ninja-charge";
+    shell.appendChild(clone);
+    DocsElements.body.appendChild(shell);
     node.classList.add("egg-hero-hidden");
 
-    showToast("Ninja star override", "Seven taps triggered a bounce-run across the site shell.");
+    showToast("Achievement unlocked", "Shardstorm Protocol armed. Ricochet spin charging.");
+    spawnRibbons(28);
+    await wait(3000);
+    clone.classList.remove("egg-ninja-charge");
+    showToast("Ricochet burst", "Ember shard released into the lattice.");
 
     const minSpeed = 420;
     const maxSpeed = 760;
@@ -200,7 +256,7 @@ const EasterEgg = (() => {
     let velocityY = Math.sin(angle) * (minSpeed + (Math.random() * (maxSpeed - minSpeed)));
     let positionX = startRect.left;
     let positionY = startRect.top;
-    let spin = 0;
+    let spin = 18000;
     let lastFrame = performance.now();
     const travelUntil = lastFrame + 2700;
 
@@ -237,9 +293,9 @@ const EasterEgg = (() => {
           velocityY *= speedScale;
         }
 
-        clone.style.left = `${positionX}px`;
-        clone.style.top = `${positionY}px`;
-        clone.style.transform = `rotate(${spin}deg) scale(1.02)`;
+        shell.style.left = `${positionX}px`;
+        shell.style.top = `${positionY}px`;
+        clone.style.transform = `rotate(${spin}deg) scale(1.03)`;
 
         if (now < travelUntil) {
           window.requestAnimationFrame(step);
@@ -253,23 +309,32 @@ const EasterEgg = (() => {
     });
 
     const endRect = node.getBoundingClientRect();
-    const returnAnimation = clone.animate(
+    const returnAnimation = shell.animate(
       [
-        { left: `${positionX}px`, top: `${positionY}px`, transform: `rotate(${spin}deg) scale(1.02)` },
-        { left: `${endRect.left}px`, top: `${endRect.top}px`, transform: `rotate(${spin + 1080}deg) scale(1)` }
+        { left: `${positionX}px`, top: `${positionY}px` },
+        { left: `${endRect.left}px`, top: `${endRect.top}px` }
+      ],
+      { duration: 820, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "forwards" }
+    );
+    const returnSpin = clone.animate(
+      [
+        { transform: `rotate(${spin}deg) scale(1.03)` },
+        { transform: `rotate(${spin + 1440}deg) scale(1)` }
       ],
       { duration: 820, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "forwards" }
     );
 
     try {
-      await returnAnimation.finished;
+      await Promise.all([returnAnimation.finished, returnSpin.finished]);
     } catch (error) {
       // Ignore interrupted animation and continue restoring the original node.
     }
 
-    clone.remove();
+    shell.remove();
     node.classList.remove("egg-hero-hidden");
     pulseLogo(node);
+    releaseHeroCircuit(node);
+    showToast("Shardstorm complete", "Ricochet pattern collapsed back into the operator mark.");
     heroStarActive = false;
   }
 

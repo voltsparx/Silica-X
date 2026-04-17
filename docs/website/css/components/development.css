@@ -191,6 +191,10 @@
   padding: 1.2rem;
 }
 
+.raw-viewer-open {
+  overflow: hidden;
+}
+
 .raw-viewer-window {
   width: min(960px, 100%);
   max-height: min(88vh, 900px);
@@ -253,14 +257,116 @@
 }
 
 .raw-viewer-body {
-  margin: 0;
   padding: 1rem;
   overflow: auto;
   color: #d9e3ef;
   font-size: 0.9rem;
   line-height: 1.65;
-  white-space: pre-wrap;
   background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));
+}
+
+.raw-viewer-body.is-plain {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: "IBM Plex Mono", monospace;
+}
+
+.raw-viewer-body.is-markdown {
+  display: block;
+  color: #d8e3ef;
+  white-space: normal;
+}
+
+.raw-viewer-body.is-markdown > :first-child {
+  margin-top: 0;
+}
+
+.raw-viewer-body.is-markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.raw-viewer-body.is-markdown h1,
+.raw-viewer-body.is-markdown h2,
+.raw-viewer-body.is-markdown h3,
+.raw-viewer-body.is-markdown h4 {
+  margin: 1.3rem 0 0.7rem;
+  color: var(--text-0);
+}
+
+.raw-viewer-body.is-markdown p,
+.raw-viewer-body.is-markdown ul,
+.raw-viewer-body.is-markdown ol,
+.raw-viewer-body.is-markdown blockquote,
+.raw-viewer-body.is-markdown pre,
+.raw-viewer-body.is-markdown table {
+  margin: 0.9rem 0;
+}
+
+.raw-viewer-body.is-markdown ul,
+.raw-viewer-body.is-markdown ol {
+  padding-left: 1.35rem;
+}
+
+.raw-viewer-body.is-markdown li + li {
+  margin-top: 0.35rem;
+}
+
+.raw-viewer-body.is-markdown a {
+  color: var(--cyan);
+}
+
+.raw-viewer-body.is-markdown code {
+  padding: 0.1rem 0.38rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.88em;
+}
+
+.raw-viewer-body.is-markdown pre,
+.raw-md-code {
+  padding: 0.95rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 176, 90, 0.1);
+  background: rgba(4, 8, 12, 0.82);
+  overflow: auto;
+}
+
+.raw-viewer-body.is-markdown pre code,
+.raw-md-code code {
+  padding: 0;
+  background: transparent;
+}
+
+.raw-viewer-body.is-markdown blockquote {
+  padding: 0.8rem 0.95rem;
+  border-left: 3px solid rgba(255, 176, 90, 0.32);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-1);
+}
+
+.raw-viewer-body.is-markdown img {
+  width: auto;
+  max-width: 100%;
+  border-radius: 12px;
+}
+
+.raw-viewer-body.is-markdown table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.raw-viewer-body.is-markdown th,
+.raw-viewer-body.is-markdown td {
+  padding: 0.7rem 0.75rem;
+  border: 1px solid rgba(255, 176, 90, 0.08);
+  text-align: left;
+  vertical-align: top;
+}
+
+.raw-viewer-body.is-markdown th {
+  color: var(--text-0);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 @media (max-width: 1080px) {

@@ -52,7 +52,7 @@ async function initDevelopmentFeed() {
             return `
               <article class="feed-item">
                 <a href="${escapeHtml(commit.html_url)}" target="_blank" rel="noreferrer">${escapeHtml(message)}</a>
-                <div class="feed-meta">${escapeHtml(author)} · ${escapeHtml(formatDate(date))} · ${escapeHtml(formatRelativeTime(date))}</div>
+                <div class="feed-meta">${escapeHtml(author)} &#183; ${escapeHtml(formatDate(date))} &#183; ${escapeHtml(formatRelativeTime(date))}</div>
               </article>
             `;
           }).join("")}
@@ -70,7 +70,7 @@ async function initDevelopmentFeed() {
         ? `<div class="feed-list">${releases.map((release) => `
             <article class="feed-item">
               <a href="${escapeHtml(release.html_url)}" target="_blank" rel="noreferrer">${escapeHtml(release.name || release.tag_name || "Release")}</a>
-              <div class="feed-meta">${escapeHtml(release.tag_name || "untagged")} · ${escapeHtml(release.published_at ? formatDate(release.published_at) : "draft")}</div>
+              <div class="feed-meta">${escapeHtml(release.tag_name || "untagged")} &#183; ${escapeHtml(release.published_at ? formatDate(release.published_at) : "draft")}</div>
             </article>
           `).join("")}</div>`
         : '<div class="empty-state">No published GitHub releases yet. The project currently signals release state through repository docs and tags.</div>';

@@ -13,14 +13,17 @@ function buildWorkflowRail(railElement) {
           <article class="workflow-stage${activeClass}" data-key="${escapeHtml(stage.key)}">
             <button class="workflow-stage-trigger" type="button" aria-expanded="${expanded}">
               <div class="workflow-stage-top">
-                <span class="workflow-stage-index">${escapeHtml(stage.label)}</span>
-                <span class="pill">${escapeHtml(stage.title)}</span>
+                <div class="workflow-stage-headline">
+                  <span class="workflow-stage-index">${escapeHtml(stage.label)}</span>
+                  <h3 class="workflow-stage-title">${escapeHtml(stage.title)}</h3>
+                </div>
+                <span class="workflow-stage-chevron" aria-hidden="true"></span>
               </div>
               <div class="workflow-stage-summary">${escapeHtml(stage.summary)}</div>
             </button>
             <div class="workflow-stage-body">
               <div class="stage-detail">
-                <h3>${escapeHtml(stage.title)}</h3>
+                <div class="stage-detail-kicker">Execution slice</div>
                 <p>${escapeHtml(stage.detail)}</p>
                 <div class="stage-detail-meta">${pills}</div>
               </div>

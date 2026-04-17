@@ -1,15 +1,36 @@
 .workflow-rail {
   display: grid;
-  gap: 0.9rem;
+  gap: 1rem;
 }
 
 .workflow-stage {
   position: relative;
+  padding-left: 1.15rem;
   border-radius: 18px;
   border: 1px solid rgba(255, 176, 90, 0.1);
   background: rgba(255, 255, 255, 0.025);
   overflow: hidden;
   transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.workflow-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: linear-gradient(180deg, rgba(255, 138, 29, 0.2), rgba(115, 212, 255, 0.26));
+}
+
+.workflow-stage::after {
+  content: "";
+  position: absolute;
+  left: 0.5rem;
+  top: 1.45rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--ember), var(--ember-2));
+  box-shadow: 0 0 16px rgba(255, 138, 29, 0.38);
 }
 
 .workflow-stage:hover,
@@ -26,7 +47,7 @@
 .workflow-stage-trigger {
   display: block;
   width: 100%;
-  padding: 1rem 1.05rem 1rem;
+  padding: 1rem 1.05rem 1rem 1.15rem;
   background: transparent;
   color: inherit;
   text-align: left;
@@ -36,8 +57,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
   gap: 0.75rem;
+}
+
+.workflow-stage-headline {
+  display: grid;
+  gap: 0.35rem;
 }
 
 .workflow-stage-index {
@@ -50,14 +75,30 @@
 
 .workflow-stage-title {
   color: var(--text-0);
+  font-size: 1.06rem;
   font-weight: 700;
+}
+
+.workflow-stage-chevron {
+  width: 0.9rem;
+  height: 0.9rem;
+  flex: 0 0 auto;
+  border-right: 2px solid rgba(255, 176, 90, 0.48);
+  border-bottom: 2px solid rgba(255, 176, 90, 0.48);
+  transform: rotate(45deg);
+  transition: transform 180ms ease, border-color 180ms ease;
+}
+
+.workflow-stage.is-active .workflow-stage-chevron {
+  border-color: rgba(255, 176, 90, 0.9);
+  transform: rotate(225deg);
 }
 
 .workflow-stage-summary {
   margin-top: 0.65rem;
   color: var(--text-1);
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: 0.95rem;
+  line-height: 1.58;
   padding-right: 0.2rem;
 }
 
@@ -76,16 +117,28 @@
 }
 
 .stage-detail {
-  padding: 0 1.05rem 1.05rem;
+  padding: 0 1.05rem 1.15rem 1.15rem;
   overflow: hidden;
 }
 
-.stage-detail h3 {
-  font-size: 1.1rem;
+.stage-detail-kicker {
+  display: inline-flex;
+  margin-top: 0.1rem;
+  padding: 0.32rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(255, 138, 29, 0.08);
+  border: 1px solid rgba(255, 176, 90, 0.12);
+  color: var(--ember-2);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .stage-detail p {
-  margin: 0.75rem 0 0;
+  margin: 0.85rem 0 0;
+  color: var(--text-1);
+  line-height: 1.7;
 }
 
 .stage-detail-meta {
