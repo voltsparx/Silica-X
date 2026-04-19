@@ -1,4 +1,4 @@
-﻿# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # SPDX-License-Identifier: Proprietary
 #
 # Silica-X Intelligence Framework
@@ -2210,6 +2210,22 @@ async def run_profile_scan(
         append_framework_log("profile_scan_failed", f"target={username} reason={exc}", level="WARN")
         return EXIT_FAILURE, None
 
+    from core.collect.osint_hunt import hunt_username_signals
+    from core.intelligence.pre_sim import PreIntelligenceSimulator
+
+    osint_hunt = await hunt_username_signals(
+        username=username,
+        proxy_url=proxy_url,
+        timeout=timeout_seconds,
+        max_concurrency=max_concurrency,
+    )
+    _sim = PreIntelligenceSimulator()
+    _target_model = _sim.simulate(
+        target=username,
+        profile_results=results,
+        domain_result=None,
+        ocr_payload=None,
+    )
     correlation = correlate(results)
     issues = assess_profile_exposure(results)
     issue_summary = summarize_issues(issues)
@@ -2228,7 +2244,17 @@ async def run_profile_scan(
         issues=issues,
         profile_results=results,
     )
+    intelligence_bundle["target_model"] = _target_model.as_dict()
+    from core.collect.fingerprint_intel import FingerprintCollector
+
+    _fc = FingerprintCollector()
+    intelligence_bundle["master_fingerprint"] = _fc.build_master_fingerprint(
+        target=username,
+        profile_results=results,
+    )
     attachable_payload = dict(extra_payload or {})
+    attachable_payload["osint_hunt"] = osint_hunt
+    attachable_payload["target_model"] = _target_model.as_dict()
     plugin_results, plugin_errors = await PLUGIN_MANAGER.run_plugins(
         {
             "target": username,
@@ -2333,6 +2359,7 @@ async def run_profile_scan(
                 filter_results=filter_results,
                 filter_errors=filter_errors,
                 intelligence_bundle=intelligence_bundle,
+                extra_payload=attachable_payload,
                 output_stamp=stamp,
             )
             print(c(f"HTML report generated -> {report_path}", Colors.GREEN))
@@ -2439,6 +2466,51 @@ async def run_surface_scan(
         append_framework_log("surface_scan_failed", f"target={normalized_domain} reason={exc}", level="WARN")
         return EXIT_FAILURE, None
 
+    try:
+        from core.collect.port_surface_probe import run_surface_port_probe, SURFACE_SCAN_PRESETS
+
+        _port_profiles = SURFACE_SCAN_PRESETS.get("quick_surface", ["connect_sweep", "top_100_ports"])
+        _port_result = await run_surface_port_probe(
+            target=normalized_domain,
+            profiles=_port_profiles,
+            timeout=min(30, timeout_seconds),
+        )
+        domain_result["port_surface"] = _port_result
+    except Exception:
+        pass
+
+    if recon_mode in {"active", "hybrid"}:
+        try:
+            from core.collect.subdomain_harvest import harvest_subdomains
+            from wordlists.attack_surface import get_wordlist_path
+
+            _wl = get_wordlist_path("subdomains_small")
+            _harvest = await harvest_subdomains(
+                domain=normalized_domain,
+                mode="passive",
+                timeout=min(60, timeout_seconds),
+                wordlist_path=str(_wl) if _wl else None,
+            )
+            if _harvest.get("success") and _harvest.get("subdomains"):
+                existing_subs = set(domain_result.get("subdomains", []))
+                for sub in _harvest["subdomains"]:
+                    if sub not in existing_subs:
+                        domain_result.setdefault("subdomains", []).append(sub)
+                domain_result["subdomain_harvest"] = _harvest
+        except Exception:
+            pass
+
+    from core.intelligence.pre_sim import PreIntelligenceSimulator
+
+    _sim = PreIntelligenceSimulator()
+    _target_model = _sim.simulate(
+        target=normalized_domain,
+        profile_results=None,
+        domain_result=domain_result,
+        ocr_payload=None,
+        port_data=domain_result.get("port_surface") if isinstance(domain_result.get("port_surface"), dict) else None,
+        subdomain_data=domain_result.get("subdomain_harvest") if isinstance(domain_result.get("subdomain_harvest"), dict) else None,
+    )
     issues = assess_domain_exposure(
         domain=normalized_domain,
         https_headers=domain_result.get("https", {}).get("headers", {}),
@@ -2468,7 +2540,21 @@ async def run_surface_scan(
         issues=issues,
         domain_result=domain_result,
     )
+    intelligence_bundle["target_model"] = _target_model.as_dict()
+    from core.collect.fingerprint_intel import FingerprintCollector
+
+    _fc = FingerprintCollector()
+    intelligence_bundle["master_fingerprint"] = _fc.build_master_fingerprint(
+        target=normalized_domain,
+        domain_result=domain_result,
+        port_data=domain_result.get("port_surface") if isinstance(domain_result.get("port_surface"), dict) else None,
+    )
     attachable_payload = dict(extra_payload or {})
+    attachable_payload["target_model"] = _target_model.as_dict()
+    if isinstance(domain_result.get("port_surface"), dict):
+        attachable_payload["port_surface"] = domain_result["port_surface"]
+    if isinstance(domain_result.get("subdomain_harvest"), dict):
+        attachable_payload["subdomain_harvest"] = domain_result["subdomain_harvest"]
     plugin_results, plugin_errors = await PLUGIN_MANAGER.run_plugins(
         {
             "target": normalized_domain,
@@ -2571,6 +2657,7 @@ async def run_surface_scan(
                 filter_results=filter_results,
                 filter_errors=filter_errors,
                 intelligence_bundle=intelligence_bundle,
+                extra_payload=attachable_payload,
                 output_stamp=stamp,
             )
             print(c(f"HTML report generated -> {report_path}", Colors.GREEN))
@@ -2685,8 +2772,25 @@ async def run_ocr_scan(
     tooling = detect_image_tooling()
     payload = ocr_result.as_dict()
     payload["target"] = target_label
+    from core.intelligence.pre_sim import PreIntelligenceSimulator
+
+    _sim = PreIntelligenceSimulator()
+    _target_model = _sim.simulate(
+        target=target_label,
+        profile_results=None,
+        domain_result=None,
+        ocr_payload=payload,
+    )
+    from core.collect.fingerprint_intel import FingerprintCollector
+
+    _fc = FingerprintCollector()
+    _ocr_intelligence_bundle = {
+        "target_model": _target_model.as_dict(),
+        "master_fingerprint": _fc.build_master_fingerprint(target=target_label),
+    }
     attachable_payload = dict(extra_payload or {})
     attachable_payload.setdefault("ocr_tooling", tooling)
+    attachable_payload["target_model"] = _target_model.as_dict()
 
     plugin_results, plugin_errors = await PLUGIN_MANAGER.run_plugins(
         {
@@ -2756,6 +2860,7 @@ async def run_ocr_scan(
         plugin_errors=plugin_errors,
         filter_results=filter_results,
         filter_errors=filter_errors,
+        intelligence_bundle=_ocr_intelligence_bundle,
         extra_payload={"ocr_scan": payload, **attachable_payload},
         output_types=selected_types,
         output_stamp=stamp,
@@ -2775,6 +2880,8 @@ async def run_ocr_scan(
                 plugin_errors=plugin_errors,
                 filter_results=filter_results,
                 filter_errors=filter_errors,
+                intelligence_bundle=_ocr_intelligence_bundle,
+                extra_payload=attachable_payload,
                 ocr_scan=payload,
                 output_stamp=stamp,
             )
@@ -2796,6 +2903,7 @@ async def run_ocr_scan(
         "plugin_errors": plugin_errors,
         "filters": filter_results,
         "filter_errors": filter_errors,
+        "intelligence_bundle": _ocr_intelligence_bundle,
         **attachable_payload,
     }
 

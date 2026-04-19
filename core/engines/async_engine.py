@@ -24,6 +24,8 @@ import asyncio
 from collections.abc import Awaitable, Sequence
 from typing import Final
 
+from core.engines.engine_base import EngineBase
+
 
 ASYNC_TASKS: Final[dict[str, str]] = {
     # Username intelligence
@@ -109,3 +111,21 @@ async def run_async_batch(
 
     tasks = [asyncio.create_task(_guarded(coro)) for coro in coroutines]
     return list(await asyncio.gather(*tasks, return_exceptions=return_exceptions))
+
+
+class AsyncEngine(EngineBase):
+    """Async-native engine using asyncio.gather with bounded concurrency."""
+
+    def __init__(self, *, concurrency_limit: int = DEFAULT_ASYNC_CONCURRENCY, monitor=None) -> None:
+        super().__init__(monitor=monitor)
+        self._concurrency_limit = max(1, int(concurrency_limit))
+
+    async def run(self, tasks, context=None):
+        coros = [task() for task in tasks]
+        return list(
+            await run_async_batch(
+                coros,
+                concurrency_limit=self._concurrency_limit,
+                return_exceptions=True,
+            )
+        )

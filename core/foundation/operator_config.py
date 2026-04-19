@@ -82,7 +82,7 @@ def load_operator_config(config_path: str | None = None) -> dict[str, Any]:
         candidate = Path(config_path)
 
     try:
-        import yaml
+        import yaml  # type: ignore[import-untyped]
 
         if not candidate.exists():
             return deepcopy(_DEFAULT_OPERATOR_CONFIG)
@@ -123,4 +123,3 @@ def get_media_recon_config(config: dict[str, Any] | None = None) -> dict[str, An
 def get_report_config(config: dict[str, Any] | None = None) -> dict[str, Any]:
     payload = config if isinstance(config, dict) else load_operator_config()
     return dict(payload.get("report", {}))
-

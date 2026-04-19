@@ -69,6 +69,102 @@ async def harvest_binary_status_async() -> dict[str, Any]:
     return await loop.run_in_executor(None, harvest_binary_status)
 
 
+async def harvest_subdomains(
+    domain: str,
+    mode: str = "passive",
+    timeout: int = 120,
+    wordlist_path: str | None = None,
+) -> dict[str, Any]:
+    """Run real subdomain enumeration against domain."""
+
+    binary = locate_harvest_binary()
+    if binary is None:
+        return {
+            "domain": domain,
+            "mode": mode,
+            "binary": None,
+            "subdomains": [],
+            "subdomain_details": [],
+            "count": 0,
+            "raw_error": "Harvest binary not found on PATH.",
+            "success": False,
+        }
+
+    cmd = [binary, "enum", "-d", domain, "-json", "-"]
+    if mode == "passive":
+        cmd.append("-passive")
+    else:
+        cmd.append("-active")
+    if wordlist_path:
+        wl = Path(wordlist_path)
+        if wl.exists():
+            cmd += ["-brute", "-wl", str(wl)]
+
+    try:
+        loop = asyncio.get_event_loop()
+        proc_result = await loop.run_in_executor(
+            None,
+            partial(
+                subprocess.run,
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=timeout,
+                check=False,
+            ),
+        )
+        raw_stdout = proc_result.stdout or ""
+        raw_error = proc_result.stderr or ""
+    except Exception as exc:
+        return {
+            "domain": domain,
+            "mode": mode,
+            "binary": binary,
+            "subdomains": [],
+            "subdomain_details": [],
+            "count": 0,
+            "raw_error": str(exc),
+            "success": False,
+        }
+
+    subdomains: list[str] = []
+    subdomain_details: list[dict[str, Any]] = []
+    for line in raw_stdout.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            obj = json.loads(line)
+            name = str(obj.get("name") or "").strip().lower()
+            if not name:
+                continue
+            addresses = [
+                str(addr.get("ip") or "")
+                for addr in (obj.get("addresses") or [])
+                if addr.get("ip")
+            ]
+            sources = [str(s) for s in (obj.get("sources") or [])]
+            if name not in subdomains:
+                subdomains.append(name)
+                subdomain_details.append({"name": name, "addresses": addresses, "sources": sources})
+        except (json.JSONDecodeError, AttributeError):
+            if "." in line and not line.startswith("{"):
+                if line not in subdomains:
+                    subdomains.append(line)
+                    subdomain_details.append({"name": line, "addresses": [], "sources": []})
+
+    return {
+        "domain": domain,
+        "mode": mode,
+        "binary": binary,
+        "subdomains": subdomains,
+        "subdomain_details": subdomain_details,
+        "count": len(subdomains),
+        "raw_error": raw_error,
+        "success": True,
+    }
+
+
 def _parse_harvest_lines(stdout: str) -> tuple[list[str], int]:
     names: list[str] = []
     raw_count = 0
@@ -252,4 +348,3 @@ async def run_full_subdomain_harvest(
         "passive_only_count": len(passive_subdomains - active_subdomains),
         "active_only_count": len(active_subdomains - passive_subdomains) if active_result else 0,
     }
-

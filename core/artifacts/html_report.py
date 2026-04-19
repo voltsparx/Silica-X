@@ -22,6 +22,7 @@ import json
 from datetime import datetime
 from typing import Any
 
+from core.artifacts.charts import build_relationship_graph_svg
 from core.foundation.metadata import AUTHOR, PROJECT_NAME, VERSION, framework_signature
 from core.analyze.profile_summary import (
     error_profile_rows,
@@ -578,6 +579,10 @@ def _render_media_recon_section(media_recon: dict | None) -> str:
             "</div>"
         )
 
+    ocr_content = "".join(ocr_blocks)
+    if not ocr_content:
+        ocr_content = "<p class='muted'>No OCR findings were captured from image assets.</p>"
+
     return (
         "<section class='panel' id='media-intel'>"
         "<div class='section-banner'>"
@@ -597,7 +602,7 @@ def _render_media_recon_section(media_recon: dict | None) -> str:
         f"<p><strong>Images Processed:</strong> {html.escape(str(image_intel.get('assets_fetched', 0) or 0))} | "
         f"<strong>Images With OCR Text:</strong> {html.escape(str(image_intel.get('assets_with_ocr_text', 0) or 0))}</p>"
         "<h4>OCR Findings</h4>"
-        f"{''.join(ocr_blocks) or '<p class=\"muted\">No OCR findings were captured from image assets.</p>'}"
+        f"{ocr_content}"
         "</section>"
     )
 
@@ -867,6 +872,197 @@ def _render_intelligence_bundle(intelligence_bundle: dict | None) -> str:
         f"{footprint_html}"
         "<h4>Explainable Guidance</h4>"
         f"<ul>{guidance_items}</ul>"
+    )
+
+
+def _build_target_model_section(intelligence_bundle: dict) -> str:
+    target_model = intelligence_bundle.get("target_model")
+    if not isinstance(target_model, dict):
+        return ""
+
+    entity_class = str(target_model.get("entity_class", "unknown") or "unknown")
+    confidence = max(0, min(100, int(float(target_model.get("confidence", 0.0) or 0.0) * 100)))
+    inferred_traits = [str(item) for item in list(target_model.get("inferred_traits", []) or []) if str(item).strip()]
+    risk_indicators = [str(item) for item in list(target_model.get("risk_indicators", []) or []) if str(item).strip()]
+    simulation_notes = [str(item) for item in list(target_model.get("simulation_notes", []) or []) if str(item).strip()]
+    scope_recommendation = str(target_model.get("scope_recommendation", "profile") or "profile")
+
+    badge_colors = {
+        "person": "#70b9ff",
+        "organization": "#87d6a6",
+        "domain_asset": "#ffb454",
+        "ip_host": "#ff8a3d",
+        "social_handle": "#ffd28c",
+        "email_address": "#ffcf73",
+        "mixed": "#c87941",
+        "unknown": "#8a8f98",
+    }
+    badge_color = badge_colors.get(entity_class, "#8a8f98")
+    risks_html = "".join(
+        f"<span class='chip' style='background:rgba(255,107,125,0.12);border-color:rgba(255,107,125,0.5);'>{html.escape(item)}</span>"
+        for item in risk_indicators
+    ) or "<span class='muted'>None</span>"
+    notes_html = "".join(f"<li>{html.escape(item)}</li>" for item in simulation_notes) or "<li>None</li>"
+    return (
+        "<section class='panel' id='target-model'>"
+        "<div class='section-banner'>"
+        "<div><div class='section-eyebrow'>Pre-Intelligence</div><h3>Target Model</h3></div>"
+        f"<span class='badge' style='background:{badge_color};'>{html.escape(entity_class)}</span>"
+        "</div>"
+        f"<p><strong>Scope recommendation:</strong> <span class='panel-chip'>{html.escape(scope_recommendation)}</span></p>"
+        f"{_bar_row('Confidence', confidence, 100, 'tone-info')}"
+        "<div class='chip-group'><h4>Inferred traits</h4>"
+        f"<div>{_render_chip_list(inferred_traits)}</div></div>"
+        "<div class='chip-group'><h4>Risk indicators</h4>"
+        f"<div>{risks_html}</div></div>"
+        "<h4>Simulation notes</h4>"
+        f"<ul>{notes_html}</ul>"
+        "</section>"
+    )
+
+
+def _build_fingerprint_section(intelligence_bundle: dict) -> str:
+    fingerprint = intelligence_bundle.get("master_fingerprint")
+    if not isinstance(fingerprint, dict):
+        return ""
+
+    fingerprint_id = str(fingerprint.get("fingerprint_id", "") or "")
+    components = fingerprint.get("components", {}) if isinstance(fingerprint.get("components"), dict) else {}
+    social = components.get("social", {}) if isinstance(components.get("social"), dict) else {}
+    network = components.get("network", {}) if isinstance(components.get("network"), dict) else {}
+    domain = components.get("domain", {}) if isinstance(components.get("domain"), dict) else {}
+
+    social_platforms = "".join(
+        f"<span class='chip'>{html.escape(str(item))}</span>"
+        for item in list(social.get("platforms_found", []) or [])
+    ) or "<span class='muted'>None</span>"
+    network_rows = "".join(
+        "<tr>"
+        f"<td>{html.escape(str(port))}</td>"
+        f"<td>{html.escape(str(service))}</td>"
+        f"<td>{html.escape(str(network.get('host_state', 'unknown')))}</td>"
+        "</tr>"
+        for port, service in zip(list(network.get("open_ports", []) or []), list(network.get("services", []) or []))
+    ) or "<tr><td colspan='3'>No network fingerprint data.</td></tr>"
+
+    return (
+        "<section class='panel' id='fingerprint'>"
+        "<div class='section-banner'>"
+        "<div><div class='section-eyebrow'>Fingerprint</div><h3>Master Fingerprint</h3></div>"
+        "<span class='panel-chip'>identity marker</span>"
+        "</div>"
+        "<div class='subpanel'>"
+        "<strong>Fingerprint ID:</strong> "
+        f"<code style=\"cursor:pointer;user-select:all;\" onclick=\"navigator.clipboard&&navigator.clipboard.writeText(this.textContent)\">{html.escape(fingerprint_id)}</code>"
+        "</div>"
+        "<details open><summary>Social fingerprint</summary>"
+        f"<div class='chip-group'>{social_platforms}</div>"
+        f"<p><strong>Emails:</strong> {html.escape(', '.join(str(item) for item in (social.get('emails', []) or [])) or '-')}</p>"
+        f"<p><strong>Phones:</strong> {html.escape(', '.join(str(item) for item in (social.get('phones', []) or [])) or '-')}</p>"
+        "</details>"
+        "<details><summary>Network fingerprint</summary>"
+        "<div class='table-wrap'><table><tr><th>Port</th><th>Service</th><th>State</th></tr>"
+        f"{network_rows}</table></div></details>"
+        "<details><summary>Domain fingerprint</summary>"
+        f"<p><strong>Subdomain count:</strong> {html.escape(str(domain.get('subdomain_count', 0)))}</p>"
+        f"<p><strong>Registrar:</strong> {html.escape(str(domain.get('registrar', '-')))}</p>"
+        f"<p><strong>Cert issuer:</strong> {html.escape(str(domain.get('cert_issuer', '-')))}</p>"
+        f"<p><strong>MX records:</strong> {html.escape(', '.join(str(item) for item in (domain.get('mx_records', []) or [])) or '-')}</p>"
+        "</details>"
+        "</section>"
+    )
+
+
+def _build_osint_hunt_section(extra_payload: dict) -> str:
+    osint_hunt = extra_payload.get("osint_hunt")
+    if not isinstance(osint_hunt, dict):
+        return ""
+
+    contact_surface = extra_payload.get("contact_surface", {}) if isinstance(extra_payload.get("contact_surface"), dict) else {}
+    credential_signals = (
+        osint_hunt.get("credential_signals", {}) if isinstance(osint_hunt.get("credential_signals"), dict) else {}
+    )
+    emails_html = "".join(
+        f"<a class='chip' href='mailto:{html.escape(str(item))}'>{html.escape(str(item))}</a>"
+        for item in list(osint_hunt.get("emails", []) or [])
+    ) or "<span class='muted'>None</span>"
+    phones_html = "".join(
+        f"<a class='chip' href='tel:{html.escape(str(item))}'>{html.escape(str(item))}</a>"
+        for item in list(osint_hunt.get("phones", []) or [])
+    ) or "<span class='muted'>None</span>"
+    alerts_html = "".join(
+        f"<span class='chip' style='background:rgba(255,107,125,0.14);border-color:rgba(255,107,125,0.5);'>{html.escape(str(item))}</span>"
+        for item in list(credential_signals.get("api_keys", []) or [])
+    ) or "<span class='muted'>None</span>"
+    finding_rows = "".join(
+        "<tr>"
+        f"<td>{html.escape(str(row.get('path', '')))}</td>"
+        f"<td>{html.escape(str(row.get('signal_type', '')))}</td>"
+        f"<td>{html.escape(str(row.get('value', '')))}</td>"
+        "</tr>"
+        for row in list(contact_surface.get("findings", []) or [])
+        if isinstance(row, dict)
+    ) or "<tr><td colspan='3'>No contact surface findings.</td></tr>"
+    return (
+        "<section class='panel' id='osint-hunt'>"
+        "<div class='section-banner'>"
+        "<div><div class='section-eyebrow'>OSINT Hunt</div><h3>Contact & Credential Surface</h3></div>"
+        "<span class='panel-chip'>native hunt</span>"
+        "</div>"
+        "<div class='chip-group'><h4>Emails</h4>"
+        f"<div>{emails_html}</div></div>"
+        "<div class='chip-group'><h4>Phones</h4>"
+        f"<div>{phones_html}</div></div>"
+        "<div class='chip-group'><h4>Credential alerts</h4>"
+        f"<div>{alerts_html}</div></div>"
+        "<div class='table-wrap'><table><tr><th>Path</th><th>Signal Type</th><th>Value</th></tr>"
+        f"{finding_rows}</table></div>"
+        "</section>"
+    )
+
+
+def _build_port_probe_section(extra_payload: dict) -> str:
+    port_surface = extra_payload.get("port_surface")
+    if not isinstance(port_surface, dict):
+        return ""
+
+    rows = []
+    for item in list(port_surface.get("open_ports", []) or []):
+        if not isinstance(item, dict):
+            continue
+        state = str(item.get("state", "") or "").lower()
+        row_style = "rgba(135,214,166,0.12)" if state == "open" else "rgba(255,207,115,0.12)" if state == "filtered" else "rgba(138,143,152,0.12)"
+        rows.append(
+            f"<tr style='background:{row_style};'>"
+            f"<td>{html.escape(str(item.get('port', '')))}</td>"
+            f"<td>{html.escape(str(item.get('protocol', '')))}</td>"
+            f"<td>{html.escape(str(item.get('state', '')))}</td>"
+            f"<td>{html.escape(str(item.get('service', '')))}</td>"
+            f"<td>{html.escape(str(item.get('version', '')))}</td>"
+            f"<td>{html.escape(str(item.get('product', '')))}</td>"
+            "</tr>"
+        )
+    os_rows = "".join(
+        f"<li>{html.escape(str(item.get('name', '')))} ({html.escape(str(item.get('accuracy', '0')))}%)</li>"
+        for item in list(port_surface.get("os_matches", []) or [])
+        if isinstance(item, dict)
+    ) or "<li>None</li>"
+    row_html = "".join(rows)
+    if not row_html:
+        row_html = '<tr><td colspan="6">No port data captured.</td></tr>'
+
+    return (
+        "<section class='panel' id='port-probe'>"
+        "<div class='section-banner'>"
+        "<div><div class='section-eyebrow'>Attack Surface</div><h3>Port Surface Probe</h3></div>"
+        f"<span class='panel-chip'>{html.escape(str(port_surface.get('host_state', 'unknown')))}</span>"
+        "</div>"
+        "<div class='table-wrap'><table><tr><th>Port</th><th>Protocol</th><th>State</th><th>Service</th><th>Version</th><th>Product</th></tr>"
+        f"{row_html}"
+        "</table></div>"
+        "<h4>OS detection</h4>"
+        f"<ul>{os_rows}</ul>"
+        "</section>"
     )
 
 
@@ -1163,6 +1359,8 @@ def generate_html(
     filter_errors: list[str] | None = None,
     intelligence_bundle: dict | None = None,
     ocr_scan: dict | None = None,
+    fused_intel: dict | None = None,
+    extra_payload: dict | None = None,
     output_stamp: str | None = None,
 ) -> str:
     results = results or []
@@ -1175,6 +1373,8 @@ def generate_html(
     filter_errors = filter_errors or []
     intelligence_bundle = intelligence_bundle or {}
     ocr_scan = ocr_scan or {}
+    fused_intel = fused_intel or {}
+    extra_payload = extra_payload or {}
 
     display_target = str(target or "").strip()
     target_display = display_target or sanitize_target(target)
@@ -1192,6 +1392,9 @@ def generate_html(
         if isinstance(intelligence_bundle.get("confidence_distribution"), dict)
         else {}
     )
+    relationship_svg = ""
+    if mode in {"fusion", "quicktest"} and isinstance(fused_intel, dict):
+        relationship_svg = build_relationship_graph_svg(fused_intel)
 
     overlap_score = correlation.get("identity_overlap_score", 0)
     metrics_html = "".join(
@@ -1553,6 +1756,10 @@ def generate_html(
         <div class="quick-nav">
           <a href="#overview">Overview</a>
           <a href="#graphs">Graphs</a>
+          {"<a href='#target-model'>Target Model</a>" if intelligence_bundle.get('target_model') else ""}
+          {"<a href='#fingerprint'>Fingerprint</a>" if intelligence_bundle.get('master_fingerprint') else ""}
+          {"<a href='#osint-hunt'>OSINT Hunt</a>" if extra_payload.get('osint_hunt') else ""}
+          {"<a href='#port-probe'>Port Probe</a>" if extra_payload.get('port_surface') else ""}
           <a href="#profiles">Profiles</a>
           <a href="#errors">Errors</a>
           <a href="#correlation">Correlation</a>
@@ -1590,6 +1797,11 @@ def generate_html(
 
         {_render_extension_overview(issues, issue_summary, plugin_results, plugin_errors, filter_results, filter_errors)}
         {_render_graph_cluster(results, issues, plugin_results, filter_results, intelligence_bundle, ocr_scan)}
+        {_build_target_model_section(intelligence_bundle)}
+        {_build_fingerprint_section(intelligence_bundle)}
+        {_build_osint_hunt_section(extra_payload)}
+        {_build_port_probe_section(extra_payload)}
+        {"<section class='panel' id='relationship-graph'><div class='section-banner'><div><div class='section-eyebrow'>Relationships</div><h3>Relationship Graph</h3></div><span class='panel-chip'>fusion map</span></div>" + relationship_svg + "</section>" if relationship_svg else ""}
 
         <section class="panel" id="profiles">
           <div class="section-banner">

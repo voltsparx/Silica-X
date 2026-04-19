@@ -68,7 +68,7 @@ def _install_linux() -> bool:
 
 def _install_macos() -> bool:
     if shutil.which("brew") is None:
-        print(f"[Silica-X] Homebrew is required to install tesseract automatically: https://brew.sh")
+        print("[Silica-X] Homebrew is required to install tesseract automatically: https://brew.sh")
         return False
     return _run_install_command(["brew", "install", "tesseract"])
 
@@ -127,7 +127,7 @@ def resolve_tesseract() -> None:
     print("[Silica-X] Tesseract OCR binary not found. Install it automatically? (y/n): ", end="", flush=True)
     try:
         response = input().strip().lower()
-    except (EOFError, KeyboardInterrupt):
+    except (EOFError, KeyboardInterrupt, OSError):
         print("")
         response = ""
 

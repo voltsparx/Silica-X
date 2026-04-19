@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+import math
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any
@@ -140,3 +141,85 @@ def build_chart_images(payload: dict[str, Any]) -> tuple[TemporaryDirectory[str]
     charts["confidence_hist"] = hist_path
 
     return temp_dir, charts
+
+
+def build_relationship_graph_svg(fused_intel: dict) -> str:
+    """Produce a simple relationship-map SVG using only stdlib layout math."""
+
+    if not isinstance(fused_intel, dict):
+        return ""
+    relation_map = fused_intel.get("relationship_map", {})
+    if not isinstance(relation_map, dict) or not relation_map:
+        return ""
+
+    node_ids: list[str] = []
+    seen: set[str] = set()
+    for source, targets in relation_map.items():
+        source_id = str(source or "").strip()
+        if source_id and source_id not in seen:
+            seen.add(source_id)
+            node_ids.append(source_id)
+        if isinstance(targets, (list, tuple, set)):
+            for target in targets:
+                target_id = str(target or "").strip()
+                if target_id and target_id not in seen:
+                    seen.add(target_id)
+                    node_ids.append(target_id)
+    if not node_ids:
+        return ""
+
+    width, height = 800, 600
+    center_x, center_y = width / 2, height / 2
+    radius = min(width, height) * 0.34
+    positions: dict[str, tuple[float, float]] = {}
+    for index, node_id in enumerate(node_ids):
+        angle = (2 * math.pi * index / max(1, len(node_ids))) - (math.pi / 2)
+        positions[node_id] = (
+            center_x + math.cos(angle) * radius,
+            center_y + math.sin(angle) * radius,
+        )
+
+    edge_markup: list[str] = []
+    seen_edges: set[tuple[str, str]] = set()
+    for source, targets in relation_map.items():
+        source_id = str(source or "").strip()
+        if source_id not in positions or not isinstance(targets, (list, tuple, set)):
+            continue
+        x1, y1 = positions[source_id]
+        for target in targets:
+            target_id = str(target or "").strip()
+            if target_id not in positions or target_id == source_id:
+                continue
+            edge_key = (source_id, target_id) if source_id <= target_id else (target_id, source_id)
+            if edge_key in seen_edges:
+                continue
+            seen_edges.add(edge_key)
+            x2, y2 = positions[target_id]
+            edge_markup.append(
+                f"<line x1='{x1:.1f}' y1='{y1:.1f}' x2='{x2:.1f}' y2='{y2:.1f}' "
+                "stroke='#6a4327' stroke-width='2' opacity='0.84' />"
+            )
+
+    node_markup: list[str] = []
+    for node_id in node_ids:
+        x, y = positions[node_id]
+        safe = (
+            str(node_id)
+            .replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+        )
+        node_markup.append(
+            f"<circle cx='{x:.1f}' cy='{y:.1f}' r='18' fill='#c87941' stroke='#fff1e4' stroke-width='2' />"
+        )
+        node_markup.append(
+            f"<text x='{x:.1f}' y='{(y + 34):.1f}' fill='#fff1e4' font-size='12' text-anchor='middle'>{safe}</text>"
+        )
+
+    return (
+        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'>"
+        "<rect width='800' height='600' fill='#140d08' rx='18' ry='18' />"
+        + "".join(edge_markup)
+        + "".join(node_markup)
+        + "</svg>"
+    )

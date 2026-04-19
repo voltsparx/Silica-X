@@ -24,6 +24,7 @@ from typing import Any, Literal, Protocol, cast
 
 from core.execution_policy import ExecutionPolicy, load_execution_policy
 from core.engines.async_engine import run_async_batch
+from core.engines.conductor_engine import ConductorEngine
 from core.engines.engine_base import EngineBase
 from core.engines.engine_result import EngineResult
 from core.engines.parallel_engine import ParallelEngine
@@ -33,6 +34,7 @@ from core.utils.logging import get_logger
 
 LOGGER = get_logger("engine_manager")
 AsyncTaskFactory = Callable[[], Awaitable[Any]]
+_CONDUCTOR_ENGINE: ConductorEngine | None = None
 
 
 class ExecutionEngine(Protocol):
@@ -330,3 +332,24 @@ def get_engine(profile: ExecutionPolicy | str) -> ExecutionEngine:
     if engine_type == "process":
         return ProcessEngine()
     return HybridEngine()
+
+
+def get_conductor() -> ConductorEngine:
+    """Return a shared ConductorEngine instance."""
+
+    global _CONDUCTOR_ENGINE
+    if _CONDUCTOR_ENGINE is None:
+        _CONDUCTOR_ENGINE = ConductorEngine()
+    return _CONDUCTOR_ENGINE
+
+
+def get_recon_engine():
+    """Return direct access to the shared recon engine."""
+
+    return get_conductor().recon_engine
+
+
+def get_crypto_engine():
+    """Return direct access to the shared crypto engine."""
+
+    return get_conductor().crypto_engine

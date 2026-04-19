@@ -18,6 +18,7 @@ import aiohttp
 import asyncio
 import hashlib
 import io
+import re
 from typing import Any
 
 
@@ -396,3 +397,134 @@ async def run_public_media_recon(
         "ocr_enabled": bool(run_ocr),
     }
 
+
+async def analyze_public_media(target: str, options: dict | None = None) -> dict:
+    """Analyze publicly available media signals for a target."""
+
+    options = options or {}
+    errors: list[str] = []
+    profile_results = list(options.get("profile_results", []) or [])
+    proxy_url = str(options.get("proxy_url") or "").strip() or None
+    timeout_seconds = max(5, int(options.get("timeout", 20)))
+
+    from core.collect.media_intel import extract_media_urls
+    from core.collect.ocr_image_scan import collect_ocr_image_scan, extract_ocr_text_signals
+
+    image_urls = list(extract_media_urls(profile_results, target=target))
+    profile_page_urls = []
+    for row in profile_results:
+        if not isinstance(row, dict):
+            continue
+        url = str(row.get("url") or "").strip()
+        if url.startswith(("http://", "https://")):
+            profile_page_urls.append(url)
+    if str(target).startswith(("http://", "https://")):
+        profile_page_urls.append(str(target))
+
+    async def _fetch_meta_images(session: aiohttp.ClientSession, url: str) -> list[str]:
+        request_kwargs: dict[str, Any] = {
+            "timeout": aiohttp.ClientTimeout(total=timeout_seconds),
+            "allow_redirects": True,
+        }
+        if proxy_url:
+            request_kwargs["proxy"] = proxy_url
+        async with session.get(url, **request_kwargs) as response:
+            text = await response.text(errors="replace")
+        matches = re.findall(
+            r"<meta[^>]+(?:property|name)=[\"'](?:og:image|twitter:image)[\"'][^>]+content=[\"']([^\"']+)[\"']",
+            text,
+            flags=re.IGNORECASE,
+        )
+        return [str(item).strip() for item in matches if str(item).startswith(("http://", "https://"))]
+
+    connector = aiohttp.TCPConnector(limit=8, ttl_dns_cache=300)
+    async with aiohttp.ClientSession(connector=connector) as session:
+        for url in profile_page_urls[:20]:
+            try:
+                image_urls.extend(await _fetch_meta_images(session, url))
+            except Exception as exc:
+                errors.append(f"profile meta image {url}: {exc}")
+
+    deduped_urls: list[str] = []
+    seen: set[str] = set()
+    for url in image_urls:
+        token = str(url or "").strip()
+        if not token or token.casefold() in seen:
+            continue
+        seen.add(token.casefold())
+        deduped_urls.append(token)
+
+    ocr_payload = {}
+    try:
+        if deduped_urls:
+            ocr_result = await collect_ocr_image_scan(
+                urls=deduped_urls,
+                preprocess_mode=str(options.get("preprocess_mode", "balanced") or "balanced"),
+                timeout_seconds=timeout_seconds,
+                proxy_url=proxy_url,
+            )
+            ocr_payload = ocr_result.as_dict()
+        else:
+            ocr_payload = {"items": [], "summary": {"ocr_hits": 0}}
+    except Exception as exc:
+        errors.append(f"ocr scan: {exc}")
+        ocr_payload = {"items": [], "summary": {"ocr_hits": 0}}
+
+    signal_map: dict[str, list[str]] = {
+        "emails": [],
+        "phones": [],
+        "urls": [],
+        "mentions": [],
+        "watermarks": [],
+        "text_fragments": [],
+    }
+    image_sources: list[dict[str, str]] = []
+
+    for item in list(ocr_payload.get("items", []) or []):
+        if not isinstance(item, dict):
+            continue
+        ocr_text = str(item.get("raw_text") or "").strip()
+        signals = extract_ocr_text_signals(ocr_text)
+        signal_map["emails"].extend(signals.get("emails", []))
+        signal_map["phones"].extend(signals.get("phones", []))
+        signal_map["urls"].extend(signals.get("urls", []))
+        signal_map["mentions"].extend(signals.get("mentions", []))
+        signal_map["text_fragments"].extend([fragment for fragment in ocr_text.splitlines()[:4] if fragment.strip()])
+        watermark_candidates = [
+            token
+            for token in re.findall(r"\b[A-Za-z0-9_.-]{4,32}\b", ocr_text)
+            if any(char.isalpha() for char in token) and any(char in token for char in "._-")
+        ]
+        signal_map["watermarks"].extend(watermark_candidates[:6])
+        image_sources.append(
+            {
+                "url": str(item.get("source", "")),
+                "source": str(item.get("source_kind", "remote_url")),
+                "ocr_text": ocr_text,
+            }
+        )
+
+    for key in signal_map:
+        seen_values: set[str] = set()
+        ordered: list[str] = []
+        for value in signal_map[key]:
+            token = str(value or "").strip()
+            if not token:
+                continue
+            lowered = token.casefold()
+            if lowered in seen_values:
+                continue
+            seen_values.add(lowered)
+            ordered.append(token)
+        signal_map[key] = ordered[:40]
+
+    return {
+        "target": target,
+        "images_found": len(deduped_urls),
+        "images_scanned": len(image_sources),
+        "ocr_hits": int(((ocr_payload.get("summary") or {}).get("ocr_hits", 0)) or 0),
+        "signal_map": signal_map,
+        "image_sources": image_sources,
+        "success": True,
+        "errors": errors,
+    }

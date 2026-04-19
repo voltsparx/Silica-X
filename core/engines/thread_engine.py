@@ -30,6 +30,8 @@ from functools import partial
 from typing import Any
 from typing import Final
 
+from core.engines.engine_base import EngineBase
+
 
 THREAD_TASKS: Final[dict[str, str]] = {
     # DNS & socket operations
@@ -195,3 +197,19 @@ async def run_blocking_batch(
 
     tasks = [asyncio.create_task(_run_one(call)) for call in calls]
     return list(await asyncio.gather(*tasks))
+
+
+class ThreadEngine(EngineBase):
+    """Thread-backed engine for blocking sync work."""
+
+    def __init__(self, *, max_workers: int = DEFAULT_THREAD_WORKERS, monitor=None) -> None:
+        super().__init__(monitor=monitor)
+        self._max_workers = max(1, int(max_workers))
+
+    async def run(self, tasks, context=None):
+        loop = asyncio.get_event_loop()
+        results: list[Any] = []
+        with ThreadPoolExecutor(max_workers=self._max_workers) as pool:
+            futures = [loop.run_in_executor(pool, task) for task in tasks]
+            results = list(await asyncio.gather(*futures, return_exceptions=True))
+        return results

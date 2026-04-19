@@ -37,6 +37,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+full = [
+  "easyocr>=1.7.1",
+  "scapy>=2.5.0",
+]
 ocr = [
   "easyocr>=1.7.1",
 ]

@@ -17,6 +17,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from wordlists.inventory import WordlistAsset, build_wordlist_inventory, load_wordlist_entries, load_wordlist_ports
 
 
@@ -39,3 +41,21 @@ def load_attack_surface_port_wordlist(filename: str, fallback: tuple[int, ...] =
     """Load one port-based attack-surface wordlist for read-only runtime guidance."""
 
     return load_wordlist_ports(ATTACK_SURFACE_COLLECTION, filename, fallback)
+
+
+def get_wordlist_path(name: str) -> Path | None:
+    """Return Path to a named wordlist file, or None if not found.
+
+    Names: "subdomains_small", "ports_top100", "paths_common"
+    """
+
+    base = Path(__file__).parent / "attack_surface"
+    candidates = {
+        "subdomains_small": base / "subdomains_small.txt",
+        "ports_top100": base / "ports_top100.txt",
+        "paths_common": base / "paths_common.txt",
+    }
+    path = candidates.get(name)
+    if path and path.exists():
+        return path
+    return None

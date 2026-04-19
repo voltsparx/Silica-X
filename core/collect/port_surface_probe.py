@@ -107,109 +107,33 @@ SURFACE_SCAN_PROFILES: dict[str, list[str]] = {
 }
 
 SURFACE_SCAN_PRESETS: dict[str, list[str]] = {
-    "quick_surface": [
-        "stealth_sweep",
-        "top_100_ports",
+    "quick_surface": ["connect_sweep", "top_100_ports", "timing_aggressive", "open_ports_only"],
+    "stealth_surface": ["stealth_sweep", "top_1000_ports", "timing_sneaky", "show_port_reason"],
+    "service_map": ["connect_sweep", "service_version_probe", "top_1000_ports", "timing_normal"],
+    "os_detect": ["connect_sweep", "os_fingerprint", "timing_normal"],
+    "full_audit": [
+        "connect_sweep",
+        "service_version_probe",
+        "default_script_run",
+        "os_fingerprint",
+        "top_1000_ports",
         "timing_normal",
-        "open_ports_only",
-        "xml_stream_output",
     ],
+    "vuln_sweep": ["connect_sweep", "vuln_script_run", "top_1000_ports", "timing_normal"],
+    "udp_recon": ["udp_sweep", "top_100_ports", "timing_normal"],
+    "banner_harvest": ["connect_sweep", "banner_capture", "top_1000_ports", "timing_aggressive"],
+    "http_audit": ["connect_sweep", "http_surface_scripts", "top_1000_ports", "timing_normal"],
+    "ssl_audit": ["connect_sweep", "ssl_surface_scripts", "top_1000_ports", "timing_normal"],
     "deep_surface": [
         "stealth_sweep",
         "all_65535_ports",
         "service_version_probe",
         "timing_aggressive",
         "open_ports_only",
-        "xml_stream_output",
     ],
-    "service_fingerprint": [
-        "stealth_sweep",
-        "service_version_probe",
-        "version_intensity_high",
-        "default_script_run",
-        "timing_normal",
-        "xml_stream_output",
-    ],
-    "os_fingerprint": [
-        "stealth_sweep",
-        "os_fingerprint",
-        "os_scan_guess",
-        "timing_normal",
-        "xml_stream_output",
-    ],
-    "full_aggressive": [
-        "full_aggressive_probe",
-        "all_65535_ports",
-        "timing_aggressive",
-        "xml_stream_output",
-    ],
-    "vuln_surface": [
-        "stealth_sweep",
-        "vuln_script_run",
-        "service_version_probe",
-        "common_service_ports",
-        "timing_normal",
-        "xml_stream_output",
-    ],
-    "stealth_recon": [
-        "stealth_sweep",
-        "timing_sneaky",
-        "open_ports_only",
-        "skip_host_discovery",
-        "fragment_packets",
-        "xml_stream_output",
-    ],
-    "udp_surface": [
-        "udp_sweep",
-        "top_100_ports",
-        "timing_normal",
-        "service_version_probe",
-        "xml_stream_output",
-    ],
-    "http_ssl_surface": [
-        "stealth_sweep",
-        "http_surface_scripts",
-        "ssl_surface_scripts",
-        "service_version_probe",
-        "common_service_ports",
-        "timing_normal",
-        "xml_stream_output",
-    ],
-    "passive_safe": [
-        "connect_sweep",
-        "host_discovery_only",
-        "timing_polite",
-        "safe_script_run",
-        "xml_stream_output",
-    ],
-    "banner_sweep": [
-        "stealth_sweep",
-        "banner_capture",
-        "service_version_probe",
-        "top_1000_ports",
-        "timing_normal",
-        "xml_stream_output",
-    ],
-    "smb_audit": [
-        "stealth_sweep",
-        "smb_surface_scripts",
-        "service_version_probe",
-        "timing_normal",
-        "xml_stream_output",
-    ],
-    "dns_audit": [
-        "stealth_sweep",
-        "dns_surface_scripts",
-        "service_version_probe",
-        "timing_normal",
-        "xml_stream_output",
-    ],
-    "discovery_sweep": [
-        "host_discovery_only",
-        "discovery_script_run",
-        "timing_normal",
-        "xml_stream_output",
-    ],
+    "full_aggressive": ["full_aggressive_probe", "all_65535_ports", "timing_aggressive"],
+    "passive_safe": ["connect_sweep", "host_discovery_only", "timing_polite", "safe_script_run"],
+    "discovery_sweep": ["host_discovery_only", "discovery_script_run", "timing_normal"],
 }
 
 
@@ -217,6 +141,124 @@ def locate_surface_scanner() -> str | None:
     """Locate an installed surface-scanner binary."""
 
     return shutil.which("nmap") or shutil.which("nmap3")
+
+
+async def run_surface_port_probe(
+    target: str,
+    profiles: list[str],
+    timeout: int = 60,
+) -> dict[str, Any]:
+    """Run real port surface probe against target."""
+
+    binary = locate_surface_scanner()
+    if binary is None:
+        return {
+            "target": target,
+            "scanner": "unavailable",
+            "profiles_used": profiles,
+            "open_ports": [],
+            "os_matches": [],
+            "host_state": "unknown",
+            "scan_stats": {},
+            "raw_error": "Surface scanner binary not found on PATH.",
+            "success": False,
+        }
+
+    flags: list[str] = []
+    for profile_name in profiles:
+        profile_flags = SURFACE_SCAN_PROFILES.get(profile_name, [])
+        for flag in profile_flags:
+            if flag not in flags:
+                flags.append(flag)
+
+    cmd = [binary, "-oX", "-"] + flags + [target]
+
+    try:
+        loop = asyncio.get_event_loop()
+        proc_result = await loop.run_in_executor(
+            None,
+            partial(
+                subprocess.run,
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=timeout,
+                check=False,
+            ),
+        )
+        xml_output = proc_result.stdout or ""
+        raw_error = proc_result.stderr or ""
+    except Exception as exc:
+        return {
+            "target": target,
+            "scanner": binary,
+            "profiles_used": profiles,
+            "open_ports": [],
+            "os_matches": [],
+            "host_state": "unknown",
+            "scan_stats": {},
+            "raw_error": str(exc),
+            "success": False,
+        }
+
+    open_ports: list[dict[str, Any]] = []
+    os_matches: list[dict[str, Any]] = []
+    host_state = "unknown"
+    scan_stats: dict[str, Any] = {}
+
+    try:
+        root = ET.fromstring(xml_output)
+        run_stats = root.find("runstats")
+        if run_stats is not None:
+            finished = run_stats.find("finished")
+            hosts_el = run_stats.find("hosts")
+            scan_stats = {
+                "elapsed": finished.get("elapsed", "") if finished is not None else "",
+                "hosts_up": int((hosts_el.get("up") or "0") if hosts_el is not None else 0),
+            }
+        for host in root.findall("host"):
+            status_el = host.find("status")
+            if status_el is not None:
+                host_state = status_el.get("state", "unknown")
+            ports_el = host.find("ports")
+            if ports_el is not None:
+                for port_el in ports_el.findall("port"):
+                    state_el = port_el.find("state")
+                    service_el = port_el.find("service")
+                    open_ports.append(
+                        {
+                            "port": int(port_el.get("portid", 0)),
+                            "protocol": port_el.get("protocol", ""),
+                            "state": state_el.get("state", "") if state_el is not None else "",
+                            "service": service_el.get("name", "") if service_el is not None else "",
+                            "version": service_el.get("version", "") if service_el is not None else "",
+                            "product": service_el.get("product", "") if service_el is not None else "",
+                            "extra_info": service_el.get("extrainfo", "") if service_el is not None else "",
+                        }
+                    )
+            os_el = host.find("os")
+            if os_el is not None:
+                for match in os_el.findall("osmatch"):
+                    os_matches.append(
+                        {
+                            "name": match.get("name", ""),
+                            "accuracy": int(match.get("accuracy", 0)),
+                        }
+                    )
+    except ET.ParseError:
+        pass
+
+    return {
+        "target": target,
+        "scanner": binary,
+        "profiles_used": profiles,
+        "open_ports": open_ports,
+        "os_matches": os_matches,
+        "host_state": host_state,
+        "scan_stats": scan_stats,
+        "raw_error": raw_error,
+        "success": True,
+    }
 
 
 def surface_scanner_status() -> dict[str, Any]:
@@ -565,4 +607,3 @@ def list_surface_scan_presets() -> list[str]:
     """List all available surface scan presets."""
 
     return sorted(SURFACE_SCAN_PRESETS.keys())
-

@@ -41,16 +41,22 @@ def preprocess_for_ocr(image_bytes: bytes, intensity: str = "balanced") -> bytes
 
             if normalized == "balanced":
                 working = working.filter(ImageFilter.SHARPEN)
-                working = working.resize((working.width * 2, working.height * 2), Image.LANCZOS)
+                working = working.resize(
+                    (working.width * 2, working.height * 2),
+                    Image.Resampling.LANCZOS,
+                )
                 buffer = io.BytesIO()
                 working.save(buffer, format="PNG")
                 return buffer.getvalue()
 
             working = working.filter(ImageFilter.SHARPEN)
             working = working.filter(ImageFilter.SHARPEN)
-            working = working.resize((working.width * 2, working.height * 2), Image.LANCZOS)
+            working = working.resize(
+                (working.width * 2, working.height * 2),
+                Image.Resampling.LANCZOS,
+            )
             working = ImageEnhance.Contrast(working).enhance(2.0)
-            working = working.convert("1", dither=0)
+            working = working.convert("1", dither=Image.Dither.NONE)
             buffer = io.BytesIO()
             working.save(buffer, format="PNG")
             return buffer.getvalue()
@@ -303,4 +309,3 @@ def run_ocr_pipeline(
         "image_size_bytes": len(image_bytes),
         "engines_run": engines_run,
     }
-

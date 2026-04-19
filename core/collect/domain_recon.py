@@ -18,12 +18,16 @@ import asyncio
 from datetime import datetime, timezone
 from functools import partial
 import importlib.util
+import os
 import shutil
 import socket
 import subprocess
 from typing import Any
+from urllib.parse import quote
 
 import aiohttp
+
+from core.collect.domain_intel import scan_domain_surface
 
 
 def _dedupe_sorted(values: list[str]) -> list[str]:
@@ -51,7 +55,7 @@ async def collect_dns_records(
 
     try:
         a_infos = await asyncio.wait_for(
-            loop.getaddrinfo(domain, None, socket.AF_INET),
+            loop.getaddrinfo(domain, None, family=socket.AF_INET),
             timeout=max(1, int(timeout_seconds)),
         )
         result["a_records"] = _dedupe_sorted([row[4][0] for row in a_infos if row and row[4]])
@@ -60,7 +64,7 @@ async def collect_dns_records(
 
     try:
         aaaa_infos = await asyncio.wait_for(
-            loop.getaddrinfo(domain, None, socket.AF_INET6),
+            loop.getaddrinfo(domain, None, family=socket.AF_INET6),
             timeout=max(1, int(timeout_seconds)),
         )
         result["aaaa_records"] = _dedupe_sorted([row[4][0] for row in aaaa_infos if row and row[4]])
@@ -349,3 +353,228 @@ async def run_domain_deep_recon(
         "recon_timestamp_utc": datetime.now(timezone.utc).isoformat(),
     }
 
+
+async def run_domain_recon(domain: str, options: dict | None = None) -> dict:
+    """Run comprehensive domain OSINT recon."""
+
+    options = options or {}
+    errors: list[str] = []
+    result: dict[str, Any] = {
+        "domain": domain,
+        "dns": {
+            "a": [],
+            "aaaa": [],
+            "mx": [],
+            "ns": [],
+            "txt": [],
+            "cname": [],
+            "soa": "",
+            "spf": "",
+            "dmarc": "",
+            "ptr": [],
+            "dkim": [],
+        },
+        "whois": {"registrar": "", "creation_date": "", "expiry_date": "", "name_servers": []},
+        "ct_subdomains": [],
+        "http_posture": {
+            "status_code": 0,
+            "https_available": False,
+            "redirect_to_https": False,
+            "headers": {},
+            "tech_stack": [],
+            "security_txt": "",
+        },
+        "robots_txt": "",
+        "spf_valid": False,
+        "dmarc_policy": "",
+        "security_txt_present": False,
+        "shodan_passive": {},
+        "success": True,
+        "errors": errors,
+    }
+
+    timeout_seconds = max(5, int(options.get("timeout_seconds", 25)))
+    proxy_url = str(options.get("proxy_url") or "").strip() or None
+    normalized = domain.strip().lower()
+
+    async def _dns_lookup(name: str, record_type: str) -> list[str]:
+        if importlib.util.find_spec("dns.resolver") is None:
+            return []
+        try:
+            import dns.resolver
+
+            answer = await asyncio.get_event_loop().run_in_executor(
+                None,
+                lambda: dns.resolver.resolve(name, record_type),
+            )
+            return [str(item).strip().strip('"') for item in answer if str(item).strip()]
+        except Exception as exc:
+            errors.append(f"dns {record_type} {name}: {exc}")
+            return []
+
+    def _parse_tech_stack(headers: dict[str, str]) -> list[str]:
+        stack: list[str] = []
+        mapping = {
+            "server": headers.get("server", ""),
+            "x-powered-by": headers.get("x-powered-by", ""),
+            "x-generator": headers.get("x-generator", ""),
+            "via": headers.get("via", ""),
+        }
+        for key, value in mapping.items():
+            if value:
+                stack.append(f"{key}:{value}")
+        if headers.get("cf-ray"):
+            stack.append("Cloudflare")
+        if headers.get("x-vercel-id"):
+            stack.append("Vercel")
+        return sorted(set(stack))
+
+    async def _fetch_text(session: aiohttp.ClientSession, url: str) -> tuple[int, str, dict[str, str]]:
+        request_kwargs: dict[str, Any] = {
+            "timeout": aiohttp.ClientTimeout(total=timeout_seconds),
+            "allow_redirects": True,
+        }
+        if proxy_url:
+            request_kwargs["proxy"] = proxy_url
+        async with session.get(url, **request_kwargs) as response:
+            text = await response.text(errors="replace")
+            return int(response.status), text, {k: v for k, v in response.headers.items()}
+
+    connector = aiohttp.TCPConnector(limit=10, ttl_dns_cache=300)
+    async with aiohttp.ClientSession(connector=connector) as session:
+        try:
+            base_surface = await scan_domain_surface(
+                domain=normalized,
+                timeout_seconds=timeout_seconds,
+                include_ct=True,
+                include_rdap=True,
+                max_subdomains=int(options.get("max_subdomains", 100)),
+                recon_mode=str(options.get("recon_mode", "hybrid") or "hybrid"),
+            )
+        except Exception as exc:
+            errors.append(f"scan_domain_surface: {exc}")
+            base_surface = {}
+
+        try:
+            a_records, aaaa_records, mx_records, ns_records, txt_records, cname_records, soa_records, ptr_records = await asyncio.gather(
+                _dns_lookup(normalized, "A"),
+                _dns_lookup(normalized, "AAAA"),
+                _dns_lookup(normalized, "MX"),
+                _dns_lookup(normalized, "NS"),
+                _dns_lookup(normalized, "TXT"),
+                _dns_lookup(normalized, "CNAME"),
+                _dns_lookup(normalized, "SOA"),
+                _dns_lookup(normalized, "PTR"),
+            )
+            result["dns"].update(
+                {
+                    "a": a_records,
+                    "aaaa": aaaa_records,
+                    "mx": mx_records,
+                    "ns": ns_records,
+                    "txt": txt_records,
+                    "cname": cname_records,
+                    "soa": soa_records[0] if soa_records else "",
+                    "ptr": ptr_records,
+                }
+            )
+        except Exception as exc:
+            errors.append(f"dns gather: {exc}")
+
+        result["whois"] = {
+            "registrar": str((base_surface.get("rdap") or {}).get("registrar", "")),
+            "creation_date": str((base_surface.get("rdap") or {}).get("creation_date", "")),
+            "expiry_date": str((base_surface.get("rdap") or {}).get("expiration_date", "")),
+            "name_servers": list((base_surface.get("rdap") or {}).get("name_servers", []) or []),
+        }
+        result["ct_subdomains"] = list(base_surface.get("subdomains", []) or [])
+
+        try:
+            status, body, headers = await _fetch_text(session, f"https://{normalized}")
+            result["http_posture"].update(
+                {
+                    "status_code": status,
+                    "https_available": status < 400,
+                    "redirect_to_https": False,
+                    "headers": headers,
+                    "tech_stack": _parse_tech_stack(headers),
+                }
+            )
+        except Exception as exc:
+            errors.append(f"https probe: {exc}")
+            try:
+                status, body, headers = await _fetch_text(session, f"http://{normalized}")
+                result["http_posture"].update(
+                    {
+                        "status_code": status,
+                        "https_available": False,
+                        "redirect_to_https": bool(str(headers.get("location", "")).startswith("https://")),
+                        "headers": headers,
+                        "tech_stack": _parse_tech_stack(headers),
+                    }
+                )
+            except Exception as inner_exc:
+                errors.append(f"http probe: {inner_exc}")
+
+        preferred_scheme = "https" if result["http_posture"]["https_available"] else "http"
+        try:
+            _status, robots_text, _headers = await _fetch_text(session, f"{preferred_scheme}://{normalized}/robots.txt")
+            result["robots_txt"] = robots_text[:4000]
+        except Exception as exc:
+            errors.append(f"robots.txt: {exc}")
+
+        security_text = ""
+        for path in ("/.well-known/security.txt", "/security.txt"):
+            try:
+                status, text, _headers = await _fetch_text(session, f"{preferred_scheme}://{normalized}{path}")
+                if status < 400 and text.strip():
+                    security_text = text[:4000]
+                    result["security_txt_present"] = True
+                    break
+            except Exception as exc:
+                errors.append(f"security.txt {path}: {exc}")
+        result["http_posture"]["security_txt"] = security_text
+
+        try:
+            _status, _text, _headers = await _fetch_text(session, f"{preferred_scheme}://{normalized}/sitemap.xml")
+        except Exception as exc:
+            errors.append(f"sitemap.xml: {exc}")
+
+        safe_url = f"https://transparencyreport.google.com/safe-browsing/search?url={quote(normalized)}"
+        try:
+            _status, safe_text, _headers = await _fetch_text(session, safe_url)
+            result["safe_browsing"] = "Site is not listed" in safe_text
+        except Exception as exc:
+            errors.append(f"safe browsing: {exc}")
+
+        shodan_key = str(os.getenv("SHODAN_API_KEY") or "").strip()
+        if shodan_key:
+            shodan_url = f"https://api.shodan.io/dns/resolve?hostnames={quote(normalized)}&key={quote(shodan_key)}"
+            try:
+                request_kwargs: dict[str, Any] = {"timeout": aiohttp.ClientTimeout(total=timeout_seconds)}
+                if proxy_url:
+                    request_kwargs["proxy"] = proxy_url
+                async with session.get(shodan_url, **request_kwargs) as response:
+                    payload = await response.json(content_type=None)
+                    result["shodan_passive"] = payload if isinstance(payload, dict) else {}
+            except Exception as exc:
+                errors.append(f"shodan: {exc}")
+
+    txt_records = list(result["dns"].get("txt", []) or [])
+    spf_record = next((row for row in txt_records if "v=spf1" in row.lower()), "")
+    dmarc_records = await _dns_lookup(f"_dmarc.{normalized}", "TXT")
+    dkim_records = await _dns_lookup(f"default._domainkey.{normalized}", "TXT")
+    dmarc_record = dmarc_records[0] if dmarc_records else ""
+    result["dns"]["spf"] = spf_record
+    result["dns"]["dmarc"] = dmarc_record
+    result["dns"]["dkim"] = dkim_records
+    result["spf_valid"] = bool(spf_record and "all" in spf_record.lower())
+    dmarc_policy = ""
+    for token in dmarc_record.split(";"):
+        token = token.strip()
+        if token.lower().startswith("p="):
+            dmarc_policy = token.split("=", 1)[1].strip()
+            break
+    result["dmarc_policy"] = dmarc_policy
+    result["success"] = True
+    return result

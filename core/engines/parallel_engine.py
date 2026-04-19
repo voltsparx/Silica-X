@@ -25,6 +25,7 @@ import os
 from typing import Any
 
 from core.engines.async_engine import DEFAULT_ASYNC_CONCURRENCY, run_async_batch
+from core.engines.engine_base import EngineBase
 from core.engines.thread_engine import DEFAULT_THREAD_WORKERS, run_blocking_batch
 
 
@@ -52,7 +53,7 @@ def _execute_call(call: BlockingCall) -> Any:
     return fn(*args, **kwargs)
 
 
-class ParallelEngine:
+class ParallelEngine(EngineBase):
     """Run async, blocking, and CPU-heavy work in one orchestration."""
 
     def __init__(
@@ -61,10 +62,44 @@ class ParallelEngine:
         async_concurrency: int = DEFAULT_ASYNC_CONCURRENCY,
         thread_concurrency: int = DEFAULT_THREAD_WORKERS,
         cpu_workers: int | None = None,
+        monitor=None,
     ) -> None:
+        super().__init__(monitor=monitor)
         self.async_concurrency = max(1, int(async_concurrency))
         self.thread_concurrency = max(1, int(thread_concurrency))
         self.cpu_workers = max(1, int(cpu_workers or (os.cpu_count() or 2)))
+
+    async def run(self, tasks, context=None) -> list[Any]:
+        async_tasks = [task() for task in tasks]
+        thread_calls: list[BlockingCall] = []
+        context_map = context or {}
+        blocking_tasks = context_map.get("blocking_tasks")
+        if isinstance(blocking_tasks, Sequence):
+            for call in blocking_tasks:
+                if (
+                    isinstance(call, tuple)
+                    and len(call) == 3
+                    and callable(call[0])
+                    and isinstance(call[1], tuple)
+                    and isinstance(call[2], dict)
+                ):
+                    thread_calls.append(call)
+
+        async_phase = asyncio.create_task(
+            run_async_batch(
+                async_tasks,
+                concurrency_limit=self.async_concurrency,
+                return_exceptions=True,
+            )
+        )
+        thread_phase = asyncio.create_task(
+            run_blocking_batch(
+                list(thread_calls),
+                concurrency_limit=self.thread_concurrency,
+            )
+        )
+        async_results, thread_results = await asyncio.gather(async_phase, thread_phase)
+        return list(async_results) + list(thread_results)
 
     async def run_hybrid(
         self,
@@ -127,4 +162,3 @@ class ParallelEngine:
             else:
                 results.append(item)
         return results
-
