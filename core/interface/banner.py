@@ -34,5 +34,5 @@ def show_banner(anonymity_status: str = "No Anonymization") -> None:
         f"{c(f'[{VERSION_THEME}]', Colors.EMBER)}"
     )
     print("_" * 89)
-    print(f"    {c('Current anonymity:', Colors.EMBER)} {c(anonymity_status, Colors.CYAN)}")
+    print(f"{c('Current anonymity:', Colors.EMBER)} {c(anonymity_status, Colors.CYAN)}")
     
