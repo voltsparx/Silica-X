@@ -552,6 +552,10 @@ TEMPLATES: list[dict[str, Any]] = [
     },
 ]
 
+TEMPLATE_ALIASES: dict[str, str] = {
+    "generic-osint-01": "atlas-mercier",
+}
+
 
 def quicktest_template_ids() -> list[str]:
     return [str(item.get("id", "")).strip() for item in TEMPLATES if str(item.get("id", "")).strip()]
@@ -571,6 +575,7 @@ def list_quicktest_templates() -> list[dict[str, str]]:
 
 def pick_quicktest_template(*, template_id: str | None = None, seed: int | None = None) -> dict[str, Any]:
     requested = str(template_id or "").strip().lower()
+    requested = TEMPLATE_ALIASES.get(requested, requested)
     if requested:
         for item in TEMPLATES:
             if str(item.get("id", "")).strip().lower() == requested:

@@ -25,7 +25,7 @@ from core.domain import BaseEntity
 from core.engines.engine_result import EngineResult
 from core.engine_manager import get_engine
 from core.execution_policy import ExecutionPolicy, load_execution_policy
-from core.filters import FilterPipeline, build_filter_registry
+from core.signal_filters import FilterPipeline, build_filter_registry
 from core.fusion import FusionEngine
 from core.intelligence import IntelligenceEngine, StrategicAdvisor
 from core.lifecycle import ScanLifecycle

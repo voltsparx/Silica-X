@@ -22,7 +22,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from core.domain import AssetEntity, BaseEntity, make_entity_id
-from core.filters.base_filter import BaseFilter
+from core.signal_filters.base_filter import BaseFilter
 
 
 class DuplicateFilter(BaseFilter):

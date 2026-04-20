@@ -1232,11 +1232,93 @@ def _module_available(module_name: str) -> bool:
     return importlib.util.find_spec(module_name) is not None
 
 
+def _build_engine_health_snapshot() -> dict[str, Any]:
+    health: dict[str, Any] = {}
+
+    try:
+        from core.engines.conductor_engine import ConductorEngine
+
+        _ce = ConductorEngine()
+        _ = _ce
+        health["conductor_engine"] = {
+            "available": True,
+            "sub_engines": ["async", "sync", "stabilizer", "crypto", "recon"],
+        }
+    except Exception as exc:
+        health["conductor_engine"] = {"available": False, "error": str(exc)}
+
+    try:
+        from core.engines.crypto_engine import CryptoEngine
+
+        _crypto = CryptoEngine()
+        _token = _crypto.random_token()
+        health["crypto_engine"] = {"available": True, "token_test": len(_token) == 64}
+    except Exception as exc:
+        health["crypto_engine"] = {"available": False, "error": str(exc)}
+
+    try:
+        from core.engines.recon_engine import ReconEngine
+
+        _ = ReconEngine
+        health["recon_engine"] = {"available": True}
+    except Exception as exc:
+        health["recon_engine"] = {"available": False, "error": str(exc)}
+
+    try:
+        from core.engines.pipeline_engine import PipelineEngine
+
+        _ = PipelineEngine
+        health["pipeline_engine"] = {"available": True}
+    except Exception as exc:
+        health["pipeline_engine"] = {"available": False, "error": str(exc)}
+
+    try:
+        from core.intelligence.pre_sim import PreIntelligenceSimulator
+
+        _ = PreIntelligenceSimulator
+        health["pre_sim"] = {"available": True}
+    except Exception as exc:
+        health["pre_sim"] = {"available": False, "error": str(exc)}
+
+    try:
+        from core.collect.fingerprint_intel import FingerprintCollector
+
+        _ = FingerprintCollector
+        health["fingerprint_collector"] = {"available": True}
+    except Exception as exc:
+        health["fingerprint_collector"] = {"available": False, "error": str(exc)}
+
+    try:
+        from core.collect.port_surface_probe import locate_surface_scanner
+
+        scanner_path = locate_surface_scanner()
+        health["port_surface_scanner"] = {
+            "available": scanner_path is not None,
+            "path": scanner_path,
+        }
+    except Exception as exc:
+        health["port_surface_scanner"] = {"available": False, "error": str(exc)}
+
+    try:
+        from core.collect.subdomain_harvest import locate_harvest_binary
+
+        harvest_path = locate_harvest_binary()
+        health["subdomain_harvest_binary"] = {
+            "available": harvest_path is not None,
+            "path": harvest_path,
+        }
+    except Exception as exc:
+        health["subdomain_harvest_binary"] = {"available": False, "error": str(exc)}
+
+    return health
+
+
 def _build_doctor_snapshot() -> dict[str, Any]:
     inventory = _collect_runtime_inventory()
     output_settings = describe_output_settings()
     tor_status = probe_tor_status()
     ocr_tooling = detect_image_tooling()
+    engine_health = _build_engine_health_snapshot()
     report_backends = {
         "matplotlib": {"available": _module_available("matplotlib")},
         "python_docx": {"available": _module_available("docx")},
@@ -1267,6 +1349,11 @@ def _build_doctor_snapshot() -> dict[str, Any]:
         warnings.append("reportlab is unavailable; PDF output will be unavailable.")
     if not tor_status.binary_found:
         warnings.append("Tor binary is not installed on this machine.")
+    for engine_name, engine_status in engine_health.items():
+        if isinstance(engine_status, dict) and not engine_status.get("available"):
+            warnings.append(
+                f"Engine '{engine_name}' is unavailable: {engine_status.get('error', 'unknown reason')}"
+            )
 
     return {
         "silica_x": {
@@ -1296,6 +1383,7 @@ def _build_doctor_snapshot() -> dict[str, Any]:
             "config_path": str(output_settings.get("config_path") or ""),
         },
         "ocr_tooling": ocr_tooling,
+        "engine_health": engine_health,
         "report_backends": report_backends,
         "tor": {
             "binary_found": tor_status.binary_found,
@@ -1357,12 +1445,14 @@ def _print_doctor_report(snapshot: dict[str, Any]) -> None:
     runtime_inventory_raw = snapshot.get("runtime_inventory")
     output_raw = snapshot.get("output")
     ocr_tooling_raw = snapshot.get("ocr_tooling")
+    engine_health_raw = snapshot.get("engine_health")
     report_backends_raw = snapshot.get("report_backends")
     tor_data_raw = snapshot.get("tor")
     summary: dict[str, Any] = summary_raw if isinstance(summary_raw, dict) else {}
     runtime_inventory: dict[str, Any] = runtime_inventory_raw if isinstance(runtime_inventory_raw, dict) else {}
     output: dict[str, Any] = output_raw if isinstance(output_raw, dict) else {}
     ocr_tooling: dict[str, Any] = ocr_tooling_raw if isinstance(ocr_tooling_raw, dict) else {}
+    engine_health: dict[str, Any] = engine_health_raw if isinstance(engine_health_raw, dict) else {}
     report_backends: dict[str, Any] = report_backends_raw if isinstance(report_backends_raw, dict) else {}
     tor_data: dict[str, Any] = tor_data_raw if isinstance(tor_data_raw, dict) else {}
     warnings = snapshot.get("warnings") if isinstance(snapshot.get("warnings"), list) else []
@@ -1401,6 +1491,16 @@ def _print_doctor_report(snapshot: dict[str, Any]) -> None:
     print(c("\ntor:", Colors.BLUE))
     print(c(f"  binary_found={bool(tor_data.get('binary_found'))} socks_reachable={bool(tor_data.get('socks_reachable'))}", Colors.CYAN))
     print(c(f"  binary_path={tor_data.get('binary_path') or '-'}", Colors.CYAN))
+
+    if isinstance(engine_health_raw, dict):
+        print(c("\nengine health:", Colors.BLUE))
+        for engine_name, engine_status in engine_health.items():
+            available = bool(engine_status.get("available")) if isinstance(engine_status, dict) else False
+            status_color = Colors.GREEN if available else Colors.RED
+            status_label = "ok" if available else "unavailable"
+            print(c(f"  {engine_name}={status_label}", status_color))
+            if not available and isinstance(engine_status, dict) and engine_status.get("error"):
+                print(c(f"    error: {engine_status['error']}", Colors.EMBER))
 
     if warnings:
         print(c("\nwarnings:", Colors.EMBER))
@@ -3633,7 +3733,27 @@ async def _handle_fusion_command(
         issues=combined_issues,
         issue_summary=combined_issue_summary,
     )
+    try:
+        from core.engines.pipeline_engine import PipelineEngine, PipelineEvent, PipelineEventType
+
+        _pipeline = PipelineEngine(buffer_size=256, timeout_per_module=30.0)
+        if surface_data and isinstance(surface_data.get("domain_result"), dict):
+            _subs = surface_data["domain_result"].get("subdomains", [])
+            for _sub in _subs[:20]:
+                _pipeline.emit(
+                    PipelineEvent(
+                        event_type=PipelineEventType.SIGNAL_FOUND,
+                        source="surface_phase",
+                        target=combined_target,
+                        data={"signal_type": "subdomain", "value": _sub},
+                    )
+                )
+        fused_pipeline_summary = _pipeline.event_summary()
+    except Exception:
+        fused_pipeline_summary = {}
     fused_intel = await FUSION_ENGINE.fuse_profile_domain(profile_data, surface_data)
+    if fused_pipeline_summary:
+        fused_intel["pipeline_summary"] = fused_pipeline_summary
     fusion_graph = await FUSION_ENGINE.generate_graph(fused_intel)
     intelligence_entities = build_fusion_entities(
         username,
@@ -3658,6 +3778,7 @@ async def _handle_fusion_command(
     )
     fused_intel["advisor_confidence"] = advisor.estimate_confidence(fused_intel)
     fused_intel["advisor_recommendations"] = advisor.recommend_next()
+    print(c(REPORT_GENERATOR.generate_intelligence_brief(fused_intel), Colors.CYAN))
 
     plugin_results, plugin_errors = await PLUGIN_MANAGER.run_plugins(
         {
@@ -5309,6 +5430,9 @@ async def _dispatch(args: argparse.Namespace, state: RunnerState, prompt_mode: b
         return EXIT_SUCCESS
     if args.command == "explain":
         print(c(build_explain_text(), Colors.CYAN))
+        return EXIT_SUCCESS
+    if args.command == "version":
+        print(c(framework_signature(), Colors.CYAN))
         return EXIT_SUCCESS
     if args.command == "wizard":
         return await _handle_wizard_command(args, state=state, prompt_mode=prompt_mode)

@@ -13,7 +13,7 @@
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
-"""Filter entities by allowed scope rules."""
+"""Risk-oriented filter for sensitive content suppression."""
 
 from __future__ import annotations
 
@@ -21,36 +21,29 @@ from collections.abc import Mapping, Sequence
 from typing import Any
 
 from core.domain import BaseEntity
-from core.filters.base_filter import BaseFilter
+from core.signal_filters.base_filter import BaseFilter
 
 
-class ScopeFilter(BaseFilter):
-    """Keep entities inside configured source/type scope."""
+DEFAULT_BLOCKED_TERMS: tuple[str, ...] = ("password", "secret", "token", "apikey", "api_key")
 
-    filter_id = "scope"
+
+class RiskFilter(BaseFilter):
+    """Remove entities carrying explicitly sensitive terms."""
+
+    filter_id = "risk"
 
     def apply(self, entities: Sequence[BaseEntity], context: Mapping[str, Any]) -> list[BaseEntity]:
-        allowed_sources = context.get("allowed_sources", [])
-        allowed_types = context.get("allowed_types", [])
-
-        source_set = {
-            str(item).strip().lower()
-            for item in allowed_sources
-            if isinstance(item, str) and item.strip()
-        }
-        type_set = {
-            str(item).strip().lower()
-            for item in allowed_types
-            if isinstance(item, str) and item.strip()
-        }
-
-        if not source_set and not type_set:
-            return list(entities)
+        blocked_terms = context.get("blocked_terms")
+        terms = DEFAULT_BLOCKED_TERMS
+        if isinstance(blocked_terms, list):
+            custom = [str(item).strip().lower() for item in blocked_terms if isinstance(item, str) and item.strip()]
+            if custom:
+                terms = tuple(custom)
 
         output: list[BaseEntity] = []
         for entity in entities:
-            source_ok = not source_set or entity.source.strip().lower() in source_set
-            type_ok = not type_set or entity.entity_type.strip().lower() in type_set
-            if source_ok and type_ok:
-                output.append(entity)
+            haystack = f"{entity.value} {' '.join(str(item) for item in dict(entity.attributes).values())}".lower()
+            if any(term in haystack for term in terms):
+                continue
+            output.append(entity)
         return output

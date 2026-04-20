@@ -16,10 +16,10 @@
 import unittest
 
 from core.domain import AssetEntity, ProfileEntity
-from core.filters.depth_filter import DepthFilter
-from core.filters.keyword_filter import KeywordFilter
-from core.filters.risk_filter import RiskFilter
-from core.filters.scope_filter import ScopeFilter
+from core.signal_filters.depth_filter import DepthFilter
+from core.signal_filters.keyword_filter import KeywordFilter
+from core.signal_filters.risk_filter import RiskFilter
+from core.signal_filters.scope_filter import ScopeFilter
 
 
 class TestAdditionalFilters(unittest.TestCase):

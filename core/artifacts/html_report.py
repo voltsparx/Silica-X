@@ -904,7 +904,7 @@ def _build_target_model_section(intelligence_bundle: dict) -> str:
     ) or "<span class='muted'>None</span>"
     notes_html = "".join(f"<li>{html.escape(item)}</li>" for item in simulation_notes) or "<li>None</li>"
     return (
-        "<section class='panel' id='target-model'>"
+        "<div class='panel' id='target-model'>"
         "<div class='section-banner'>"
         "<div><div class='section-eyebrow'>Pre-Intelligence</div><h3>Target Model</h3></div>"
         f"<span class='badge' style='background:{badge_color};'>{html.escape(entity_class)}</span>"
@@ -917,7 +917,7 @@ def _build_target_model_section(intelligence_bundle: dict) -> str:
         f"<div>{risks_html}</div></div>"
         "<h4>Simulation notes</h4>"
         f"<ul>{notes_html}</ul>"
-        "</section>"
+        "</div>"
     )
 
 
@@ -946,7 +946,7 @@ def _build_fingerprint_section(intelligence_bundle: dict) -> str:
     ) or "<tr><td colspan='3'>No network fingerprint data.</td></tr>"
 
     return (
-        "<section class='panel' id='fingerprint'>"
+        "<div class='panel' id='fingerprint'>"
         "<div class='section-banner'>"
         "<div><div class='section-eyebrow'>Fingerprint</div><h3>Master Fingerprint</h3></div>"
         "<span class='panel-chip'>identity marker</span>"
@@ -969,7 +969,7 @@ def _build_fingerprint_section(intelligence_bundle: dict) -> str:
         f"<p><strong>Cert issuer:</strong> {html.escape(str(domain.get('cert_issuer', '-')))}</p>"
         f"<p><strong>MX records:</strong> {html.escape(', '.join(str(item) for item in (domain.get('mx_records', []) or [])) or '-')}</p>"
         "</details>"
-        "</section>"
+        "</div>"
     )
 
 
@@ -1004,7 +1004,7 @@ def _build_osint_hunt_section(extra_payload: dict) -> str:
         if isinstance(row, dict)
     ) or "<tr><td colspan='3'>No contact surface findings.</td></tr>"
     return (
-        "<section class='panel' id='osint-hunt'>"
+        "<div class='panel' id='osint-hunt'>"
         "<div class='section-banner'>"
         "<div><div class='section-eyebrow'>OSINT Hunt</div><h3>Contact & Credential Surface</h3></div>"
         "<span class='panel-chip'>native hunt</span>"
@@ -1017,7 +1017,7 @@ def _build_osint_hunt_section(extra_payload: dict) -> str:
         f"<div>{alerts_html}</div></div>"
         "<div class='table-wrap'><table><tr><th>Path</th><th>Signal Type</th><th>Value</th></tr>"
         f"{finding_rows}</table></div>"
-        "</section>"
+        "</div>"
     )
 
 
@@ -1052,7 +1052,7 @@ def _build_port_probe_section(extra_payload: dict) -> str:
         row_html = '<tr><td colspan="6">No port data captured.</td></tr>'
 
     return (
-        "<section class='panel' id='port-probe'>"
+        "<div class='panel' id='port-probe'>"
         "<div class='section-banner'>"
         "<div><div class='section-eyebrow'>Attack Surface</div><h3>Port Surface Probe</h3></div>"
         f"<span class='panel-chip'>{html.escape(str(port_surface.get('host_state', 'unknown')))}</span>"
@@ -1062,7 +1062,7 @@ def _build_port_probe_section(extra_payload: dict) -> str:
         "</table></div>"
         "<h4>OS detection</h4>"
         f"<ul>{os_rows}</ul>"
-        "</section>"
+        "</div>"
     )
 
 
@@ -1541,6 +1541,14 @@ def generate_html(
           margin-bottom: 16px;
           box-shadow: var(--shadow);
         }}
+        .section {{
+          background: linear-gradient(180deg, rgba(43,24,13,0.92), rgba(28,16,10,0.98));
+          border: 1px solid var(--line);
+          border-radius: 18px;
+          padding: 16px;
+          margin-bottom: 16px;
+          box-shadow: var(--shadow);
+        }}
         .reporter-panel {{
           border-color: rgba(255, 180, 84, 0.45);
           box-shadow: 0 22px 70px rgba(255, 138, 61, 0.14), var(--shadow);
@@ -1801,7 +1809,7 @@ def generate_html(
         {_build_fingerprint_section(intelligence_bundle)}
         {_build_osint_hunt_section(extra_payload)}
         {_build_port_probe_section(extra_payload)}
-        {"<section class='panel' id='relationship-graph'><div class='section-banner'><div><div class='section-eyebrow'>Relationships</div><h3>Relationship Graph</h3></div><span class='panel-chip'>fusion map</span></div>" + relationship_svg + "</section>" if relationship_svg else ""}
+        {"<div class='section' id='relationship-graph'><div class='section-banner'><div><div class='section-eyebrow'>Relationships</div><h3>Relationship Graph</h3></div><span class='panel-chip'>fusion map</span></div>" + relationship_svg + "</div>" if relationship_svg else ""}
 
         <section class="panel" id="profiles">
           <div class="section-banner">

@@ -13,7 +13,7 @@
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
-"""Depth-oriented filter to constrain entity volume by scan depth."""
+"""Filter entities by keyword matching across values and metadata."""
 
 from __future__ import annotations
 
@@ -21,24 +21,26 @@ from collections.abc import Mapping, Sequence
 from typing import Any
 
 from core.domain import BaseEntity
-from core.filters.base_filter import BaseFilter
+from core.signal_filters.base_filter import BaseFilter
 
 
-class DepthFilter(BaseFilter):
-    """Apply depth-aware cap to output volume."""
+class KeywordFilter(BaseFilter):
+    """Retain entities matching configured keywords."""
 
-    filter_id = "depth"
+    filter_id = "keyword"
 
     def apply(self, entities: Sequence[BaseEntity], context: Mapping[str, Any]) -> list[BaseEntity]:
-        depth = max(1, int(context.get("depth", 2)))
-        explicit_limit = context.get("entity_limit")
-        if isinstance(explicit_limit, int) and explicit_limit > 0:
-            limit = explicit_limit
-        else:
-            limit = depth * 30
-
-        if len(entities) <= limit:
+        keywords = context.get("keywords", [])
+        normalized = [
+            str(item).strip().lower() for item in keywords if isinstance(item, str) and item.strip()
+        ]
+        if not normalized:
             return list(entities)
 
-        ranked = sorted(entities, key=lambda item: (-item.confidence, item.entity_type, item.value))
-        return ranked[:limit]
+        output: list[BaseEntity] = []
+        for entity in entities:
+            haystack = entity.value.lower()
+            metadata_text = " ".join(str(item).lower() for item in dict(entity.attributes).values())
+            if any(keyword in haystack or keyword in metadata_text for keyword in normalized):
+                output.append(entity)
+        return output

@@ -21,7 +21,7 @@ from collections.abc import Mapping, Sequence
 from typing import Any
 
 from core.domain import BaseEntity
-from core.filters.base_filter import BaseFilter
+from core.signal_filters.base_filter import BaseFilter
 
 
 class FilterPipeline:

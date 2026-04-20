@@ -15,13 +15,13 @@
 
 """Filter pipeline exports and registry helpers."""
 
-from core.filters.base_filter import BaseFilter
-from core.filters.builtins import AnomalyFilter, ConfidenceFilter, DuplicateFilter, RelevanceFilter
-from core.filters.depth_filter import DepthFilter
-from core.filters.keyword_filter import KeywordFilter
-from core.filters.pipeline import FilterPipeline
-from core.filters.risk_filter import RiskFilter
-from core.filters.scope_filter import ScopeFilter
+from core.signal_filters.base_filter import BaseFilter
+from core.signal_filters.builtins import AnomalyFilter, ConfidenceFilter, DuplicateFilter, RelevanceFilter
+from core.signal_filters.depth_filter import DepthFilter
+from core.signal_filters.keyword_filter import KeywordFilter
+from core.signal_filters.pipeline import FilterPipeline
+from core.signal_filters.risk_filter import RiskFilter
+from core.signal_filters.scope_filter import ScopeFilter
 
 
 def build_filter_registry() -> dict[str, BaseFilter]:

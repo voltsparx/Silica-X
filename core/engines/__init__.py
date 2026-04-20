@@ -18,6 +18,7 @@
 from core.engines.engine_base import EngineBase
 from core.engines.engine_result import EngineResult
 from core.engines.health_monitor import EngineHealthMonitor, EngineHealthSnapshot
+from core.engines.pipeline_engine import PipelineEngine, PipelineEvent, PipelineEventType
 from core.engines.sync_engine import SyncEngine
 from core.engines.stabilizer_engine import StabilizerEngine
 from core.engines.crypto_engine import CryptoEngine
@@ -31,6 +32,9 @@ __all__ = [
     "EngineResult",
     "EngineHealthMonitor",
     "EngineHealthSnapshot",
+    "PipelineEngine",
+    "PipelineEvent",
+    "PipelineEventType",
     "SyncEngine",
     "StabilizerEngine",
     "CryptoEngine",

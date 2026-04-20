@@ -41,7 +41,7 @@ Core modules are grouped by responsibility to keep runtime wiring and ownership 
 - `core/domain/` -> immutable entity contracts.
 - `core/capabilities/` -> tool-agnostic capability interfaces and implementations.
 - `core/adapters/` -> scanner/domain adapters that normalize into entities.
-- `core/filters/` -> stateless entity filter pipeline.
+- `core/signal_filters/` -> stateless entity filter pipeline.
 - `core/fusion/` -> relationship and confidence fusion engine.
 - `core/intelligence/` -> strategic next-step advisor.
 - `core/reporting/` -> presentation-only payload renderers.

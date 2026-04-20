@@ -16,8 +16,8 @@
 import unittest
 
 from core.domain import ProfileEntity
-from core.filters import FilterPipeline
-from core.filters.builtins import AnomalyFilter, ConfidenceFilter, DuplicateFilter
+from core.signal_filters import FilterPipeline
+from core.signal_filters.builtins import AnomalyFilter, ConfidenceFilter, DuplicateFilter
 
 
 class TestFilterPipeline(unittest.TestCase):
