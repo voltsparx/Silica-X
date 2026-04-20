@@ -38,6 +38,14 @@ def test_hunt_credential_signals_finds_phone():
     assert result["phones"]
 
 
+def test_hunt_credential_signals_filters_invalid_contact_noise():
+    result = hunt_credential_signals(
+        "Noise admin..ops@example..com 00000000 1111111111 valid alice@example.com +1 (202) 555-0188"
+    )
+    assert result["emails"] == ["alice@example.com"]
+    assert result["phones"] == ["+1 (202) 555-0188"]
+
+
 def test_hunt_username_signals_returns_dict():
     async def fake_scan_username(*args, **kwargs):
         return [

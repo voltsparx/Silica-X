@@ -101,6 +101,35 @@ class TestDomainIntel(unittest.IsolatedAsyncioTestCase):
         self.assertIn("api", result["surface_wordlists"]["matched_priority_labels"])
         self.assertEqual(result["rdap"]["name_servers"], ["ns1.example.com"])
 
+    async def test_surface_filters_invalid_ct_subdomains(self):
+        class _Response:
+            def __init__(self, payload: bytes):
+                self._payload = payload
+
+            async def __aenter__(self):
+                return self
+
+            async def __aexit__(self, exc_type, exc, tb):
+                return False
+
+            @property
+            def content(self):
+                return self
+
+            async def read(self, _limit):
+                return self._payload
+
+        class _Session:
+            def get(self, *_args, **_kwargs):
+                payload = b'[{"name_value":"api.example.com\\nBAD_HOST\\nevil.net"}]'
+                return _Response(payload)
+
+        from core.collect.domain_intel import _load_ct_subdomains
+
+        subdomains, error = await _load_ct_subdomains(_Session(), "example.com", 2, 20)
+        self.assertIsNone(error)
+        self.assertEqual(subdomains, ["api.example.com"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -294,7 +294,7 @@ def _add_modules_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--sync",
         action="store_true",
-        help="Rebuild module catalog from intel-sources before listing.",
+        help="Rebuild module catalog from framework source trees under temp/ before listing.",
     )
     _add_info_template_args(parser)
     parser.add_argument(
@@ -1156,7 +1156,7 @@ def build_root_parser(
     )
     modules_parser = subparsers.add_parser(
         "modules",
-        help="List/sync source-intel module catalog discovered from intel-sources.",
+        help="List/sync source-intel module catalog discovered from framework source trees under temp/.",
     )
     _add_modules_args(modules_parser)
     history_parser = subparsers.add_parser(

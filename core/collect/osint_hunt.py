@@ -21,6 +21,11 @@ from urllib.parse import urlparse
 
 import aiohttp
 
+from core.collect.extractor import (
+    filter_valid_emails,
+    filter_valid_hostnames,
+    filter_valid_phones,
+)
 from core.collect.scanner import scan_username
 
 _EMAIL_RE = re.compile(r"[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[A-Za-z]{2,}")
@@ -61,8 +66,8 @@ def hunt_credential_signals(text_blob: str) -> dict[str, Any]:
     api_keys = _dedupe(_API_KEY_RE.findall(body))
     base64_blobs = _dedupe(_BASE64_RE.findall(body))
     return {
-        "emails": _dedupe(_EMAIL_RE.findall(body)),
-        "phones": _dedupe(_PHONE_RE.findall(body)),
+        "emails": filter_valid_emails(_EMAIL_RE.findall(body)),
+        "phones": filter_valid_phones(_PHONE_RE.findall(body)),
         "api_keys": api_keys,
         "pgp_blocks": _dedupe(_PGP_RE.findall(body)),
         "ssh_public_keys": _dedupe(_SSH_RE.findall(body)),
@@ -125,8 +130,8 @@ async def hunt_contact_surface(
         return {
             "domain": domain,
             "findings": findings,
-            "emails": _dedupe([row["value"] for row in findings if row["signal_type"] == "email"]),
-            "phones": _dedupe([row["value"] for row in findings if row["signal_type"] == "phone"]),
+            "emails": filter_valid_emails([row["value"] for row in findings if row["signal_type"] == "email"]),
+            "phones": filter_valid_phones([row["value"] for row in findings if row["signal_type"] == "phone"]),
             "names": _dedupe(names),
             "social_links": _dedupe(social_links),
             "success": True,
@@ -189,19 +194,20 @@ async def hunt_username_signals(
             credential_hits.append(hunt_credential_signals("\n".join(blob_parts)))
 
         merged_credentials = {
-            "emails": _dedupe(emails + [item for hit in credential_hits for item in hit.get("emails", [])]),
-            "phones": _dedupe(phones + [item for hit in credential_hits for item in hit.get("phones", [])]),
+            "emails": filter_valid_emails(emails + [item for hit in credential_hits for item in hit.get("emails", [])]),
+            "phones": filter_valid_phones(phones + [item for hit in credential_hits for item in hit.get("phones", [])]),
             "api_keys": _dedupe([item for hit in credential_hits for item in hit.get("api_keys", [])]),
             "pgp_blocks": _dedupe([item for hit in credential_hits for item in hit.get("pgp_blocks", [])]),
             "ssh_public_keys": _dedupe([item for hit in credential_hits for item in hit.get("ssh_public_keys", [])]),
             "jwts": _dedupe([item for hit in credential_hits for item in hit.get("jwts", [])]),
             "base64_blobs": _dedupe([item for hit in credential_hits for item in hit.get("base64_blobs", [])]),
         }
-        domains = {
-            urlparse(link).netloc.lower()
-            for link in external_links + links
-            if urlparse(link).netloc
-        }
+        domains = filter_valid_hostnames(
+            [
+                urlparse(link).hostname or ""
+                for link in external_links + links
+            ]
+        )
         return {
             "username": username,
             "profiles_found": len(found),
@@ -209,7 +215,7 @@ async def hunt_username_signals(
             "emails": merged_credentials["emails"],
             "phones": merged_credentials["phones"],
             "external_links": _dedupe(external_links + links),
-            "external_domains": sorted(domains),
+            "external_domains": domains,
             "mentions": _dedupe(mentions + _MENTION_RE.findall("\n".join(bios))),
             "profile_images": _dedupe(profile_images),
             "credential_signals": merged_credentials,

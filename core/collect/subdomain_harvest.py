@@ -22,6 +22,8 @@ import shutil
 import subprocess
 from typing import Any
 
+from core.collect.extractor import filter_valid_hostnames
+
 
 def locate_harvest_binary() -> str | None:
     """Locate the installed subdomain harvest binary."""
@@ -153,6 +155,7 @@ async def harvest_subdomains(
                     subdomains.append(line)
                     subdomain_details.append({"name": line, "addresses": [], "sources": []})
 
+    subdomains = filter_valid_hostnames(subdomains, base_domain=domain)
     return {
         "domain": domain,
         "mode": mode,
@@ -165,7 +168,7 @@ async def harvest_subdomains(
     }
 
 
-def _parse_harvest_lines(stdout: str) -> tuple[list[str], int]:
+def _parse_harvest_lines(stdout: str, domain: str) -> tuple[list[str], int]:
     names: list[str] = []
     raw_count = 0
     for line in stdout.splitlines():
@@ -181,7 +184,7 @@ def _parse_harvest_lines(stdout: str) -> tuple[list[str], int]:
             continue
         names.append(name)
         raw_count += 1
-    return sorted(set(names)), raw_count
+    return filter_valid_hostnames(sorted(set(names)), base_domain=domain), raw_count
 
 
 def run_passive_subdomain_harvest(
@@ -210,7 +213,7 @@ def run_passive_subdomain_harvest(
     except subprocess.TimeoutExpired:
         return {"error": "subdomain harvest timed out", "domain": domain, "subdomains": []}
 
-    subdomains, raw_count = _parse_harvest_lines(result.stdout)
+    subdomains, raw_count = _parse_harvest_lines(result.stdout, domain)
     return {
         "domain": domain,
         "mode": "passive",
@@ -280,7 +283,7 @@ def run_active_subdomain_harvest(
     except subprocess.TimeoutExpired:
         return {"error": "subdomain harvest timed out", "domain": domain, "subdomains": []}
 
-    subdomains, raw_count = _parse_harvest_lines(result.stdout)
+    subdomains, raw_count = _parse_harvest_lines(result.stdout, domain)
     return {
         "domain": domain,
         "mode": "active",

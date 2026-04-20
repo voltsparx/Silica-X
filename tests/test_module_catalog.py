@@ -169,6 +169,28 @@ class TestModuleCatalog(unittest.TestCase):
             self.assertTrue(is_valid)
             self.assertEqual(rebuilt.get("catalog_version"), DEFAULT_CATALOG_VERSION)
 
+    def test_ensure_catalog_rebuilds_on_source_root_mismatch(self):
+        with TemporaryDirectory() as temp_dir:
+            old_root = Path(temp_dir) / "intel-sources"
+            new_root = Path(temp_dir) / "temp"
+            output_root = Path(temp_dir) / "modules"
+
+            (old_root / "alpha").mkdir(parents=True, exist_ok=True)
+            (old_root / "alpha" / "scan.py").write_text("# module plugin", encoding="utf-8")
+            build_module_catalog(old_root, output_root=output_root)
+
+            (new_root / "bbot").mkdir(parents=True, exist_ok=True)
+            (new_root / "bbot" / "collector.py").write_text(
+                "# plugin profile account collector",
+                encoding="utf-8",
+            )
+
+            rebuilt = ensure_module_catalog(refresh=False, source_root=new_root, output_root=output_root)
+
+            self.assertEqual(rebuilt.get("source_root"), new_root.as_posix())
+            self.assertEqual(rebuilt.get("framework_count"), 1)
+            self.assertEqual(rebuilt.get("module_count"), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

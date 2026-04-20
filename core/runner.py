@@ -1447,6 +1447,16 @@ def _build_doctor_snapshot() -> dict[str, Any]:
 
 def _print_runtime_loaded_inventory() -> None:
     inventory = _collect_runtime_inventory()
+    plugin_coverage = (
+        f"plugins={inventory.plugin_scope_counts['profile']}/"
+        f"{inventory.plugin_scope_counts['surface']}/"
+        f"{inventory.plugin_scope_counts['fusion']} "
+    )
+    filter_coverage = (
+        f"filters={inventory.filter_scope_counts['profile']}/"
+        f"{inventory.filter_scope_counts['surface']}/"
+        f"{inventory.filter_scope_counts['fusion']}"
+    )
 
     print(
         f"{c('Loaded:', Colors.EMBER)} "
@@ -1457,8 +1467,8 @@ def _print_runtime_loaded_inventory() -> None:
     )
     print(
         f"{c('Coverage:', Colors.EMBER)} "
-        f"{c(f\"plugins={inventory.plugin_scope_counts['profile']}/{inventory.plugin_scope_counts['surface']}/{inventory.plugin_scope_counts['fusion']} \", Colors.GREY)}"
-        f"{c(f\"filters={inventory.filter_scope_counts['profile']}/{inventory.filter_scope_counts['surface']}/{inventory.filter_scope_counts['fusion']}\", Colors.GREY)}"
+        f"{c(plugin_coverage, Colors.GREY)}"
+        f"{c(filter_coverage, Colors.GREY)}"
     )
     hybrid_lines = render_hybrid_inventory_lines(inventory.hybrid_architecture)
     print(c(hybrid_lines[0], Colors.EMBER))
@@ -3228,10 +3238,14 @@ def _print_prompt_config(session: PromptSessionState, state: RunnerState) -> Non
     print(f"{c('output config:', Colors.EMBER)} {c(output_settings.get('config_path'), Colors.CYAN)}")
     print(f"{c('anonymity:', Colors.EMBER)} {c(get_anonymity_status(state), Colors.CYAN)}")
     tor_status = probe_tor_status()
+    tor_socks_label = (
+        f"{'reachable' if tor_status.socks_reachable else 'unreachable'} "
+        f"({TOR_HOST}:{TOR_SOCKS_PORT})"
+    )
     print(f"{c('tor binary:', Colors.EMBER)} {c('present' if tor_status.binary_found else 'missing', Colors.CYAN)}")
     print(
         f"{c('tor socks:', Colors.EMBER)} "
-        f"{c(f\"{'reachable' if tor_status.socks_reachable else 'unreachable'} ({TOR_HOST}:{TOR_SOCKS_PORT})\", Colors.CYAN)}"
+        f"{c(tor_socks_label, Colors.CYAN)}"
     )
     prompt_engine = PromptEngine(history=session.history)
     advisor = IntelligenceAdvisor(history=session.history, auto_build_capability_pack=True)

@@ -37,7 +37,7 @@ COMMAND_EXPLANATIONS: dict[str, str] = {
     "filters": "Lists available internal filters and their compatible workflow scopes.",
     "templates": "Lists bundled info-templates (curated plugin/filter/module arrangements; consent-only targets).",
     "modules": (
-        "Builds/lists the source-intel module catalog from intel-sources with "
+        "Builds/lists the source-intel module catalog from framework source trees under temp/ with "
         "scope/kind/search/tag/score controls, plus pagination and integrity validation."
     ),
     "quicktest": (

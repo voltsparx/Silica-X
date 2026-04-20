@@ -15,7 +15,13 @@
 
 import unittest
 
-from core.collect.extractor import extract_bio, extract_contacts, extract_links, extract_username_mentions
+from core.collect.extractor import (
+    extract_bio,
+    extract_contacts,
+    extract_links,
+    extract_username_mentions,
+    filter_valid_hostnames,
+)
 
 
 class TestExtractor(unittest.TestCase):
@@ -47,7 +53,28 @@ class TestExtractor(unittest.TestCase):
         self.assertIn("@alice", [value.lower() for value in mentions])
         self.assertIn("/alice", [value.lower() for value in mentions])
 
+    def test_extract_contacts_filters_invalid_email_and_phone_noise(self):
+        html = (
+            "<p>Noise admin..ops@example..com and 00000000 and 1111111111.</p>"
+            "<p>Valid: analyst@example.com and +1 (202) 555-0188</p>"
+        )
+        contacts = extract_contacts(html)
+        self.assertEqual(contacts["emails"], ["analyst@example.com"])
+        self.assertEqual(contacts["phones"], ["+1 (202) 555-0188"])
+
+    def test_filter_valid_hostnames_restricts_to_base_domain(self):
+        values = [
+            "api.example.com",
+            "*.dev.example.com",
+            "mailto:test@example.com",
+            "evil-example.net",
+            "bad_host",
+        ]
+        self.assertEqual(
+            filter_valid_hostnames(values, base_domain="example.com"),
+            ["api.example.com", "dev.example.com"],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
-

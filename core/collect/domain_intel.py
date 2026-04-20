@@ -27,6 +27,7 @@ from urllib.parse import quote, urlsplit
 
 import aiohttp
 
+from core.collect.extractor import filter_valid_hostnames
 from core.foundation.recon_modes import normalize_recon_mode
 from core.foundation.surface_wordlists import build_surface_wordlist_guidance
 
@@ -146,7 +147,7 @@ async def _load_ct_subdomains(
             if len(names) >= max_subdomains:
                 break
 
-    return sorted(names)[:max_subdomains], None
+    return filter_valid_hostnames(sorted(names), base_domain=domain)[:max_subdomains], None
 
 
 async def _load_rdap(

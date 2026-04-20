@@ -42,7 +42,19 @@ class TestSubdomainHarvest(unittest.TestCase):
             result = run_passive_subdomain_harvest("example.com")
         self.assertEqual(result["subdomains"], ["api.example.com", "sub.example.com"])
 
+    def test_parses_json_lines_filters_invalid_hosts(self):
+        mock_result = Mock(
+            stdout='{"name":"api.example.com"}\n{"name":"bad_host"}\n{"name":"evil.net"}\n',
+            stderr="",
+            returncode=0,
+        )
+        with (
+            patch("core.collect.subdomain_harvest.locate_harvest_binary", return_value="/usr/bin/amass"),
+            patch("core.collect.subdomain_harvest.subprocess.run", return_value=mock_result),
+        ):
+            result = run_passive_subdomain_harvest("example.com")
+        self.assertEqual(result["subdomains"], ["api.example.com"])
+
 
 if __name__ == "__main__":
     unittest.main()
-
