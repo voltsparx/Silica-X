@@ -1802,7 +1802,7 @@ def generate_html(
               <div class="muted"><strong>Target:</strong> {html.escape(target_display or target_key)} |
               <strong>Generated:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} |
               <strong>Framework:</strong> {html.escape(framework_signature())}</div>
-              <p class="header-copy">Reporter is the v10.0 case-view layer for Silica-X. It reshapes raw results into triage-friendly sections, categorized vulnerability context, extension drill-downs, and an operator-ready closing summary.</p>
+        <p class="header-copy">Reporter is the current case-view layer for Silica-X. It reshapes raw results into triage-friendly sections, categorized vulnerability context, extension drill-downs, and an operator-ready closing summary.</p>
             </div>
             <div class="header-pills">{triage_chips}</div>
           </div>

@@ -1,6 +1,6 @@
 # Core Module Layout
 
-Release: v10.0 (Theme: Ember)
+Release: v11.2.0 (Theme: Ember)
 
 Core modules are grouped by responsibility to keep runtime wiring and ownership clear.
 

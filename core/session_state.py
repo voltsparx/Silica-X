@@ -110,4 +110,4 @@ class PromptSessionState:
 
     def module_prompt(self) -> str:
         marker = "*" if self.has_custom_context() else ""
-        return f"sx({self.module}{marker})>"
+        return f"({self.module}{marker})>"

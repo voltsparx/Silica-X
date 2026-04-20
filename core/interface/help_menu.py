@@ -28,11 +28,11 @@ COMMAND_COL_WIDTH = 44
 DESCRIPTION_GAP = 6
 
 
-def _rule(color: str = Colors.BLUE, *, width: int = 118) -> None:
+def _rule(color: str = Colors.EMBER, *, width: int = 118) -> None:
     print(c("=" * width, color))
 
 
-def _section(title: str, *, color: str = Colors.BLUE, icon: str = "major") -> None:
+def _section(title: str, *, color: str = Colors.EMBER, icon: str = "major") -> None:
     print()
     _rule(color)
     print(c(f"  {symbol(icon)} {title}", Colors.BOLD + color))
@@ -61,7 +61,11 @@ def _example(command: str, description: str) -> None:
 
 
 def show_flag_help() -> None:
-    print(c(f"\n{PROJECT_NAME} v{VERSION} [{VERSION_THEME}] Flag Help", Colors.BOLD + Colors.CYAN))
+    print(
+        f"\n{c(f'{PROJECT_NAME} v{VERSION} ', Colors.BOLD + Colors.CYAN)}"
+        f"{c(f'[{VERSION_THEME}]', Colors.BOLD + Colors.EMBER)}"
+        f"{c(' Flag Help', Colors.BOLD + Colors.CYAN)}"
+    )
     print(c(f"{symbol('action')} Usage: silica-x <command> [flags]", Colors.GREY))
 
     _section("Global Flags", icon="feature")
@@ -155,7 +159,11 @@ def show_flag_help() -> None:
 
 
 def show_prompt_help() -> None:
-    print(c(f"\n{PROJECT_NAME} v{VERSION} [{VERSION_THEME}] Prompt Help", Colors.BOLD + Colors.CYAN))
+    print(
+        f"\n{c(f'{PROJECT_NAME} v{VERSION} ', Colors.BOLD + Colors.CYAN)}"
+        f"{c(f'[{VERSION_THEME}]', Colors.BOLD + Colors.EMBER)}"
+        f"{c(' Prompt Help', Colors.BOLD + Colors.CYAN)}"
+    )
     print(c(f"{symbol('action')} Type one command and press Enter.", Colors.GREY))
 
     _section("Workflow Commands")
@@ -229,7 +237,7 @@ def show_prompt_help() -> None:
     )
 
     _section("Prompt Format")
-    print(c(f"  {symbol('feature')} sx(<module>)>", Colors.CYAN))
+    print(c(f"  {symbol('feature')} (<module>)>", Colors.CYAN))
     print(c(f"  {symbol('tip')} A trailing `*` means the current module has custom selectors or control settings.", Colors.GREY))
     print(c(f"  {symbol('tip')} Run `show config` for the full session context.", Colors.GREY))
 

@@ -33,6 +33,7 @@ from core.collect.extractor import (
     extract_username_mentions,
 )
 from core.collect.platform_schema import PlatformConfig, load_platforms
+from core.foundation.metadata import VERSION
 
 if TYPE_CHECKING:
     from core.engines.pipeline_engine import PipelineEngine
@@ -326,7 +327,7 @@ async def _probe_platform(
 ) -> dict[str, Any]:
     platform_url = platform.url.format(username=quote(username, safe=""))
     url_probe = platform.url_probe.format(username=quote(username, safe=""))
-    headers = {"User-Agent": "Silica-X/10.0", **(platform.headers or {})}
+    headers = {"User-Agent": f"Silica-X/{VERSION}", **(platform.headers or {})}
 
     if not _evaluate_regex(platform, username):
         return {
@@ -439,7 +440,7 @@ async def _fetch_profile_content(
     proxy_url: str | None,
 ) -> dict[str, Any]:
     url = platform.url.format(username=quote(username, safe=""))
-    headers = {"User-Agent": "Silica-X/10.0", **(platform.headers or {})}
+    headers = {"User-Agent": f"Silica-X/{VERSION}", **(platform.headers or {})}
     response = await _fetch_with_retries(
         session,
         method="GET",

@@ -1449,22 +1449,16 @@ def _print_runtime_loaded_inventory() -> None:
     inventory = _collect_runtime_inventory()
 
     print(
-        c(
-            "Loaded: "
-            f"plugins={inventory.plugin_count} "
-            f"filters={inventory.filter_count} "
-            f"platforms={inventory.platform_count} "
-            f"modules={inventory.module_count}",
-            Colors.CYAN,
-        )
+        f"{c('Loaded:', Colors.EMBER)} "
+        f"{c(f'plugins={inventory.plugin_count} ', Colors.CYAN)}"
+        f"{c(f'filters={inventory.filter_count} ', Colors.CYAN)}"
+        f"{c(f'platforms={inventory.platform_count} ', Colors.CYAN)}"
+        f"{c(f'modules={inventory.module_count}', Colors.CYAN)}"
     )
     print(
-        c(
-            "Coverage: "
-            f"plugins={inventory.plugin_scope_counts['profile']}/{inventory.plugin_scope_counts['surface']}/{inventory.plugin_scope_counts['fusion']} "
-            f"filters={inventory.filter_scope_counts['profile']}/{inventory.filter_scope_counts['surface']}/{inventory.filter_scope_counts['fusion']}",
-            Colors.GREY,
-        )
+        f"{c('Coverage:', Colors.EMBER)} "
+        f"{c(f\"plugins={inventory.plugin_scope_counts['profile']}/{inventory.plugin_scope_counts['surface']}/{inventory.plugin_scope_counts['fusion']} \", Colors.GREY)}"
+        f"{c(f\"filters={inventory.filter_scope_counts['profile']}/{inventory.filter_scope_counts['surface']}/{inventory.filter_scope_counts['fusion']}\", Colors.GREY)}"
     )
     hybrid_lines = render_hybrid_inventory_lines(inventory.hybrid_architecture)
     print(c(hybrid_lines[0], Colors.EMBER))
@@ -3212,42 +3206,39 @@ def _apply_info_template(
 
 
 def _print_prompt_config(session: PromptSessionState, state: RunnerState) -> None:
-    print(c(f"\n{symbol('major')} Prompt Configuration", Colors.BLUE))
-    print(c("-" * 36, Colors.BLUE))
-    print(c(f"prompt: {session.module_prompt()}", Colors.CYAN))
-    print(c(f"context: {session.context_summary()}", Colors.CYAN))
-    print(c("enabled attachables:", Colors.BLUE))
-    print(c(f"  plugins: {session.plugins_label()}", Colors.CYAN))
-    print(c(f"  filters: {session.filters_label()}", Colors.CYAN))
-    print(c(f"  modules: {session.modules_label()}", Colors.CYAN))
-    print(c(f"profile preset: {session.profile_preset}", Colors.CYAN))
-    print(c(f"surface preset: {session.surface_preset}", Colors.CYAN))
-    print(c(f"profile extension control: {session.profile_extension_control}", Colors.CYAN))
-    print(c(f"surface extension control: {session.surface_extension_control}", Colors.CYAN))
-    print(c(f"fusion extension control: {session.fusion_extension_control}", Colors.CYAN))
-    print(c(f"orchestrate extension control: {session.orchestrate_extension_control}", Colors.CYAN))
+    print(c(f"\n{symbol('major')} Prompt Configuration", Colors.EMBER))
+    print(c("-" * 36, Colors.EMBER))
+    print(f"{c('prompt:', Colors.EMBER)} {c(session.module_prompt(), Colors.CYAN)}")
+    print(f"{c('context:', Colors.EMBER)} {c(session.context_summary(), Colors.CYAN)}")
+    print(c("enabled attachables:", Colors.EMBER))
+    print(f"  {c('plugins:', Colors.EMBER)} {c(session.plugins_label(), Colors.CYAN)}")
+    print(f"  {c('filters:', Colors.EMBER)} {c(session.filters_label(), Colors.CYAN)}")
+    print(f"  {c('modules:', Colors.EMBER)} {c(session.modules_label(), Colors.CYAN)}")
+    print(f"{c('profile preset:', Colors.EMBER)} {c(session.profile_preset, Colors.CYAN)}")
+    print(f"{c('surface preset:', Colors.EMBER)} {c(session.surface_preset, Colors.CYAN)}")
+    print(f"{c('profile extension control:', Colors.EMBER)} {c(session.profile_extension_control, Colors.CYAN)}")
+    print(f"{c('surface extension control:', Colors.EMBER)} {c(session.surface_extension_control, Colors.CYAN)}")
+    print(f"{c('fusion extension control:', Colors.EMBER)} {c(session.fusion_extension_control, Colors.CYAN)}")
+    print(f"{c('orchestrate extension control:', Colors.EMBER)} {c(session.orchestrate_extension_control, Colors.CYAN)}")
     output_settings = describe_output_settings()
-    print(c(f"output root: {output_settings.get('output_root')}", Colors.CYAN))
-    print(c(f"output types: {output_settings.get('output_types')}", Colors.CYAN))
-    print(c(f"output default base: {output_settings.get('default_base_dir')}", Colors.CYAN))
-    print(c(f"output current base: {output_settings.get('current_base_dir')}", Colors.CYAN))
-    print(c(f"output config: {output_settings.get('config_path')}", Colors.CYAN))
-    print(c(f"anonymity: {get_anonymity_status(state)}", Colors.CYAN))
+    print(f"{c('output root:', Colors.EMBER)} {c(output_settings.get('output_root'), Colors.CYAN)}")
+    print(f"{c('output types:', Colors.EMBER)} {c(output_settings.get('output_types'), Colors.CYAN)}")
+    print(f"{c('output default base:', Colors.EMBER)} {c(output_settings.get('default_base_dir'), Colors.CYAN)}")
+    print(f"{c('output current base:', Colors.EMBER)} {c(output_settings.get('current_base_dir'), Colors.CYAN)}")
+    print(f"{c('output config:', Colors.EMBER)} {c(output_settings.get('config_path'), Colors.CYAN)}")
+    print(f"{c('anonymity:', Colors.EMBER)} {c(get_anonymity_status(state), Colors.CYAN)}")
     tor_status = probe_tor_status()
-    print(c(f"tor binary: {'present' if tor_status.binary_found else 'missing'}", Colors.CYAN))
+    print(f"{c('tor binary:', Colors.EMBER)} {c('present' if tor_status.binary_found else 'missing', Colors.CYAN)}")
     print(
-        c(
-            f"tor socks: {'reachable' if tor_status.socks_reachable else 'unreachable'} "
-            f"({TOR_HOST}:{TOR_SOCKS_PORT})",
-            Colors.CYAN,
-        )
+        f"{c('tor socks:', Colors.EMBER)} "
+        f"{c(f\"{'reachable' if tor_status.socks_reachable else 'unreachable'} ({TOR_HOST}:{TOR_SOCKS_PORT})\", Colors.CYAN)}"
     )
     prompt_engine = PromptEngine(history=session.history)
     advisor = IntelligenceAdvisor(history=session.history, auto_build_capability_pack=True)
     prompt_suggestions = prompt_engine.suggest_next(limit=3)
     advisor_suggestions = advisor.recommend_next()[:2]
-    print(c(f"prompt suggestions: {', '.join(prompt_suggestions)}", Colors.CYAN))
-    print(c(f"advisor hints: {', '.join(advisor_suggestions)}", Colors.CYAN))
+    print(f"{c('prompt suggestions:', Colors.EMBER)} {c(', '.join(prompt_suggestions), Colors.CYAN)}")
+    print(f"{c('advisor hints:', Colors.EMBER)} {c(', '.join(advisor_suggestions), Colors.CYAN)}")
     print()
 
 
@@ -4497,7 +4488,7 @@ async def _handle_anonymity_command(
     prompt_mode: bool,
 ) -> int:
     if args.check:
-        print(c(f"Current anonymity: {get_anonymity_status(state)}", Colors.CYAN))
+        print(f"{c('Current anonymity:', Colors.EMBER)} {c(get_anonymity_status(state), Colors.CYAN)}")
         _print_tor_status()
         return EXIT_SUCCESS
 
@@ -4515,7 +4506,7 @@ async def _handle_anonymity_command(
             if _prompt_yes_no("Open anonymity configuration now?", True):
                 set_anonymity_interactive(state)
     elif args.tor is None and args.proxy is None:
-        print(c(f"Current anonymity: {get_anonymity_status(state)}", Colors.CYAN))
+        print(f"{c('Current anonymity:', Colors.EMBER)} {c(get_anonymity_status(state), Colors.CYAN)}")
     else:
         ok = apply_anonymity_flags(state, tor=args.tor, proxy=args.proxy, prompt_user=True)
         if not ok:
@@ -5566,7 +5557,7 @@ async def _dispatch(args: argparse.Namespace, state: RunnerState, prompt_mode: b
         show_flag_help()
         return EXIT_SUCCESS
     if args.command == "about":
-        print(c(build_about_text(), Colors.CYAN))
+        print(build_about_text())
         return EXIT_SUCCESS
     if args.command == "explain":
         print(c(build_explain_text(), Colors.CYAN))
@@ -5654,7 +5645,7 @@ async def run_prompt_mode(initial_state: RunnerState | None = None) -> int:
             print(c(framework_signature(), Colors.CYAN))
             continue
         if keyword_match == "about" or lowered == "about":
-            print(c(build_about_text(), Colors.CYAN))
+            print(build_about_text())
             continue
         if keyword_match == "explain" or lowered == "explain":
             print(c(build_explain_text(), Colors.CYAN))
@@ -5853,7 +5844,7 @@ async def run(argv: Sequence[str] | None = None) -> int:
 
     if getattr(args, "about_flag", False) or getattr(args, "explain_flag", False):
         if getattr(args, "about_flag", False):
-            print(c(build_about_text(), Colors.CYAN))
+            print(build_about_text())
         if getattr(args, "explain_flag", False):
             print(c(build_explain_text(), Colors.CYAN))
         append_framework_log("framework_exit", f"status={EXIT_SUCCESS}")

@@ -1,16 +1,19 @@
-# Silica-X v10.0
+# Silica-X v11.2.0
 
-<strong>Theme: Ember</strong><br>
-OSINT orchestration, media intelligence, and Reporter-grade artifacts for profile, surface, fusion, and OCR-led investigations.
+> Theme: Ember  
+> OSINT orchestration, media intelligence, and Reporter-grade artifacts for profile, surface, fusion, and OCR-led investigations.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/voltsparx/Silica-X/refs/heads/main/docs/images/illustration/silica-x-icon.png" alt="Silica-X logo" width="420">
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-v10.0-F47C20?style=for-the-badge" alt="Version v10.0">
+  <img src="https://img.shields.io/badge/version-v11.2.0-F47C20?style=for-the-badge" alt="Version v11.2.0">
   <img src="https://img.shields.io/badge/theme-Ember-E86F1C?style=for-the-badge" alt="Theme Ember">
   <img src="https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python Versions">
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/package-silica--x-CB6D1E?style=for-the-badge" alt="PyPI package name">
   <img src="https://img.shields.io/badge/import-silica__x-784421?style=for-the-badge" alt="Python import name">
   <img src="https://img.shields.io/badge/license-Proprietary-8B0000?style=for-the-badge" alt="License Proprietary">
@@ -18,7 +21,7 @@ OSINT orchestration, media intelligence, and Reporter-grade artifacts for profil
 
 Silica-X is a Python intelligence framework for authorized OSINT work. It combines profile reconnaissance, domain-surface analysis, fusion scoring, public-media reconnaissance, and OCR image scanning into one runtime with plugins, filters, engine policies, and categorized artifacts.
 
-## What v10.0 changes
+## What v11.2.0 includes
 
 - Reporter is now the primary reporting layer for HTML and CLI summaries.
 - Media reconnaissance and OCR image scanning are first-class lanes instead of side notes.
@@ -54,6 +57,8 @@ silica-x doctor
 
 ```python
 import silica_x
+
+print(silica_x.__version__)
 ```
 
 From source:
@@ -61,8 +66,8 @@ From source:
 ```bash
 git clone https://github.com/voltsparx/Silica-X.git
 cd Silica-X
-pip install -r requirements.txt
-python silica-x.py
+pip install -e .
+silica-x --help
 ```
 
 Optional extras:

@@ -4,6 +4,14 @@ All notable changes to Silica-X are documented in this file.
 
 ## Unreleased
 
+## v11.2.0
+
+### Changed
+
+- Aligned the Python package version and runtime metadata with the current Silica-X release state.
+- Updated root README package/install guidance and cleaned the top section layout for better rendering.
+- Replaced stale hardcoded runtime version strings in user-facing report and HTTP user-agent paths.
+
 ### Added
 
 - First-class Docker runtime integration via `--docker` and `--docker-rebuild`.
