@@ -1,10 +1,12 @@
 {
-  "name": "SteamCommunity",
+  "name": "Steam",
   "url": "https://steamcommunity.com/id/{username}",
   "errorType": "status_code",
   "request_method": "GET",
-  "exists_status": [200, 301, 302],
+  "exists_status": 200,
   "not_found_statuses": [404],
+  "body_not_contains": "The specified profile could not be found",
   "regexCheck": "^[A-Za-z0-9_-]{2,32}$",
-  "confidence_weight": 0.8
+  "confidence": 75,
+  "timeout": 15
 }

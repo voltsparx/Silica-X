@@ -1,0 +1,10 @@
+{
+  "name": "Chess.com",
+  "url": "https://www.chess.com/member/{username}",
+  "errorType": "status_code",
+  "request_method": "GET",
+  "exists_status": 200,
+  "body_contains": "\"username\":",
+  "confidence": 75,
+  "timeout": 15
+}

@@ -1,5 +1,5 @@
 {
-  "name": "LeetCode",
+  "name": "Leetcode",
   "url": "https://leetcode.com/{username}/",
   "exists_status": 200,
   "confidence_weight": 0.8

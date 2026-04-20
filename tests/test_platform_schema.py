@@ -29,7 +29,7 @@ class TestPlatformSchema(unittest.TestCase):
         names = {platform.name for platform in platforms}
         expected_new = {
             "HackerRank",
-            "CodePen",
+            "Codepen",
             "Replit",
             "Keybase",
             "Unsplash",
@@ -37,7 +37,7 @@ class TestPlatformSchema(unittest.TestCase):
             "Quora",
             "ProductHunt",
             "BuyMeACoffee",
-            "SteamCommunity",
+            "Steam",
             "Mastodon",
             "Threads",
             "DeviantArt",
@@ -70,4 +70,3 @@ class TestPlatformSchema(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

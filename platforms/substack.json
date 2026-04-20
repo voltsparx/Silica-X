@@ -1,0 +1,10 @@
+{
+  "name": "Substack",
+  "url": "https://{username}.substack.com",
+  "errorType": "status_code",
+  "request_method": "GET",
+  "exists_status": 200,
+  "body_contains": "substack",
+  "confidence": 75,
+  "timeout": 15
+}

@@ -1,0 +1,9 @@
+{
+  "name": "Upwork",
+  "url": "https://www.upwork.com/freelancers/~{username}",
+  "errorType": "status_code",
+  "request_method": "GET",
+  "exists_status": 200,
+  "confidence": 60,
+  "timeout": 15
+}

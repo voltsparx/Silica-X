@@ -18,6 +18,7 @@
 from __future__ import annotations
 
 import argparse
+import asyncio
 from collections.abc import Iterable, Sequence
 import difflib
 import html
@@ -1313,12 +1314,28 @@ def _build_engine_health_snapshot() -> dict[str, Any]:
     return health
 
 
+def _build_kb_snapshot() -> dict[str, Any]:
+    try:
+        from core.artifacts.sql_store import KnowledgeBase
+
+        kb = KnowledgeBase()
+        targets = kb.get_all_targets()
+        return {
+            "available": True,
+            "target_count": len(targets),
+            "db_path": kb._db_path,
+        }
+    except Exception as exc:
+        return {"available": False, "error": str(exc)}
+
+
 def _build_doctor_snapshot() -> dict[str, Any]:
     inventory = _collect_runtime_inventory()
     output_settings = describe_output_settings()
     tor_status = probe_tor_status()
     ocr_tooling = detect_image_tooling()
     engine_health = _build_engine_health_snapshot()
+    knowledge_base = _build_kb_snapshot()
     report_backends = {
         "matplotlib": {"available": _module_available("matplotlib")},
         "python_docx": {"available": _module_available("docx")},
@@ -1384,6 +1401,7 @@ def _build_doctor_snapshot() -> dict[str, Any]:
         },
         "ocr_tooling": ocr_tooling,
         "engine_health": engine_health,
+        "knowledge_base": knowledge_base,
         "report_backends": report_backends,
         "tor": {
             "binary_found": tor_status.binary_found,
@@ -1446,6 +1464,7 @@ def _print_doctor_report(snapshot: dict[str, Any]) -> None:
     output_raw = snapshot.get("output")
     ocr_tooling_raw = snapshot.get("ocr_tooling")
     engine_health_raw = snapshot.get("engine_health")
+    knowledge_base_raw = snapshot.get("knowledge_base")
     report_backends_raw = snapshot.get("report_backends")
     tor_data_raw = snapshot.get("tor")
     summary: dict[str, Any] = summary_raw if isinstance(summary_raw, dict) else {}
@@ -1453,6 +1472,7 @@ def _print_doctor_report(snapshot: dict[str, Any]) -> None:
     output: dict[str, Any] = output_raw if isinstance(output_raw, dict) else {}
     ocr_tooling: dict[str, Any] = ocr_tooling_raw if isinstance(ocr_tooling_raw, dict) else {}
     engine_health: dict[str, Any] = engine_health_raw if isinstance(engine_health_raw, dict) else {}
+    knowledge_base: dict[str, Any] = knowledge_base_raw if isinstance(knowledge_base_raw, dict) else {}
     report_backends: dict[str, Any] = report_backends_raw if isinstance(report_backends_raw, dict) else {}
     tor_data: dict[str, Any] = tor_data_raw if isinstance(tor_data_raw, dict) else {}
     warnings = snapshot.get("warnings") if isinstance(snapshot.get("warnings"), list) else []
@@ -1501,6 +1521,14 @@ def _print_doctor_report(snapshot: dict[str, Any]) -> None:
             print(c(f"  {engine_name}={status_label}", status_color))
             if not available and isinstance(engine_status, dict) and engine_status.get("error"):
                 print(c(f"    error: {engine_status['error']}", Colors.EMBER))
+
+    if isinstance(knowledge_base_raw, dict):
+        print(c("\nknowledge base:", Colors.BLUE))
+        available = bool(knowledge_base.get("available"))
+        print(c(f"  available={available}", Colors.GREEN if available else Colors.RED))
+        if available:
+            print(c(f"  target_count={knowledge_base.get('target_count', 0)}", Colors.CYAN))
+            print(c(f"  db_path={knowledge_base.get('db_path', '-')}", Colors.CYAN))
 
     if warnings:
         print(c("\nwarnings:", Colors.EMBER))
@@ -2292,7 +2320,14 @@ async def run_profile_scan(
         include_all_plugins=include_all_plugins,
         include_all_filters=include_all_filters,
     )
+    attachable_payload = dict(extra_payload or {})
     try:
+        from core.engines.pipeline_engine import PipelineEngine
+        from core.intelligence.live_enrichment import LiveEnrichmentSubscriber
+
+        _live_pipeline = PipelineEngine(buffer_size=512)
+        _live_enricher = LiveEnrichmentSubscriber()
+        _live_pipeline.subscribe(_live_enricher.handle_event)
         results = await scan_username(
             username=username,
             proxy_url=proxy_url,
@@ -2300,6 +2335,7 @@ async def run_profile_scan(
             max_concurrency=max_concurrency,
             source_profile=source_profile,
             max_platforms=max_platforms,
+            pipeline=_live_pipeline,
         )
     except PlatformValidationError as exc:
         print(c(f"{symbol('warn')} Platform manifest validation failed: {exc}", Colors.RED))
@@ -2309,6 +2345,20 @@ async def run_profile_scan(
         print(c(f"{symbol('warn')} Scan failed: {exc}", Colors.RED))
         append_framework_log("profile_scan_failed", f"target={username} reason={exc}", level="WARN")
         return EXIT_FAILURE, None
+
+    try:
+        await asyncio.wait_for(_live_pipeline.dispatch_loop(), timeout=2.0)
+    except asyncio.TimeoutError:
+        pass
+    except Exception:
+        pass
+
+    _enrichment_summary = _live_enricher.summary()
+    _enriched_signals = _live_enricher.get_signals()
+    if _enriched_signals:
+        attachable_payload.setdefault("live_enrichment", {})
+        attachable_payload["live_enrichment"]["signals"] = _enriched_signals
+        attachable_payload["live_enrichment"]["summary"] = _enrichment_summary
 
     from core.collect.osint_hunt import hunt_username_signals
     from core.intelligence.pre_sim import PreIntelligenceSimulator
@@ -2352,7 +2402,6 @@ async def run_profile_scan(
         target=username,
         profile_results=results,
     )
-    attachable_payload = dict(extra_payload or {})
     attachable_payload["osint_hunt"] = osint_hunt
     attachable_payload["target_model"] = _target_model.as_dict()
     plugin_results, plugin_errors = await PLUGIN_MANAGER.run_plugins(
@@ -2439,6 +2488,23 @@ async def run_profile_scan(
         output_stamp=stamp,
         return_payload=write_csv,
     )
+
+    try:
+        from core.artifacts.sql_store import KnowledgeBase
+
+        _kb = KnowledgeBase()
+        _kb.record_scan_target(username, "social_handle")
+        _kb.record_found_profiles(username, results)
+        if intelligence_bundle.get("master_fingerprint"):
+            _kb.record_fingerprint(username, intelligence_bundle["master_fingerprint"])
+        if issues:
+            _kb.record_risk_signals(username, issues)
+        for email in correlation.get("shared_emails", {}).keys():
+            _kb.record_contact_signals(username, {"emails": [email]})
+        for phone in correlation.get("shared_phones", {}).keys():
+            _kb.record_contact_signals(username, {"phones": [phone]})
+    except Exception:
+        pass
 
     if write_csv:
         payload = saved[1] if isinstance(saved, tuple) and len(saved) > 1 else None
@@ -2740,6 +2806,20 @@ async def run_surface_scan(
         output_stamp=stamp,
         return_payload=write_csv,
     )
+
+    try:
+        from core.artifacts.sql_store import KnowledgeBase
+
+        _kb = KnowledgeBase()
+        _kb.record_scan_target(normalized_domain, "domain")
+        if intelligence_bundle.get("master_fingerprint"):
+            _kb.record_fingerprint(normalized_domain, intelligence_bundle["master_fingerprint"])
+        if issues:
+            _kb.record_risk_signals(normalized_domain, issues)
+        for sub in domain_result.get("subdomains", [])[:50]:
+            _kb.record_contact_signals(normalized_domain, {"subdomains": [sub]}, "ct_logs")
+    except Exception:
+        pass
     report_path = ""
     try:
         if write_html:

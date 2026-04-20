@@ -6,7 +6,7 @@
     "component": "module_catalog"
   },
   "catalog_version": "2.1",
-  "generated_at_utc": "2026-04-20T03:36:34Z",
+  "generated_at_utc": "2026-04-20T05:45:10Z",
   "source_root": "intel-sources",
   "framework_count": 0,
   "module_count": 0,
@@ -28,8 +28,8 @@
   },
   "power_score_avg": 0.0,
   "build_stats": {
-    "scan_started_utc": "2026-04-20T03:36:34Z",
-    "scan_finished_utc": "2026-04-20T03:36:34Z",
+    "scan_started_utc": "2026-04-20T05:45:10Z",
+    "scan_finished_utc": "2026-04-20T05:45:10Z",
     "scan_duration_ms": 0,
     "max_file_bytes": 2000000,
     "sample_bytes": 24000,

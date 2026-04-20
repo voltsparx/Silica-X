@@ -41,13 +41,27 @@
       "minItems": 1
     },
     "regexCheck": { "type": "string" },
+    "body_contains": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+      ]
+    },
+    "body_not_contains": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+      ]
+    },
     "headers": {
       "type": "object",
       "additionalProperties": { "type": "string" }
     },
     "request_method": { "type": "string", "enum": ["GET", "HEAD", "POST", "PUT"] },
     "request_payload": { "type": "object" },
-    "confidence_weight": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
+    "confidence_weight": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+    "confidence": { "type": "integer", "minimum": 1, "maximum": 100 },
+    "timeout": { "type": "integer", "minimum": 1 }
   },
   "additionalProperties": true
 }

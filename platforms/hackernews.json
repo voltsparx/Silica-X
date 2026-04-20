@@ -1,0 +1,10 @@
+{
+  "name": "HackerNews",
+  "url": "https://news.ycombinator.com/user?id={username}",
+  "errorType": "status_code",
+  "request_method": "GET",
+  "exists_status": 200,
+  "body_contains": "<tr><td>user:</td>",
+  "confidence": 75,
+  "timeout": 15
+}

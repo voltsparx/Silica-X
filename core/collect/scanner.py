@@ -21,7 +21,7 @@ import asyncio
 from dataclasses import dataclass
 import re
 import time
-from typing import Any, Iterable
+from typing import TYPE_CHECKING, Any, Iterable
 from urllib.parse import quote
 
 import aiohttp
@@ -33,6 +33,9 @@ from core.collect.extractor import (
     extract_username_mentions,
 )
 from core.collect.platform_schema import PlatformConfig, load_platforms
+
+if TYPE_CHECKING:
+    from core.engines.pipeline_engine import PipelineEngine
 DEFAULT_TIMEOUT_SECONDS = 20
 DEFAULT_MAX_CONCURRENCY = 25
 _MAX_RESPONSE_BYTES = 140_000
@@ -84,7 +87,7 @@ def _load_platforms_cached() -> list[PlatformConfig]:
 
 
 def _score_platform(platform: PlatformConfig, profile: str) -> float:
-    base = float(platform.confidence_weight) * 100.0
+    base = float(platform.confidence)
     methods = set(platform.detection_methods)
     method = platform.request_method.upper()
 
@@ -182,13 +185,25 @@ def evaluate_presence(
                 status_not_found = True
                 reasons.append(f"not_found_status={status_code}")
 
+    lowered = (body or "").lower()
+
     if "message" in methods:
-        lowered = (body or "").lower()
         for marker in platform.error_messages:
             if marker and marker.lower() in lowered:
                 status_not_found = True
                 reasons.append("error_message")
                 break
+
+    for marker in platform.body_contains:
+        if marker and marker.lower() in lowered:
+            status_found = True
+            reasons.append("body_contains")
+            break
+
+    if lowered and platform.body_not_contains:
+        if all(marker.lower() not in lowered for marker in platform.body_not_contains if marker):
+            status_found = True
+            reasons.append("body_not_contains")
 
     if "response_url" in methods and platform.error_url:
         error_url = platform.error_url.format(username=username)
@@ -347,7 +362,7 @@ async def _probe_platform(
         method=method,
         url=url_probe,
         headers=headers,
-        timeout_seconds=timeout_seconds,
+        timeout_seconds=min(timeout_seconds, platform.timeout_seconds),
         proxy_url=proxy_url,
         request_payload=request_payload,
         allow_redirects=True,
@@ -361,7 +376,7 @@ async def _probe_platform(
             method="GET",
             url=url_probe,
             headers=headers,
-            timeout_seconds=timeout_seconds,
+            timeout_seconds=min(timeout_seconds, platform.timeout_seconds),
             proxy_url=proxy_url,
             request_payload=None,
             allow_redirects=True,
@@ -379,7 +394,7 @@ async def _probe_platform(
 
     confidence = 0
     if verdict == "FOUND":
-        confidence = int(round(float(platform.confidence_weight) * 100))
+        confidence = int(platform.confidence)
     elif verdict == "BLOCKED":
         confidence = 8
     elif verdict == "UNKNOWN":
@@ -430,7 +445,7 @@ async def _fetch_profile_content(
         method="GET",
         url=url,
         headers=headers,
-        timeout_seconds=timeout_seconds,
+        timeout_seconds=min(timeout_seconds, platform.timeout_seconds),
         proxy_url=proxy_url,
         request_payload=None,
         allow_redirects=True,
@@ -457,6 +472,7 @@ async def scan_username(
     max_concurrency: int = DEFAULT_MAX_CONCURRENCY,
     source_profile: str = "balanced",
     max_platforms: int | None = None,
+    pipeline: PipelineEngine | None = None,
 ) -> list[dict[str, Any]]:
     """Scan a username across platform manifests with async concurrency."""
 
@@ -516,6 +532,30 @@ async def scan_username(
                     payload = exc
                 return index, payload
 
+        def _emit_pipeline_result(result: dict[str, Any]) -> None:
+            if pipeline is None:
+                return
+            try:
+                from core.engines.pipeline_engine import PipelineEvent, PipelineEventType
+
+                pipeline.emit(
+                    PipelineEvent(
+                        event_type=PipelineEventType.RESULT_EMITTED,
+                        source=f"platform:{result.get('platform', 'unknown')}",
+                        target=normalized_username,
+                        data={
+                            "platform": result.get("platform", ""),
+                            "status": result.get("status", ""),
+                            "confidence": result.get("confidence", 0),
+                            "url": result.get("url", ""),
+                            "contacts": result.get("contacts", {}),
+                            "bio": result.get("bio", ""),
+                        },
+                    )
+                )
+            except Exception:
+                pass
+
         tasks = [
             asyncio.create_task(_probe_with_limit(index, platform))
             for index, platform in enumerate(selected)
@@ -542,7 +582,7 @@ async def scan_username(
         for future in asyncio.as_completed(tasks):
             index, platform, payload = await future
             if isinstance(payload, Exception):
-                rows[index] = {
+                error_row = {
                     "platform": platform.name,
                     "url": platform.url.format(username=quote(normalized_username, safe="")),
                     "status": "ERROR",
@@ -555,12 +595,18 @@ async def scan_username(
                     "mentions": [],
                     "bio": "",
                 }
+                rows[index] = error_row
+                _emit_pipeline_result(error_row)
                 continue
 
             if payload.get("_needs_followup"):
+                payload.pop("_needs_followup", None)
+                rows[index] = payload
                 follow_tasks.append(asyncio.create_task(_follow_with_limit(index, platform)))
-            payload.pop("_needs_followup", None)
-            rows[index] = payload
+            else:
+                payload.pop("_needs_followup", None)
+                rows[index] = payload
+                _emit_pipeline_result(payload)
 
         if follow_tasks:
             for follow_future in asyncio.as_completed(follow_tasks):
@@ -568,6 +614,7 @@ async def scan_username(
                 if isinstance(payload, Exception) or not isinstance(payload, dict):
                     continue
                 rows[row_index].update(payload)
+                _emit_pipeline_result(rows[row_index])
 
     rows.sort(key=lambda item: str(item.get("platform", "")).lower())
     return rows

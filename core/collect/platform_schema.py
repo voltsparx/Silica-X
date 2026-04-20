@@ -47,6 +47,10 @@ class PlatformConfig:
     request_method: str
     request_payload: dict[str, Any] | None
     confidence_weight: float
+    confidence: int = 70
+    body_contains: tuple[str, ...] = ()
+    body_not_contains: tuple[str, ...] = ()
+    timeout_seconds: int = 20
 
 
 def _load_platforms_from_dir(platform_dir: str) -> list[PlatformConfig]:
@@ -149,6 +153,15 @@ def _normalize_platform(raw: dict[str, Any], source: str) -> PlatformConfig:
     if regex_check is not None and (not isinstance(regex_check, str) or not regex_check):
         raise PlatformValidationError(f"{source}: regex_check/regexCheck must be a string.")
 
+    body_contains = _normalize_string_list(
+        raw.get("body_contains", raw.get("bodyContains")),
+        f"{source}: body_contains",
+    )
+    body_not_contains = _normalize_string_list(
+        raw.get("body_not_contains", raw.get("bodyNotContains")),
+        f"{source}: body_not_contains",
+    )
+
     headers = raw.get("headers", {})
     if not isinstance(headers, dict) or not all(
         isinstance(k, str) and isinstance(v, str) for k, v in headers.items()
@@ -170,18 +183,46 @@ def _normalize_platform(raw: dict[str, Any], source: str) -> PlatformConfig:
     if request_payload is not None and not isinstance(request_payload, dict):
         raise PlatformValidationError(f"{source}: request_payload must be an object.")
 
-    confidence_weight = raw.get("confidence_weight", 0.7)
+    confidence_raw = raw.get("confidence")
+    confidence_weight_raw = raw.get("confidence_weight")
+    if confidence_raw is not None:
+        try:
+            confidence = int(confidence_raw)
+        except (TypeError, ValueError) as exc:
+            raise PlatformValidationError(
+                f"{source}: confidence must be an integer."
+            ) from exc
+        if not 1 <= confidence <= 100:
+            raise PlatformValidationError(
+                f"{source}: confidence must be between 1 and 100."
+            )
+        confidence_weight = confidence / 100.0
+    else:
+        if confidence_weight_raw is None:
+            confidence_weight_raw = 0.7
+        try:
+            confidence_weight = float(confidence_weight_raw)
+        except (TypeError, ValueError) as exc:
+            raise PlatformValidationError(
+                f"{source}: confidence_weight must be numeric."
+            ) from exc
+        if not 0.0 < confidence_weight <= 1.0:
+            raise PlatformValidationError(
+                f"{source}: confidence_weight must be between 0.0 and 1.0."
+            )
+        confidence = int(round(confidence_weight * 100))
+
+    timeout_raw = raw.get("timeout", raw.get("timeout_seconds", raw.get("timeoutSeconds", 20)))
+    if timeout_raw is None:
+        timeout_raw = 20
     try:
-        confidence_weight = float(confidence_weight)
+        timeout_seconds = int(timeout_raw)
     except (TypeError, ValueError) as exc:
         raise PlatformValidationError(
-            f"{source}: confidence_weight must be numeric."
+            f"{source}: timeout must be an integer."
         ) from exc
-
-    if not 0.0 <= confidence_weight <= 1.0:
-        raise PlatformValidationError(
-            f"{source}: confidence_weight must be between 0.0 and 1.0."
-        )
+    if timeout_seconds <= 0:
+        raise PlatformValidationError(f"{source}: timeout must be greater than zero.")
 
     return PlatformConfig(
         name=name.strip(),
@@ -197,6 +238,10 @@ def _normalize_platform(raw: dict[str, Any], source: str) -> PlatformConfig:
         request_method=request_method,
         request_payload=request_payload,
         confidence_weight=confidence_weight,
+        confidence=confidence,
+        body_contains=tuple(body_contains),
+        body_not_contains=tuple(body_not_contains),
+        timeout_seconds=timeout_seconds,
     )
 
 

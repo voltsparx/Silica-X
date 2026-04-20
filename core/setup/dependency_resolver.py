@@ -6,6 +6,7 @@ import os
 import platform
 import shutil
 import subprocess
+import sys
 import tempfile
 import urllib.request
 
@@ -122,6 +123,9 @@ def _install_windows() -> bool:
 
 def resolve_tesseract() -> None:
     if shutil.which("tesseract") is not None:
+        return
+
+    if not sys.stdin.isatty() or not sys.stdout.isatty():
         return
 
     print("[Silica-X] Tesseract OCR binary not found. Install it automatically? (y/n): ", end="", flush=True)

@@ -1,0 +1,10 @@
+{
+  "name": "Gravatar",
+  "url": "https://en.gravatar.com/{username}",
+  "errorType": "status_code",
+  "request_method": "GET",
+  "exists_status": 200,
+  "body_contains": "gravatar",
+  "confidence": 75,
+  "timeout": 15
+}

@@ -1022,6 +1022,52 @@ def _build_osint_hunt_section(extra_payload: dict) -> str:
     )
 
 
+def _build_live_enrichment_section(extra_payload: dict) -> str:
+    """Build HTML section for live enrichment signals."""
+    enrichment = extra_payload.get("live_enrichment", {})
+    if not enrichment:
+        return ""
+    signals = enrichment.get("signals", [])
+    summary = enrichment.get("summary", {})
+    if not signals and not summary.get("platforms_processed"):
+        return ""
+
+    rows = ""
+    for sig in signals:
+        platform = html.escape(str(sig.get("platform", "")))
+        url = html.escape(str(sig.get("url", "")))
+        found = sig.get("signals", {})
+        emails = ", ".join(found.get("emails", [])) or "-"
+        phones = ", ".join(found.get("phones", [])) or "-"
+        api_hits = len(found.get("api_key_patterns", []))
+        rows += (
+            f"<tr><td>{platform}</td>"
+            f"<td><a href='{url}' target='_blank' rel='noreferrer'>{url}</a></td>"
+            f"<td>{html.escape(emails)}</td>"
+            f"<td>{html.escape(phones)}</td>"
+            f"<td>{'⚠ ' + str(api_hits) + ' pattern(s)' if api_hits else '-'}</td></tr>"
+        )
+    if not rows:
+        rows = "<tr><td colspan='5'>No credential signals found in live enrichment.</td></tr>"
+
+    processed = int(summary.get("platforms_processed", 0))
+    enriched = int(summary.get("enriched_signal_count", 0))
+
+    return f"""
+<div class="section" id="live-enrichment">
+  <h2>Live Enrichment Signals</h2>
+  <p class="muted">Platforms processed in real time: {processed} |
+     Platforms with signals: {enriched}</p>
+  <table>
+    <tr>
+      <th>Platform</th><th>Profile URL</th>
+      <th>Emails Found</th><th>Phones Found</th><th>Credential Patterns</th>
+    </tr>
+    {rows}
+  </table>
+</div>"""
+
+
 def _build_port_probe_section(extra_payload: dict) -> str:
     port_surface = extra_payload.get("port_surface")
     if not isinstance(port_surface, dict):
@@ -1768,6 +1814,7 @@ def generate_html(
           {"<a href='#target-model'>Target Model</a>" if intelligence_bundle.get('target_model') else ""}
           {"<a href='#fingerprint'>Fingerprint</a>" if intelligence_bundle.get('master_fingerprint') else ""}
           {"<a href='#osint-hunt'>OSINT Hunt</a>" if extra_payload.get('osint_hunt') else ""}
+          {"<a href='#live-enrichment'>Live Enrichment</a>" if extra_payload.get('live_enrichment') else ""}
           {"<a href='#port-probe'>Port Probe</a>" if extra_payload.get('port_surface') else ""}
           <a href="#profiles">Profiles</a>
           <a href="#errors">Errors</a>
@@ -1809,6 +1856,7 @@ def generate_html(
         {_build_target_model_section(intelligence_bundle)}
         {_build_fingerprint_section(intelligence_bundle)}
         {_build_osint_hunt_section(extra_payload)}
+        {_build_live_enrichment_section(extra_payload)}
         {_build_port_probe_section(extra_payload)}
         {"<div class='section' id='relationship-graph'><div class='section-banner'><div><div class='section-eyebrow'>Relationships</div><h3>Relationship Graph</h3></div><span class='panel-chip'>fusion map</span></div>" + relationship_svg + "</div>" if relationship_svg else ""}
 

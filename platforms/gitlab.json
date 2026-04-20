@@ -1,9 +1,11 @@
 {
   "name": "GitLab",
   "url": "https://gitlab.com/{username}",
-  "urlProbe": "https://gitlab.com/api/v4/users?username={username}",
-  "errorType": "message",
-  "errorMsg": "[]",
+  "urlProbe": "https://gitlab.com/{username}",
+  "errorType": ["status_code"],
   "request_method": "GET",
-  "confidence_weight": 0.9
+  "exists_status": 200,
+  "body_contains": "user-profile",
+  "confidence": 75,
+  "timeout": 15
 }

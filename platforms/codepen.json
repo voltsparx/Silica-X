@@ -1,5 +1,5 @@
 {
-  "name": "CodePen",
+  "name": "Codepen",
   "url": "https://codepen.io/{username}",
   "errorType": "status_code",
   "request_method": "HEAD",

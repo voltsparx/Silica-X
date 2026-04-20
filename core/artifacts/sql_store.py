@@ -168,3 +168,293 @@ def write_sqlite_report(path: Path, payload: dict[str, Any]) -> str:
         conn.close()
 
     return str(path)
+
+
+class KnowledgeBase:
+    """Cross-session persistent knowledge base for Silica-X.
+
+    Stores findings from every scan so future scans of the same or related
+    targets can be enriched with historical context.
+
+    All methods are synchronous and safe to call from async context via
+    asyncio.run_in_executor. All SQL operations use parameterized queries.
+    The database is created automatically on first use.
+    """
+
+    def __init__(self, db_path: str | None = None) -> None:
+        if db_path is None:
+            try:
+                from core.foundation.output_config import get_output_settings
+
+                settings = get_output_settings()
+                root = settings.output_root or Path("output")
+                db_path = str(Path(root) / "silica_x_kb.db")
+            except Exception:
+                db_path = "output/silica_x_kb.db"
+        self._db_path = db_path
+        Path(db_path).parent.mkdir(parents=True, exist_ok=True)
+        self._init_schema()
+
+    def _connect(self) -> sqlite3.Connection:
+        conn = sqlite3.connect(self._db_path, timeout=10)
+        conn.row_factory = sqlite3.Row
+        return conn
+
+    def _init_schema(self) -> None:
+        """Create all tables if they do not exist."""
+        conn = self._connect()
+        try:
+            conn.executescript(
+                """
+                CREATE TABLE IF NOT EXISTS scan_targets (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    target TEXT NOT NULL,
+                    target_type TEXT NOT NULL,
+                    first_seen TEXT NOT NULL,
+                    last_seen TEXT NOT NULL,
+                    scan_count INTEGER DEFAULT 1
+                );
+                CREATE TABLE IF NOT EXISTS found_profiles (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    target TEXT NOT NULL,
+                    platform TEXT NOT NULL,
+                    profile_url TEXT,
+                    confidence INTEGER,
+                    first_seen TEXT NOT NULL,
+                    last_seen TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS contact_signals (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    target TEXT NOT NULL,
+                    signal_type TEXT NOT NULL,
+                    value TEXT NOT NULL,
+                    source_platform TEXT,
+                    first_seen TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS domain_findings (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    domain TEXT NOT NULL,
+                    finding_type TEXT NOT NULL,
+                    value TEXT NOT NULL,
+                    first_seen TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS fingerprints (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    target TEXT NOT NULL,
+                    fingerprint_id TEXT NOT NULL,
+                    component_json TEXT NOT NULL,
+                    created_at TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS risk_signals (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    target TEXT NOT NULL,
+                    risk_type TEXT NOT NULL,
+                    severity TEXT NOT NULL,
+                    detail TEXT,
+                    first_seen TEXT NOT NULL
+                );
+                """
+            )
+        finally:
+            conn.close()
+
+    def record_scan_target(self, target: str, target_type: str) -> None:
+        """Record or update a scan target."""
+        from datetime import datetime, timezone
+
+        now = datetime.now(timezone.utc).isoformat()
+        conn = self._connect()
+        try:
+            existing = conn.execute(
+                "SELECT id, scan_count FROM scan_targets WHERE target = ?",
+                (target,),
+            ).fetchone()
+            if existing:
+                conn.execute(
+                    "UPDATE scan_targets SET last_seen = ?, scan_count = ? WHERE id = ?",
+                    (now, existing["scan_count"] + 1, existing["id"]),
+                )
+            else:
+                conn.execute(
+                    "INSERT INTO scan_targets (target, target_type, first_seen, last_seen) VALUES (?, ?, ?, ?)",
+                    (target, target_type, now, now),
+                )
+            conn.commit()
+        finally:
+            conn.close()
+
+    def record_found_profiles(self, target: str, results: list[dict[str, Any]]) -> None:
+        """Store FOUND profile results."""
+        from datetime import datetime, timezone
+
+        now = datetime.now(timezone.utc).isoformat()
+        found = [row for row in results if str(row.get("status")) == "FOUND"]
+        conn = self._connect()
+        try:
+            for row in found:
+                platform = str(row.get("platform", "")).strip()
+                url = str(row.get("url", "")).strip()
+                confidence = int(row.get("confidence", 0) or 0)
+                if not platform:
+                    continue
+                existing = conn.execute(
+                    "SELECT id FROM found_profiles WHERE target = ? AND platform = ?",
+                    (target, platform),
+                ).fetchone()
+                if existing:
+                    conn.execute(
+                        "UPDATE found_profiles SET last_seen = ?, confidence = ?, profile_url = ? WHERE id = ?",
+                        (now, confidence, url, existing["id"]),
+                    )
+                else:
+                    conn.execute(
+                        "INSERT INTO found_profiles (target, platform, profile_url, confidence, first_seen, last_seen) VALUES (?, ?, ?, ?, ?, ?)",
+                        (target, platform, url, confidence, now, now),
+                    )
+            conn.commit()
+        finally:
+            conn.close()
+
+    def record_contact_signals(
+        self,
+        target: str,
+        signals: dict[str, Any],
+        source_platform: str = "",
+    ) -> None:
+        """Store contact signals (emails, phones, links)."""
+        from datetime import datetime, timezone
+
+        now = datetime.now(timezone.utc).isoformat()
+        conn = self._connect()
+        try:
+            for signal_type, values in signals.items():
+                if not isinstance(values, list):
+                    continue
+                for value in values:
+                    clean_value = str(value).strip()
+                    if not clean_value:
+                        continue
+                    existing = conn.execute(
+                        "SELECT id FROM contact_signals WHERE target = ? AND signal_type = ? AND value = ?",
+                        (target, signal_type, clean_value),
+                    ).fetchone()
+                    if not existing:
+                        conn.execute(
+                            "INSERT INTO contact_signals (target, signal_type, value, source_platform, first_seen) VALUES (?, ?, ?, ?, ?)",
+                            (target, signal_type, clean_value, source_platform, now),
+                        )
+            conn.commit()
+        finally:
+            conn.close()
+
+    def record_fingerprint(self, target: str, fingerprint: dict[str, Any]) -> None:
+        """Store a master fingerprint."""
+        from datetime import datetime, timezone
+
+        now = datetime.now(timezone.utc).isoformat()
+        fingerprint_id = str(fingerprint.get("fingerprint_id", "")).strip()
+        if not fingerprint_id:
+            return
+        components = fingerprint.get("components", {})
+        conn = self._connect()
+        try:
+            existing = conn.execute(
+                "SELECT id FROM fingerprints WHERE target = ? AND fingerprint_id = ?",
+                (target, fingerprint_id),
+            ).fetchone()
+            if not existing:
+                conn.execute(
+                    "INSERT INTO fingerprints (target, fingerprint_id, component_json, created_at) VALUES (?, ?, ?, ?)",
+                    (target, fingerprint_id, json.dumps(components, default=str), now),
+                )
+            conn.commit()
+        finally:
+            conn.close()
+
+    def record_risk_signals(self, target: str, issues: list[dict[str, Any]]) -> None:
+        """Store risk/exposure signals from issue list."""
+        from datetime import datetime, timezone
+
+        now = datetime.now(timezone.utc).isoformat()
+        conn = self._connect()
+        try:
+            for issue in issues:
+                risk_type = str(issue.get("title", "")).strip().lower().replace(" ", "_")
+                severity = str(issue.get("severity", "LOW")).upper()
+                detail = str(issue.get("evidence", "")).strip()
+                if not risk_type:
+                    continue
+                existing = conn.execute(
+                    "SELECT id FROM risk_signals WHERE target = ? AND risk_type = ?",
+                    (target, risk_type),
+                ).fetchone()
+                if not existing:
+                    conn.execute(
+                        "INSERT INTO risk_signals (target, risk_type, severity, detail, first_seen) VALUES (?, ?, ?, ?, ?)",
+                        (target, risk_type, severity, detail, now),
+                    )
+            conn.commit()
+        finally:
+            conn.close()
+
+    def get_target_history(self, target: str) -> dict[str, Any]:
+        """Retrieve full history for a target from the knowledge base."""
+        conn = self._connect()
+        try:
+            scan_row = conn.execute(
+                "SELECT * FROM scan_targets WHERE target = ?",
+                (target,),
+            ).fetchone()
+            profiles = conn.execute(
+                "SELECT * FROM found_profiles WHERE target = ? ORDER BY confidence DESC",
+                (target,),
+            ).fetchall()
+            contacts = conn.execute(
+                "SELECT * FROM contact_signals WHERE target = ?",
+                (target,),
+            ).fetchall()
+            risks = conn.execute(
+                "SELECT * FROM risk_signals WHERE target = ? ORDER BY severity DESC",
+                (target,),
+            ).fetchall()
+            fingerprint = conn.execute(
+                "SELECT * FROM fingerprints WHERE target = ? ORDER BY id DESC LIMIT 1",
+                (target,),
+            ).fetchone()
+        finally:
+            conn.close()
+
+        return {
+            "target": target,
+            "scan_count": scan_row["scan_count"] if scan_row else 0,
+            "first_seen": scan_row["first_seen"] if scan_row else None,
+            "last_seen": scan_row["last_seen"] if scan_row else None,
+            "found_profiles": [dict(row) for row in profiles],
+            "contact_signals": [dict(row) for row in contacts],
+            "risk_signals": [dict(row) for row in risks],
+            "fingerprint_id": fingerprint["fingerprint_id"] if fingerprint else None,
+            "has_history": scan_row is not None,
+        }
+
+    def get_all_targets(self) -> list[dict[str, Any]]:
+        """Return all known targets ordered by last seen."""
+        conn = self._connect()
+        try:
+            rows = conn.execute(
+                "SELECT * FROM scan_targets ORDER BY last_seen DESC"
+            ).fetchall()
+        finally:
+            conn.close()
+        return [dict(row) for row in rows]
+
+    def search_contact_value(self, value: str) -> list[dict[str, Any]]:
+        """Find all targets associated with a contact value (email, phone, etc.)."""
+        conn = self._connect()
+        try:
+            rows = conn.execute(
+                "SELECT * FROM contact_signals WHERE value LIKE ?",
+                (f"%{value}%",),
+            ).fetchall()
+        finally:
+            conn.close()
+        return [dict(row) for row in rows]

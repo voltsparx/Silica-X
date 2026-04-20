@@ -1,0 +1,10 @@
+{
+  "name": "Goodreads",
+  "url": "https://www.goodreads.com/{username}",
+  "errorType": "status_code",
+  "request_method": "GET",
+  "exists_status": 200,
+  "body_contains": "profileName",
+  "confidence": 75,
+  "timeout": 15
+}
