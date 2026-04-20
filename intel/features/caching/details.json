@@ -6,17 +6,17 @@
     "component": "intel_pack"
   },
   "schema_version": "1.0",
-  "feature": "plugin_module_system",
-  "description": "Dynamic module/plugin discovery and orchestration.",
+  "feature": "caching",
+  "description": "Result caching and TTL reuse to reduce duplicate calls and latency.",
   "target_modules": [
-    "core/extensions/plugin_manager.py",
-    "core/extensions/signal_forge.py",
-    "core/extensions/signal_sieve.py"
+    "core/engines/fusion_engine.py",
+    "core/intel/capability_matrix.py",
+    "core/artifacts/storage.py"
   ],
   "signal_total": 0,
   "coverage_ratio": 0.0,
   "coverage_percent": 0.0,
   "strength": "unobserved",
   "priority": "expand",
-  "action": "Strengthen module contracts and discovery validation."
+  "action": "Extend TTL-aware cache layers for expensive enrichment calls."
 }

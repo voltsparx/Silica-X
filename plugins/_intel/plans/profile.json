@@ -3,41 +3,51 @@
   "capability_plan": [
     {
       "feature": "async_engine",
-      "priority": "harden",
+      "priority": "expand",
       "action": "Increase non-blocking collectors and connector reuse."
     },
     {
       "feature": "retry_backoff",
-      "priority": "harden",
+      "priority": "expand",
       "action": "Tune retry windows, jitter, and transient-error handling."
     },
     {
       "feature": "rate_limit",
-      "priority": "harden",
+      "priority": "expand",
       "action": "Calibrate concurrency with adaptive workload backpressure."
     },
     {
       "feature": "plugin_module_system",
-      "priority": "harden",
+      "priority": "expand",
       "action": "Strengthen module contracts and discovery validation."
     },
     {
       "feature": "signal_fusion_lane",
-      "priority": "harden",
+      "priority": "expand",
       "action": "Expand connector orchestration to leverage high-value multi-source collectors safely."
     },
     {
       "feature": "exports_reporting",
-      "priority": "harden",
+      "priority": "expand",
       "action": "Expand analyst outputs with richer graph/report artifacts."
     },
     {
       "feature": "test_coverage",
-      "priority": "harden",
+      "priority": "expand",
       "action": "Close regression gaps around failure paths and adapters."
     }
   ],
   "recommended_plugins": [
+    {
+      "id": "account_recovery_exposure_probe",
+      "title": "Account Recovery Exposure Probe",
+      "description": "Measures how much account-recovery metadata is publicly exposed across discovered profiles.",
+      "aliases": [
+        "recovery_exposure",
+        "contact_surface",
+        "recovery_probe"
+      ]
+    },
     {
       "id": "contact_lattice",
       "title": "Contact Ember Analyzer",
@@ -59,6 +69,57 @@
       ]
     },
     {
+      "id": "crypto_aes_attachment",
+      "title": "AES Attachment Cipher",
+      "description": "Encrypts or decrypts attachment-like text payloads using AES-CFB.",
+      "aliases": [
+        "aes_plugin",
+        "aes_crypto",
+        "crypto_aes"
+      ]
+    },
+    {
+      "id": "crypto_rot13_attachment",
+      "title": "ROT13 Attachment Cipher",
+      "description": "Applies ROT13 transform on attachment-like payloads for reversible text masking.",
+      "aliases": [
+        "rot13_plugin",
+        "rot13_crypto",
+        "crypto_rot13"
+      ]
+    },
+    {
+      "id": "crypto_xor_attachment",
+      "title": "XOR Attachment Cipher",
+      "description": "Applies XOR transform on attachment-like payloads for reversible obfuscation.",
+      "aliases": [
+        "xor_plugin",
+        "xor_crypto",
+        "crypto_xor"
+      ]
+    },
+    {
+      "id": "darkweb_tor_intel",
+      "title": "Darkweb Tor Intelligence",
+      "description": "Collects passive onion references and Tor-aware Ahmia search hints from public investigation context.",
+      "aliases": [
+        "darkweb",
+        "darknet",
+        "tor_intel",
+        "onion_intel"
+      ]
+    },
+    {
+      "id": "entity_link_intel",
+      "title": "Entity Link Intelligence",
+      "description": "Follows public bio/entity links in a controlled depth-limited way for deeper public-context gathering.",
+      "aliases": [
+        "link_intel",
+        "bio_links",
+        "deep_links"
+      ]
+    },
+    {
       "id": "identity_fusion_core",
       "title": "Identity Fusion Core",
       "description": "Aggregates confidence, mention density, and identity overlaps into a fusion index.",
@@ -67,6 +128,42 @@
         "persona",
         "fusionindex"
       ]
+    },
+    {
+      "id": "link_outbound_risk_profiler",
+      "title": "Link Outbound Risk Profiler",
+      "description": "Classifies discovered outbound links by trust, transport security, and suspicious sharing patterns.",
+      "aliases": [
+        "link_risk",
+        "outbound_links",
+        "url_risk"
+      ]
+    },
+    {
+      "id": "media_intel_core",
+      "title": "Media Intelligence Core",
+      "description": "Extracts public image metadata and optional OCR text from profile-linked media.",
+      "aliases": [
+        "media_intel",
+        "ocr_media",
+        "image_intel"
+      ]
+    },
+    {
+      "id": "media_recon_engine",
+      "title": "Media Recon Engine",
+      "description": "Runs public image, thumbnail, video-endpoint, and post-text reconnaissance for profile intelligence.",
+      "aliases": [
+        "media_recon",
+        "image_recon",
+        "video_recon"
+      ]
+    },
+    {
+      "id": "media_recon_shared",
+      "title": "media_recon_shared",
+      "description": "No description provided.",
+      "aliases": []
     },
     {
       "id": "module_capability_matrix",
@@ -89,13 +186,33 @@
       ]
     },
     {
+      "id": "post_signal_intel",
+      "title": "Post Signal Intelligence",
+      "description": "Extracts OSINT cues from public profile and post-like text fragments harvested during profile scans.",
+      "aliases": [
+        "post_intel",
+        "text_intel",
+        "caption_intel"
+      ]
+    },
+    {
       "id": "signal_fusion_core",
       "title": "Signal Fusion Core",
-      "description": "Runs internal connector lanes and merges normalized signals into Sylica workflows.",
+      "description": "Runs internal connector lanes and merges normalized signals into silica_x workflows.",
       "aliases": [
         "fusion_core",
         "signal_core",
         "connector_core"
+      ]
+    },
+    {
+      "id": "stego_signal_probe",
+      "title": "Stego Signal Probe",
+      "description": "Scores public image assets for lightweight stego-suspicion indicators such as entropy and container density.",
+      "aliases": [
+        "stego_probe",
+        "stago_probe",
+        "image_stego"
       ]
     },
     {
@@ -106,6 +223,16 @@
         "risk_orchestrator",
         "risk",
         "orchestrator"
+      ]
+    },
+    {
+      "id": "username_impersonation_probe",
+      "title": "Username Impersonation Probe",
+      "description": "Detects high-similarity username variants in mentions and profile artifacts that may indicate impersonation.",
+      "aliases": [
+        "impersonation_probe",
+        "lookalike_usernames",
+        "username_variants"
       ]
     }
   ]

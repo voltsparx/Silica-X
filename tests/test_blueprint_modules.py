@@ -315,7 +315,7 @@ class TestBlueprintModules(unittest.TestCase):
 
         with TemporaryDirectory() as temp_dir:
             scoped_generator = ReportGenerator(output_dir=temp_dir)
-            export_path = scoped_generator.export_pdf_excel(fused_data, format="excel")
+            export_path = scoped_generator.export_pdf_excel(fused_data, format_name="excel")
             payload = json.loads(Path(export_path).read_text(encoding="utf-8"))
 
         self.assertTrue(export_path.endswith(".xlsx"))
@@ -361,6 +361,5 @@ class TestBlueprintModules(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
 
 

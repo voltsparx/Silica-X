@@ -1,0 +1,306 @@
+{
+  "silica_x": {
+    "project": "Silica-X",
+    "version": "10.0",
+    "theme": "Ember",
+    "component": "intel_pack"
+  },
+  "schema_version": "1.0",
+  "generated_at_utc": "2026-04-20T03:36:34Z",
+  "kind": "filters",
+  "inventory_count": 18,
+  "inventory": [
+    {
+      "id": "anomaly_detection_filter",
+      "title": "Anomaly Detection Filter",
+      "description": "Flags inconsistent naming and one-off identity artifacts across discovered accounts.",
+      "scopes": [
+        "profile",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "anomaly",
+        "identity_anomaly",
+        "outlier"
+      ]
+    },
+    {
+      "id": "contact_canonicalizer",
+      "title": "Contact Canonicalizer",
+      "description": "Normalizes and deduplicates email/phone artifacts into canonical forms.",
+      "scopes": [
+        "profile",
+        "fusion"
+      ],
+      "version": "1.1",
+      "author": "Silica-X",
+      "aliases": [
+        "contact_normalizer",
+        "contacts",
+        "normalize"
+      ]
+    },
+    {
+      "id": "contact_quality_filter",
+      "title": "Contact Quality Filter",
+      "description": "Ranks discovered emails/phones by likely quality and flags disposable channels.",
+      "scopes": [
+        "profile",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "contact_quality",
+        "contact_ranker",
+        "reachability_filter"
+      ]
+    },
+    {
+      "id": "disclosure_readiness_filter",
+      "title": "Disclosure Readiness Filter",
+      "description": "Assesses whether targets expose clear and structured vulnerability disclosure channels.",
+      "scopes": [
+        "surface",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "disclosure_readiness",
+        "vdp_readiness",
+        "securitytxt_readiness"
+      ]
+    },
+    {
+      "id": "entity_name_resolver",
+      "title": "Entity Name Resolver",
+      "description": "Extracts likely full-name entities from biography snippets and profile descriptions.",
+      "scopes": [
+        "profile",
+        "fusion"
+      ],
+      "version": "1.1",
+      "author": "Silica-X",
+      "aliases": [
+        "name_entity_filter",
+        "names",
+        "entities"
+      ]
+    },
+    {
+      "id": "evidence_consistency_filter",
+      "title": "Evidence Consistency Filter",
+      "description": "Detects contradictions across confidence, issue severity, and intelligence risk posture.",
+      "scopes": [
+        "profile",
+        "surface",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "consistency_filter",
+        "evidence_quality",
+        "signal_consistency"
+      ]
+    },
+    {
+      "id": "exposure_tier_matrix",
+      "title": "Exposure Tier Matrix",
+      "description": "Assigns low/medium/high exposure tiers based on extracted artifacts and findings.",
+      "scopes": [
+        "profile",
+        "surface",
+        "fusion"
+      ],
+      "version": "1.1",
+      "author": "Silica-X",
+      "aliases": [
+        "exposure_tier_filter",
+        "tier",
+        "exposure"
+      ]
+    },
+    {
+      "id": "link_hygiene_filter",
+      "title": "Link Hygiene Filter",
+      "description": "Flags non-HTTPS, shortener, and suspicious-query links to tighten outbound intelligence hygiene.",
+      "scopes": [
+        "profile",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "link_hygiene",
+        "url_hygiene",
+        "link_risk_filter"
+      ]
+    },
+    {
+      "id": "mailbox_provider_profiler",
+      "title": "Mailbox Provider Profiler",
+      "description": "Separates public/free mailbox providers from custom domains in contact artifacts.",
+      "scopes": [
+        "profile",
+        "fusion"
+      ],
+      "version": "1.1",
+      "author": "Silica-X",
+      "aliases": [
+        "free_provider_filter",
+        "mailbox",
+        "provider"
+      ]
+    },
+    {
+      "id": "module_filter_router",
+      "title": "Module Filter Router",
+      "description": "Routes filter strategies using cataloged filter-like modules from source-intel trees.",
+      "scopes": [
+        "profile",
+        "surface",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "filter_router",
+        "module_router",
+        "catalog_router"
+      ]
+    },
+    {
+      "id": "noise_suppression_filter",
+      "title": "Noise Suppression Filter",
+      "description": "Marks low-signal rows and placeholder artifacts to improve scan readability.",
+      "scopes": [
+        "profile",
+        "surface",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "noise_filter",
+        "suppress_noise",
+        "quiet"
+      ]
+    },
+    {
+      "id": "ocr_signal_classifier",
+      "title": "OCR Signal Classifier",
+      "description": "Classifies OCR scan output by structured-signal density and extraction confidence.",
+      "scopes": [
+        "ocr"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "ocr_classifier",
+        "ocr_triage"
+      ]
+    },
+    {
+      "id": "pii_signal_classifier",
+      "title": "PII Signal Classifier",
+      "description": "Classifies extracted artifacts into personal data classes for analyst triage.",
+      "scopes": [
+        "profile",
+        "fusion"
+      ],
+      "version": "1.1",
+      "author": "Silica-X",
+      "aliases": [
+        "personal_data_classifier",
+        "pii",
+        "classify"
+      ]
+    },
+    {
+      "id": "sensitive_lexicon_guard",
+      "title": "Sensitive Lexicon Guard",
+      "description": "Flags sensitive personal-information phrases in bios and profile context text.",
+      "scopes": [
+        "profile",
+        "fusion"
+      ],
+      "version": "1.1",
+      "author": "Silica-X",
+      "aliases": [
+        "sensitive_keyword_filter",
+        "sensitive",
+        "privacy"
+      ]
+    },
+    {
+      "id": "signal_lane_fusion",
+      "title": "Signal Lane Fusion",
+      "description": "Deduplicates and prioritizes connector-derived signals into actionable intelligence lanes.",
+      "scopes": [
+        "profile",
+        "surface",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "lane_fusion",
+        "signal_router",
+        "fusion_router"
+      ]
+    },
+    {
+      "id": "subdomain_attack_path_filter",
+      "title": "Subdomain Attack Path Filter",
+      "description": "Ranks discovered subdomains by attack-path relevance for remediation triage.",
+      "scopes": [
+        "surface",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "attack_path_filter",
+        "subdomain_priority",
+        "surface_priority"
+      ]
+    },
+    {
+      "id": "takeover_priority_filter",
+      "title": "Takeover Priority Filter",
+      "description": "Prioritizes takeover-prone assets so analysts can triage high-impact surface risk first.",
+      "scopes": [
+        "surface",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "takeover_priority",
+        "subtakeover",
+        "takeover"
+      ]
+    },
+    {
+      "id": "triage_priority_filter",
+      "title": "Triage Priority Filter",
+      "description": "Calculates a single triage priority from issue severity and plugin signal intensity.",
+      "scopes": [
+        "profile",
+        "surface",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "triage_priority",
+        "priority_filter",
+        "incident_triage"
+      ]
+    }
+  ]
+}

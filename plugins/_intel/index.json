@@ -1,9 +1,36 @@
 {
-  "generated_at_utc": "2026-03-04T12:06:09Z",
+  "silica_x": {
+    "project": "Silica-X",
+    "version": "10.0",
+    "theme": "Ember",
+    "component": "intel_pack"
+  },
+  "schema_version": "1.0",
+  "generated_at_utc": "2026-04-20T03:36:34Z",
   "kind": "plugins",
-  "inventory_count": 12,
+  "inventory_count": 30,
   "inventory": [
     {
+      "module_name": "account_recovery_exposure_probe",
+      "id": "account_recovery_exposure_probe",
+      "title": "Account Recovery Exposure Probe",
+      "description": "Measures how much account-recovery metadata is publicly exposed across discovered profiles.",
+      "scopes": [
+        "profile",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "recovery_exposure",
+        "contact_surface",
+        "recovery_probe"
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
+    },
+    {
+      "module_name": "contact_lattice",
       "id": "contact_lattice",
       "title": "Contact Ember Analyzer",
       "description": "Correlates exposed emails/phones across platforms and calculates contact mesh density.",
@@ -17,9 +44,12 @@
         "contact_mesh",
         "contacts",
         "mesh"
-      ]
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
     },
     {
+      "module_name": "cross_platform_activity_timeline",
       "id": "cross_platform_activity_timeline",
       "title": "Cross-Platform Activity Timeline",
       "description": "Extracts public date hints across profiles to build a lightweight activity timeline.",
@@ -33,9 +63,93 @@
         "activity_timeline",
         "timeline",
         "public_activity"
-      ]
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
     },
     {
+      "module_name": "crypto.aes_plugin",
+      "id": "crypto_aes_attachment",
+      "title": "AES Attachment Cipher",
+      "description": "Encrypts or decrypts attachment-like text payloads using AES-CFB.",
+      "scopes": [
+        "profile",
+        "surface",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "aes_plugin",
+        "aes_crypto",
+        "crypto_aes"
+      ],
+      "plugin_group": "cryptography",
+      "crypto_kind": "aes"
+    },
+    {
+      "module_name": "crypto.rot13_plugin",
+      "id": "crypto_rot13_attachment",
+      "title": "ROT13 Attachment Cipher",
+      "description": "Applies ROT13 transform on attachment-like payloads for reversible text masking.",
+      "scopes": [
+        "profile",
+        "surface",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "rot13_plugin",
+        "rot13_crypto",
+        "crypto_rot13"
+      ],
+      "plugin_group": "cryptography",
+      "crypto_kind": "rot13"
+    },
+    {
+      "module_name": "crypto.xor_plugin",
+      "id": "crypto_xor_attachment",
+      "title": "XOR Attachment Cipher",
+      "description": "Applies XOR transform on attachment-like payloads for reversible obfuscation.",
+      "scopes": [
+        "profile",
+        "surface",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "xor_plugin",
+        "xor_crypto",
+        "crypto_xor"
+      ],
+      "plugin_group": "cryptography",
+      "crypto_kind": "xor"
+    },
+    {
+      "module_name": "darkweb_tor_intel",
+      "id": "darkweb_tor_intel",
+      "title": "Darkweb Tor Intelligence",
+      "description": "Collects passive onion references and Tor-aware Ahmia search hints from public investigation context.",
+      "scopes": [
+        "profile",
+        "surface",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "darkweb",
+        "darknet",
+        "tor_intel",
+        "onion_intel"
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
+    },
+    {
+      "module_name": "domain_takeover_risk_probe",
       "id": "domain_takeover_risk_probe",
       "title": "Domain Takeover Risk Probe",
       "description": "Flags subdomains that look deprovisioned or dangling based on passive DNS resolution signals.",
@@ -48,9 +162,12 @@
         "takeover_probe",
         "dangling_dns",
         "subtakeover"
-      ]
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
     },
     {
+      "module_name": "email_pattern_inference",
       "id": "email_pattern_inference",
       "title": "Email Pattern Inference",
       "description": "Infers possible corporate mailbox formats from usernames and target domain artifacts.",
@@ -63,9 +180,31 @@
         "email_pattern",
         "mail_pattern",
         "address_pattern"
-      ]
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
     },
     {
+      "module_name": "entity_link_intel",
+      "id": "entity_link_intel",
+      "title": "Entity Link Intelligence",
+      "description": "Follows public bio/entity links in a controlled depth-limited way for deeper public-context gathering.",
+      "scopes": [
+        "profile",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "link_intel",
+        "bio_links",
+        "deep_links"
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
+    },
+    {
+      "module_name": "header_hardening_probe",
       "id": "header_hardening_probe",
       "title": "Header Hardening Probe",
       "description": "Performs deep security-header assessment on target HTTPS response headers.",
@@ -79,9 +218,12 @@
         "surface_header_audit",
         "headers",
         "tlsaudit"
-      ]
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
     },
     {
+      "module_name": "identity_fusion_core",
       "id": "identity_fusion_core",
       "title": "Identity Fusion Core",
       "description": "Aggregates confidence, mention density, and identity overlaps into a fusion index.",
@@ -95,9 +237,85 @@
         "persona_signal_fusion",
         "persona",
         "fusionindex"
-      ]
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
     },
     {
+      "module_name": "link_outbound_risk_profiler",
+      "id": "link_outbound_risk_profiler",
+      "title": "Link Outbound Risk Profiler",
+      "description": "Classifies discovered outbound links by trust, transport security, and suspicious sharing patterns.",
+      "scopes": [
+        "profile",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "link_risk",
+        "outbound_links",
+        "url_risk"
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
+    },
+    {
+      "module_name": "media_intel_core",
+      "id": "media_intel_core",
+      "title": "Media Intelligence Core",
+      "description": "Extracts public image metadata and optional OCR text from profile-linked media.",
+      "scopes": [
+        "profile",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "media_intel",
+        "ocr_media",
+        "image_intel"
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
+    },
+    {
+      "module_name": "media_recon_engine",
+      "id": "media_recon_engine",
+      "title": "Media Recon Engine",
+      "description": "Runs public image, thumbnail, video-endpoint, and post-text reconnaissance for profile intelligence.",
+      "scopes": [
+        "profile",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "media_recon",
+        "image_recon",
+        "video_recon"
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
+    },
+    {
+      "module_name": "media_recon_shared",
+      "id": "media_recon_shared",
+      "title": "media_recon_shared",
+      "description": "No description provided.",
+      "scopes": [
+        "profile",
+        "surface",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [],
+      "plugin_group": "core",
+      "crypto_kind": null
+    },
+    {
+      "module_name": "module_capability_matrix",
       "id": "module_capability_matrix",
       "title": "Module Capability Matrix",
       "description": "Maps plugin-like module signals from source-intel trees into scope-aware insights.",
@@ -112,9 +330,66 @@
         "module_matrix",
         "catalog_matrix",
         "signal_matrix"
-      ]
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
     },
     {
+      "module_name": "ocr.batch_processor",
+      "id": "ocr_batch_processor",
+      "title": "OCR Batch Processor",
+      "description": "Summarizes batch coverage, failures, preprocessing lanes, and engine runtime health for OCR scans.",
+      "scopes": [
+        "ocr"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "ocr_batch",
+        "ocr_pipeline",
+        "ocr_runtime"
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
+    },
+    {
+      "module_name": "ocr.ocr_extractor",
+      "id": "ocr_extractor",
+      "title": "OCR Extractor",
+      "description": "Runs OCR extraction across local or remote image sources and preserves raw recovered text.",
+      "scopes": [
+        "ocr"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "ocr",
+        "image_ocr",
+        "text_scan"
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
+    },
+    {
+      "module_name": "ocr.regex_filters",
+      "id": "ocr_regex_filters",
+      "title": "OCR Regex Filters",
+      "description": "Extracts emails, URLs, phones, mentions, hashtags, names, and keywords from OCR text.",
+      "scopes": [
+        "ocr"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "ocr_regex",
+        "ocr_structured",
+        "ocr_signals"
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
+    },
+    {
+      "module_name": "orbit_link_matrix",
       "id": "orbit_link_matrix",
       "title": "Orbit Link Matrix",
       "description": "Builds platform-to-domain linkage and shared outbound domain signals.",
@@ -128,9 +403,50 @@
         "account_link_graph",
         "linkgraph",
         "domainlinks"
-      ]
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
     },
     {
+      "module_name": "post_signal_intel",
+      "id": "post_signal_intel",
+      "title": "Post Signal Intelligence",
+      "description": "Extracts OSINT cues from public profile and post-like text fragments harvested during profile scans.",
+      "scopes": [
+        "profile",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "post_intel",
+        "text_intel",
+        "caption_intel"
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
+    },
+    {
+      "module_name": "rdap_lifecycle_inspector",
+      "id": "rdap_lifecycle_inspector",
+      "title": "RDAP Lifecycle Inspector",
+      "description": "Evaluates RDAP status, nameserver metadata, and change recency to surface domain governance risk.",
+      "scopes": [
+        "surface",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "rdap_inspector",
+        "domain_lifecycle",
+        "rdap_governance"
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
+    },
+    {
+      "module_name": "security_txt_analyzer",
       "id": "security_txt_analyzer",
       "title": "Security.txt Analyzer",
       "description": "Parses security.txt content for disclosure channels and policy completeness.",
@@ -143,12 +459,15 @@
         "securitytxt",
         "disclosure_policy",
         "vdp_policy"
-      ]
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
     },
     {
+      "module_name": "signal_fusion_core",
       "id": "signal_fusion_core",
       "title": "Signal Fusion Core",
-      "description": "Runs internal connector lanes and merges normalized signals into Sylica workflows.",
+      "description": "Runs internal connector lanes and merges normalized signals into silica_x workflows.",
       "scopes": [
         "profile",
         "surface",
@@ -160,9 +479,31 @@
         "fusion_core",
         "signal_core",
         "connector_core"
-      ]
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
     },
     {
+      "module_name": "stego_signal_probe",
+      "id": "stego_signal_probe",
+      "title": "Stego Signal Probe",
+      "description": "Scores public image assets for lightweight stego-suspicion indicators such as entropy and container density.",
+      "scopes": [
+        "profile",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "stego_probe",
+        "stago_probe",
+        "image_stego"
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
+    },
+    {
+      "module_name": "subdomain_risk_atlas",
       "id": "subdomain_risk_atlas",
       "title": "Subdomain Risk Atlas",
       "description": "Classifies discovered subdomains by environment and high-risk naming patterns.",
@@ -176,9 +517,31 @@
         "subdomain_exposure_map",
         "subdomainmap",
         "subrisk"
-      ]
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
     },
     {
+      "module_name": "surface_transport_stability_probe",
+      "id": "surface_transport_stability_probe",
+      "title": "Surface Transport Stability Probe",
+      "description": "Scores transport availability, redirect posture, and probe failures for domain surface resilience.",
+      "scopes": [
+        "surface",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "transport_stability",
+        "http_https_probe",
+        "surface_transport"
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
+    },
+    {
+      "module_name": "threat_conductor",
       "id": "threat_conductor",
       "title": "Threat Conductor",
       "description": "Combines correlation, issue distribution, and scan quality into an executive risk signal.",
@@ -193,7 +556,28 @@
         "risk_orchestrator",
         "risk",
         "orchestrator"
-      ]
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
+    },
+    {
+      "module_name": "username_impersonation_probe",
+      "id": "username_impersonation_probe",
+      "title": "Username Impersonation Probe",
+      "description": "Detects high-similarity username variants in mentions and profile artifacts that may indicate impersonation.",
+      "scopes": [
+        "profile",
+        "fusion"
+      ],
+      "version": "1.0",
+      "author": "Silica-X",
+      "aliases": [
+        "impersonation_probe",
+        "lookalike_usernames",
+        "username_variants"
+      ],
+      "plugin_group": "core",
+      "crypto_kind": null
     }
   ]
 }

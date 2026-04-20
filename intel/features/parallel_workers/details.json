@@ -1,23 +1,21 @@
-﻿{
-  "feature": "parallel_workers",
-  "description": "Thread/process/queue worker models for throughput scaling.",
-  "target_modules": [
-    "core/engines/parallel_engine.py",
-    "core/engines/thread_engine.py"
-  ],
-  "signal_total": 41,
-  "coverage_ratio": 0.75,
-  "strength": "core",
-  "priority": "harden",
-  "action": "Balance async/thread/process lanes by workload shape.",
-  "sylica": {
+{
+  "silica_x": {
     "project": "Silica-X",
     "version": "10.0",
     "theme": "Ember",
     "component": "intel_pack"
   },
   "schema_version": "1.0",
-  "generated_at_utc": "2026-03-14T09:38:31Z",
-  "coverage_percent": 75.0
+  "feature": "parallel_workers",
+  "description": "Thread/process/queue worker models for throughput scaling.",
+  "target_modules": [
+    "core/engines/parallel_engine.py",
+    "core/engines/thread_engine.py"
+  ],
+  "signal_total": 0,
+  "coverage_ratio": 0.0,
+  "coverage_percent": 0.0,
+  "strength": "unobserved",
+  "priority": "expand",
+  "action": "Balance async/thread/process lanes by workload shape."
 }
-

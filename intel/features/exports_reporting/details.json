@@ -6,17 +6,17 @@
     "component": "intel_pack"
   },
   "schema_version": "1.0",
-  "feature": "plugin_module_system",
-  "description": "Dynamic module/plugin discovery and orchestration.",
+  "feature": "exports_reporting",
+  "description": "Analyst exports and multi-format report outputs.",
   "target_modules": [
-    "core/extensions/plugin_manager.py",
-    "core/extensions/signal_forge.py",
-    "core/extensions/signal_sieve.py"
+    "core/artifacts/reporting.py",
+    "core/artifacts/output.py",
+    "core/artifacts/html_report.py"
   ],
   "signal_total": 0,
   "coverage_ratio": 0.0,
   "coverage_percent": 0.0,
   "strength": "unobserved",
   "priority": "expand",
-  "action": "Strengthen module contracts and discovery validation."
+  "action": "Expand analyst outputs with richer graph/report artifacts."
 }

@@ -1199,6 +1199,7 @@ def save_results(
             "mode": mode,
             "framework": framework_signature(),
         },
+        "mode": mode,
         "target": target_display or target_key,
         "target_key": target_key,
         "results": results or [],

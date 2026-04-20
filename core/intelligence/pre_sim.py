@@ -91,9 +91,9 @@ class PreIntelligenceSimulator:
             + int(ocr_payload.get("ocr_hits", 0))
             + int(subdomain_data.get("count", 0))
         )
-        if signal_count > 20:
+        if signal_count >= 10:
             model.data_richness = "rich"
-        elif signal_count > 5:
+        elif signal_count > 4:
             model.data_richness = "moderate"
         else:
             model.data_richness = "sparse"

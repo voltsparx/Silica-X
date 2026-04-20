@@ -4769,7 +4769,31 @@ async def _handle_quicktest_command(args: argparse.Namespace) -> int:
         issues=issues,
         fused_anomalies=list(fused_intel.get("anomalies", []) or []),
     )
+    from core.collect.fingerprint_intel import FingerprintCollector
+    from core.intelligence.pre_sim import PreIntelligenceSimulator
+
+    target_model = PreIntelligenceSimulator().simulate(
+        f"{username} + {domain}",
+        profile_results=profile_results,
+        domain_result=domain_result,
+        port_data=(domain_result.get("port_surface") if isinstance(domain_result.get("port_surface"), dict) else None),
+        subdomain_data=(
+            domain_result.get("subdomain_harvest")
+            if isinstance(domain_result.get("subdomain_harvest"), dict)
+            else None
+        ),
+    )
+    master_fingerprint = FingerprintCollector().build_master_fingerprint(
+        storage_target,
+        profile_results=profile_results,
+        domain_result=domain_result,
+        port_data=(domain_result.get("port_surface") if isinstance(domain_result.get("port_surface"), dict) else None),
+    )
+    intelligence_bundle["target_model"] = target_model.as_dict()
+    intelligence_bundle["master_fingerprint"] = master_fingerprint
     fused_intel["intelligence_bundle"] = intelligence_bundle
+    fused_intel["target_model"] = target_model.as_dict()
+    fused_intel["master_fingerprint"] = master_fingerprint
     fused_intel["risk_summary"] = intelligence_bundle.get("risk_summary", {})
     fused_intel["confidence_distribution"] = intelligence_bundle.get("confidence_distribution", {})
 
@@ -4778,6 +4802,7 @@ async def _handle_quicktest_command(args: argparse.Namespace) -> int:
     print(c(f"{symbol('action')} template={template_id} selection={selected.get('selection_mode', 'random')}", Colors.CYAN))
     print(c(f"{symbol('action')} target={display_target}", Colors.CYAN))
     print(c(f"{symbol('bullet')} profile_rows={len(profile_results)} subdomains={len(domain_result.get('subdomains', []))}", Colors.CYAN))
+    print(c(REPORT_GENERATOR.generate_intelligence_brief(fused_intel), Colors.CYAN))
 
     display_results(
         profile_results,
@@ -4841,6 +4866,7 @@ async def _handle_quicktest_command(args: argparse.Namespace) -> int:
             filter_results=[],
             filter_errors=[],
             intelligence_bundle=intelligence_bundle,
+            fused_intel=fused_intel,
             output_stamp=output_stamp,
         )
         print(c(f"{symbol('ok')} Quicktest HTML report generated -> {report_path}", Colors.GREEN))

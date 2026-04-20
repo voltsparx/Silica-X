@@ -1,41 +1,40 @@
-﻿{
-  "generated_at_utc": "2026-03-14T09:38:31Z",
-  "source_count": 8,
-  "files_scanned": 1613,
-  "feature_totals": {
-    "async_engine": 38,
-    "retry_backoff": 21,
-    "rate_limit": 43,
-    "caching": 281,
-    "workspace_db": 25,
-    "plugin_module_system": 963,
-    "parallel_workers": 41,
-    "exports_reporting": 451,
-    "tor_proxy_ops": 651,
-    "signal_fusion_lane": 331,
-    "test_coverage": 500
-  },
-  "feature_presence": {
-    "async_engine": 5,
-    "retry_backoff": 8,
-    "rate_limit": 6,
-    "caching": 8,
-    "workspace_db": 6,
-    "plugin_module_system": 8,
-    "parallel_workers": 6,
-    "exports_reporting": 8,
-    "tor_proxy_ops": 8,
-    "signal_fusion_lane": 8,
-    "test_coverage": 5
-  },
-  "sylica": {
+{
+  "silica_x": {
     "project": "Silica-X",
     "version": "10.0",
     "theme": "Ember",
     "component": "intel_pack"
   },
   "schema_version": "1.0",
+  "generated_at_utc": "2026-04-20T03:36:34Z",
+  "source_count": 0,
+  "files_scanned": 0,
   "feature_count": 11,
-  "feature_presence_total": 76
+  "feature_presence_total": 0,
+  "feature_totals": {
+    "async_engine": 0,
+    "retry_backoff": 0,
+    "rate_limit": 0,
+    "caching": 0,
+    "workspace_db": 0,
+    "plugin_module_system": 0,
+    "parallel_workers": 0,
+    "exports_reporting": 0,
+    "tor_proxy_ops": 0,
+    "signal_fusion_lane": 0,
+    "test_coverage": 0
+  },
+  "feature_presence": {
+    "async_engine": 0,
+    "retry_backoff": 0,
+    "rate_limit": 0,
+    "caching": 0,
+    "workspace_db": 0,
+    "plugin_module_system": 0,
+    "parallel_workers": 0,
+    "exports_reporting": 0,
+    "tor_proxy_ops": 0,
+    "signal_fusion_lane": 0,
+    "test_coverage": 0
+  }
 }
-

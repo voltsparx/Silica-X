@@ -1,4 +1,11 @@
-﻿{
+{
+  "silica_x": {
+    "project": "Silica-X",
+    "version": "10.0",
+    "theme": "Ember",
+    "component": "intel_pack"
+  },
+  "schema_version": "1.0",
   "feature": "async_engine",
   "description": "Asynchronous request orchestration and non-blocking collectors.",
   "target_modules": [
@@ -6,19 +13,10 @@
     "core/collect/scanner.py",
     "core/collect/domain_intel.py"
   ],
-  "signal_total": 38,
-  "coverage_ratio": 0.625,
-  "strength": "established",
-  "priority": "harden",
-  "action": "Increase non-blocking collectors and connector reuse.",
-  "sylica": {
-    "project": "Silica-X",
-    "version": "10.0",
-    "theme": "Ember",
-    "component": "intel_pack"
-  },
-  "schema_version": "1.0",
-  "generated_at_utc": "2026-03-14T09:38:31Z",
-  "coverage_percent": 62.5
+  "signal_total": 0,
+  "coverage_ratio": 0.0,
+  "coverage_percent": 0.0,
+  "strength": "unobserved",
+  "priority": "expand",
+  "action": "Increase non-blocking collectors and connector reuse."
 }
-

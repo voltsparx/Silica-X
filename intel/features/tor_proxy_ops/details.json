@@ -6,17 +6,17 @@
     "component": "intel_pack"
   },
   "schema_version": "1.0",
-  "feature": "plugin_module_system",
-  "description": "Dynamic module/plugin discovery and orchestration.",
+  "feature": "tor_proxy_ops",
+  "description": "Proxy/Tor routing and anonymized collection channels.",
   "target_modules": [
-    "core/extensions/plugin_manager.py",
-    "core/extensions/signal_forge.py",
-    "core/extensions/signal_sieve.py"
+    "core/collect/network.py",
+    "core/foundation/security_manager.py",
+    "core/collect/anonymity.py"
   ],
   "signal_total": 0,
   "coverage_ratio": 0.0,
   "coverage_percent": 0.0,
   "strength": "unobserved",
   "priority": "expand",
-  "action": "Strengthen module contracts and discovery validation."
+  "action": "Harden routing controls and privacy-aware collection profiles."
 }

@@ -909,6 +909,7 @@ def _build_target_model_section(intelligence_bundle: dict) -> str:
         "<div><div class='section-eyebrow'>Pre-Intelligence</div><h3>Target Model</h3></div>"
         f"<span class='badge' style='background:{badge_color};'>{html.escape(entity_class)}</span>"
         "</div>"
+        f"<p><strong>Entity:</strong> {html.escape(entity_class)}</p>"
         f"<p><strong>Scope recommendation:</strong> <span class='panel-chip'>{html.escape(scope_recommendation)}</span></p>"
         f"{_bar_row('Confidence', confidence, 100, 'tone-info')}"
         "<div class='chip-group'><h4>Inferred traits</h4>"

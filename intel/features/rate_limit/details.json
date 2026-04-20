@@ -1,4 +1,11 @@
-﻿{
+{
+  "silica_x": {
+    "project": "Silica-X",
+    "version": "10.0",
+    "theme": "Ember",
+    "component": "intel_pack"
+  },
+  "schema_version": "1.0",
   "feature": "rate_limit",
   "description": "Concurrency/rate controls to reduce bans and unstable collection.",
   "target_modules": [
@@ -6,19 +13,10 @@
     "core/engines/thread_engine.py",
     "core/engines/parallel_engine.py"
   ],
-  "signal_total": 43,
-  "coverage_ratio": 0.75,
-  "strength": "core",
-  "priority": "harden",
-  "action": "Calibrate concurrency with adaptive workload backpressure.",
-  "sylica": {
-    "project": "Silica-X",
-    "version": "10.0",
-    "theme": "Ember",
-    "component": "intel_pack"
-  },
-  "schema_version": "1.0",
-  "generated_at_utc": "2026-03-14T09:38:31Z",
-  "coverage_percent": 75.0
+  "signal_total": 0,
+  "coverage_ratio": 0.0,
+  "coverage_percent": 0.0,
+  "strength": "unobserved",
+  "priority": "expand",
+  "action": "Calibrate concurrency with adaptive workload backpressure."
 }
-

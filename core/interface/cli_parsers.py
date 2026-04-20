@@ -662,7 +662,12 @@ def _add_profile_args(parser: argparse.ArgumentParser, *, default_dashboard_port
 
 
 def _add_surface_args(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("domain", help="Domain to scan for attack-surface intelligence.")
+    parser.add_argument(
+        "domain",
+        nargs="?",
+        default="",
+        help="Domain to scan for attack-surface intelligence.",
+    )
     _add_toggle_flags(parser, "tor", "Tor routing")
     _add_toggle_flags(parser, "proxy", "HTTP proxy routing")
     parser.add_argument(
@@ -1183,11 +1188,15 @@ def build_prompt_parser(*, default_dashboard_port: int) -> InteractiveArgumentPa
     subparsers = parser.add_subparsers(dest="command")
     subparsers.required = True
 
+    def _add_prompt_help_flag(command_parser: argparse.ArgumentParser) -> None:
+        command_parser.add_argument("-h", "--help", action="store_true")
+
     profile_parser = subparsers.add_parser(
         PROFILE_COMMAND_ALIASES[0],
         aliases=list(PROFILE_COMMAND_ALIASES[1:]),
         add_help=False,
     )
+    _add_prompt_help_flag(profile_parser)
     _add_profile_args(profile_parser, default_dashboard_port=default_dashboard_port)
 
     surface_parser = subparsers.add_parser(
@@ -1195,6 +1204,7 @@ def build_prompt_parser(*, default_dashboard_port: int) -> InteractiveArgumentPa
         aliases=list(SURFACE_COMMAND_ALIASES[1:]),
         add_help=False,
     )
+    _add_prompt_help_flag(surface_parser)
     _add_surface_args(surface_parser)
 
     fusion_parser = subparsers.add_parser(
@@ -1202,6 +1212,7 @@ def build_prompt_parser(*, default_dashboard_port: int) -> InteractiveArgumentPa
         aliases=list(FUSION_COMMAND_ALIASES[1:]),
         add_help=False,
     )
+    _add_prompt_help_flag(fusion_parser)
     _add_fusion_args(fusion_parser)
 
     ocr_parser = subparsers.add_parser(
@@ -1209,6 +1220,7 @@ def build_prompt_parser(*, default_dashboard_port: int) -> InteractiveArgumentPa
         aliases=list(OCR_COMMAND_ALIASES[1:]),
         add_help=False,
     )
+    _add_prompt_help_flag(ocr_parser)
     _add_ocr_args(ocr_parser)
 
     orchestrate_parser = subparsers.add_parser(
@@ -1216,48 +1228,70 @@ def build_prompt_parser(*, default_dashboard_port: int) -> InteractiveArgumentPa
         aliases=list(ORCHESTRATE_COMMAND_ALIASES[1:]),
         add_help=False,
     )
+    _add_prompt_help_flag(orchestrate_parser)
     _add_orchestrate_args(orchestrate_parser)
 
     frameworks_parser = subparsers.add_parser("frameworks", add_help=False)
+    _add_prompt_help_flag(frameworks_parser)
     _add_frameworks_args(frameworks_parser)
 
     surface_kit_parser = subparsers.add_parser("surface-kit", add_help=False)
+    _add_prompt_help_flag(surface_kit_parser)
     _add_surface_kit_args(surface_kit_parser)
 
     live_parser = subparsers.add_parser("live", add_help=False)
+    _add_prompt_help_flag(live_parser)
     _add_live_args(live_parser, default_dashboard_port=default_dashboard_port)
 
     anonymity_parser = subparsers.add_parser("anonymity", add_help=False)
+    _add_prompt_help_flag(anonymity_parser)
     _add_anonymity_args(anonymity_parser)
     doctor_parser = subparsers.add_parser("doctor", add_help=False)
+    _add_prompt_help_flag(doctor_parser)
     _add_doctor_args(doctor_parser)
 
-    subparsers.add_parser("keywords", add_help=False)
+    keywords_parser = subparsers.add_parser("keywords", add_help=False)
+    _add_prompt_help_flag(keywords_parser)
     plugins_parser = subparsers.add_parser("plugins", add_help=False)
+    _add_prompt_help_flag(plugins_parser)
     _add_plugins_args(plugins_parser)
     filters_parser = subparsers.add_parser("filters", add_help=False)
+    _add_prompt_help_flag(filters_parser)
     _add_filters_args(filters_parser)
     templates_parser = subparsers.add_parser("templates", aliases=["info-templates"], add_help=False)
+    _add_prompt_help_flag(templates_parser)
     templates_parser.add_argument("--json", action="store_true")
     out_type_parser = subparsers.add_parser("out-type", add_help=False)
+    _add_prompt_help_flag(out_type_parser)
     out_type_parser.add_argument("types", nargs="*", default=[])
     out_print_parser = subparsers.add_parser("out-print", add_help=False)
+    _add_prompt_help_flag(out_print_parser)
     out_print_parser.add_argument("path", nargs="?", default="")
     default_out_print_parser = subparsers.add_parser("default-out-print", add_help=False)
+    _add_prompt_help_flag(default_out_print_parser)
     default_out_print_parser.add_argument("path", nargs="?", default="")
     modules_parser = subparsers.add_parser("modules", add_help=False)
+    _add_prompt_help_flag(modules_parser)
     _add_modules_args(modules_parser)
     history_parser = subparsers.add_parser("history", aliases=["targets", "scans"], add_help=False)
+    _add_prompt_help_flag(history_parser)
     _add_history_args(history_parser)
     quicktest_parser = subparsers.add_parser("quicktest", aliases=["qtest", "smoke"], add_help=False)
+    _add_prompt_help_flag(quicktest_parser)
     _add_quicktest_args(quicktest_parser)
-    subparsers.add_parser("help", add_help=False)
-    subparsers.add_parser("about", add_help=False)
-    subparsers.add_parser("explain", add_help=False)
-    subparsers.add_parser("version", add_help=False)
-    subparsers.add_parser("capability-pack", aliases=["intel"], add_help=False)
+    help_parser = subparsers.add_parser("help", add_help=False)
+    _add_prompt_help_flag(help_parser)
+    about_parser = subparsers.add_parser("about", add_help=False)
+    _add_prompt_help_flag(about_parser)
+    explain_parser = subparsers.add_parser("explain", add_help=False)
+    _add_prompt_help_flag(explain_parser)
+    version_parser = subparsers.add_parser("version", add_help=False)
+    _add_prompt_help_flag(version_parser)
+    capability_pack_parser = subparsers.add_parser("capability-pack", aliases=["intel"], add_help=False)
+    _add_prompt_help_flag(capability_pack_parser)
 
     wizard_parser = subparsers.add_parser("wizard", add_help=False)
+    _add_prompt_help_flag(wizard_parser)
     _add_wizard_args(wizard_parser)
 
     return parser

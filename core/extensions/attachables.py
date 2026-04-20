@@ -114,6 +114,31 @@ def resolve_module_attachments(
             warnings=(),
         )
 
+    if not scoped_entries and not all_entries:
+        fallback_ids = tuple(str(item).strip().lower() for item in requested if str(item).strip())
+        fallback_entries = tuple(
+            {
+                "id": module_id,
+                "framework": "",
+                "file": "",
+                "kind": "catalog-fallback",
+                "scopes": [normalized_scope],
+                "capabilities": [],
+                "power_score": 0,
+                "confidence_score": 0,
+            }
+            for module_id in fallback_ids
+        )
+        return ModuleAttachmentPlan(
+            scope=normalized_scope,
+            module_ids=fallback_ids,
+            entries=fallback_entries,
+            errors=(),
+            warnings=(
+                "Module catalog is empty; raw module selectors were attached in fallback mode.",
+            ),
+        )
+
     scoped_lookup = _module_lookup(scoped_entries)
     global_lookup = _module_lookup(all_entries)
     selected: list[dict[str, Any]] = []

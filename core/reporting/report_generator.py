@@ -86,14 +86,14 @@ class ReportGenerator:
             output_stamp=output_stamp,
         )
 
-    def export_pdf_excel(self, fused_data: dict[str, Any], format: str = "pdf") -> str:
+    def export_pdf_excel(self, fused_data: dict[str, Any], format_name: str = "pdf") -> str:
         """Export a serialized snapshot for downstream PDF/Excel conversion.
 
         The framework currently writes structured export payloads with extension
         placeholders (`.pdf`, `.xlsx`) so external tooling can post-process.
         """
 
-        normalized = format.strip().lower()
+        normalized = format_name.strip().lower()
         if normalized == "excel":
             normalized = "xlsx"
         if normalized not in {"pdf", "xlsx", "json"}:

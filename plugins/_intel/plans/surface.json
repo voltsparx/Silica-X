@@ -3,41 +3,82 @@
   "capability_plan": [
     {
       "feature": "async_engine",
-      "priority": "harden",
+      "priority": "expand",
       "action": "Increase non-blocking collectors and connector reuse."
     },
     {
       "feature": "retry_backoff",
-      "priority": "harden",
+      "priority": "expand",
       "action": "Tune retry windows, jitter, and transient-error handling."
     },
     {
       "feature": "rate_limit",
-      "priority": "harden",
+      "priority": "expand",
       "action": "Calibrate concurrency with adaptive workload backpressure."
     },
     {
       "feature": "workspace_db",
-      "priority": "harden",
+      "priority": "expand",
       "action": "Improve indexed storage for historical correlation replay."
     },
     {
       "feature": "signal_fusion_lane",
-      "priority": "harden",
+      "priority": "expand",
       "action": "Expand connector orchestration to leverage high-value multi-source collectors safely."
     },
     {
       "feature": "tor_proxy_ops",
-      "priority": "harden",
+      "priority": "expand",
       "action": "Harden routing controls and privacy-aware collection profiles."
     },
     {
       "feature": "exports_reporting",
-      "priority": "harden",
+      "priority": "expand",
       "action": "Expand analyst outputs with richer graph/report artifacts."
     }
   ],
   "recommended_plugins": [
+    {
+      "id": "crypto_aes_attachment",
+      "title": "AES Attachment Cipher",
+      "description": "Encrypts or decrypts attachment-like text payloads using AES-CFB.",
+      "aliases": [
+        "aes_plugin",
+        "aes_crypto",
+        "crypto_aes"
+      ]
+    },
+    {
+      "id": "crypto_rot13_attachment",
+      "title": "ROT13 Attachment Cipher",
+      "description": "Applies ROT13 transform on attachment-like payloads for reversible text masking.",
+      "aliases": [
+        "rot13_plugin",
+        "rot13_crypto",
+        "crypto_rot13"
+      ]
+    },
+    {
+      "id": "crypto_xor_attachment",
+      "title": "XOR Attachment Cipher",
+      "description": "Applies XOR transform on attachment-like payloads for reversible obfuscation.",
+      "aliases": [
+        "xor_plugin",
+        "xor_crypto",
+        "crypto_xor"
+      ]
+    },
+    {
+      "id": "darkweb_tor_intel",
+      "title": "Darkweb Tor Intelligence",
+      "description": "Collects passive onion references and Tor-aware Ahmia search hints from public investigation context.",
+      "aliases": [
+        "darkweb",
+        "darknet",
+        "tor_intel",
+        "onion_intel"
+      ]
+    },
     {
       "id": "domain_takeover_risk_probe",
       "title": "Domain Takeover Risk Probe",
@@ -59,6 +100,12 @@
       ]
     },
     {
+      "id": "media_recon_shared",
+      "title": "media_recon_shared",
+      "description": "No description provided.",
+      "aliases": []
+    },
+    {
       "id": "module_capability_matrix",
       "title": "Module Capability Matrix",
       "description": "Maps plugin-like module signals from source-intel trees into scope-aware insights.",
@@ -66,6 +113,16 @@
         "module_matrix",
         "catalog_matrix",
         "signal_matrix"
+      ]
+    },
+    {
+      "id": "rdap_lifecycle_inspector",
+      "title": "RDAP Lifecycle Inspector",
+      "description": "Evaluates RDAP status, nameserver metadata, and change recency to surface domain governance risk.",
+      "aliases": [
+        "rdap_inspector",
+        "domain_lifecycle",
+        "rdap_governance"
       ]
     },
     {
@@ -81,7 +138,7 @@
     {
       "id": "signal_fusion_core",
       "title": "Signal Fusion Core",
-      "description": "Runs internal connector lanes and merges normalized signals into Sylica workflows.",
+      "description": "Runs internal connector lanes and merges normalized signals into silica_x workflows.",
       "aliases": [
         "fusion_core",
         "signal_core",
@@ -96,6 +153,16 @@
         "subdomain_exposure_map",
         "subdomainmap",
         "subrisk"
+      ]
+    },
+    {
+      "id": "surface_transport_stability_probe",
+      "title": "Surface Transport Stability Probe",
+      "description": "Scores transport availability, redirect posture, and probe failures for domain surface resilience.",
+      "aliases": [
+        "transport_stability",
+        "http_https_probe",
+        "surface_transport"
       ]
     },
     {
