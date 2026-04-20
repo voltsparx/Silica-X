@@ -1024,7 +1024,7 @@ def build_root_parser(
     default_dashboard_port: int,
 ) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="silica-x.py",
+        prog="silica-x",
         description=f"{project_name} v{version} OSINT runner (flags + prompt + keyword system).",
     )
     parser.add_argument(

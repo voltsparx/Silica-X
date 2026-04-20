@@ -62,7 +62,7 @@ def _example(command: str, description: str) -> None:
 
 def show_flag_help() -> None:
     print(c(f"\n{PROJECT_NAME} v{VERSION} [{VERSION_THEME}] Flag Help", Colors.BOLD + Colors.CYAN))
-    print(c(f"{symbol('action')} Usage: python silica-x.py <command> [flags]", Colors.GREY))
+    print(c(f"{symbol('action')} Usage: silica-x <command> [flags]", Colors.GREY))
 
     _section("Global Flags", icon="feature")
     _render_items(
@@ -144,11 +144,11 @@ def show_flag_help() -> None:
 
     _section("Quick Start", icon="tip")
     _example(
-        "python silica-x.py profile alice --preset deep --plugin threat_conductor --html --csv:",
+        "silica-x profile alice --preset deep --plugin threat_conductor --html --csv:",
         "Run profile intelligence with explicit plugin selection and full artifacts.",
     )
     _example(
-        "python silica-x.py orchestrate fusion alice --secondary-target example.com --html:",
+        "silica-x orchestrate fusion alice --secondary-target example.com --html:",
         "Run orchestration in fusion mode with HTML reporting.",
     )
     print()

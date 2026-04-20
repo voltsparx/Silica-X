@@ -25,6 +25,16 @@ Silica-X is a Python intelligence framework for authorized OSINT work. It combin
 - HTML artifacts are organized as case views with graphs, categorized sections, extension drill-downs, vulnerability context, and a closing `Reporter Brief`.
 - The docs tree and website are aligned to the current runtime instead of old release-planning notes.
 
+## Recent runtime additions
+
+- Platform intelligence now loads from an expanded manifest with `91` validated platforms, including major high-value public OSINT surfaces.
+- Profile scanning can emit live pipeline events as platforms resolve, allowing downstream enrichment to start before the full scan ends.
+- Live enrichment now hunts contact and credential signals from `FOUND` profile rows during the scan itself.
+- A persistent SQLite knowledge base tracks targets, found profiles, contact signals, fingerprints, and risk indicators across runs.
+- `silica-x doctor` now reports engine health, knowledge-base status, and Docker runtime status.
+- Docker is now a first-class execution path through `--docker`, with runtime detection, image build support, and mounted output persistence.
+- Tor runtime management now has a higher-level setup layer that can deploy `torrc`, check readiness, and coordinate startup.
+
 ## Core workflows
 
 - `profile` scans usernames and public profiles across platform manifests.
@@ -64,6 +74,18 @@ pip install ".[ocr]"
 
 `pytesseract` is a Python wrapper, but OCR still depends on a reachable `tesseract` binary. Silica-X now reports which OCR/image backends were actually available during the run, and `silica-x doctor` gives a quick local diagnostic pass for OCR, Tor, Reporter backends, output settings, and runtime inventory.
 
+Docker runtime:
+
+```bash
+silica-x --docker
+silica-x prompt --docker
+silica-x profile alice --docker
+silica-x surface example.com --docker
+silica-x prompt --docker --tor
+```
+
+On first use, Silica-X can check Docker, install it when supported and approved, build the image, and then launch the requested command inside the container.
+
 ## Quick examples
 
 ```bash
@@ -72,6 +94,8 @@ silica-x surface example.com --html
 silica-x fusion alice example.com --html
 silica-x ocr ./captures/poster.png --url https://example.com/image.png --html
 silica-x profile alice --plugin media_recon_engine --plugin post_signal_intel --plugin stego_signal_probe --html
+silica-x prompt
+silica-x prompt --docker
 silica-x doctor
 ```
 
@@ -89,6 +113,13 @@ Silica-X writes artifacts under `output/` and can emit:
 - run logs and framework logs
 
 Reporter is designed to make the result easier to triage by grouping identity findings, reliability issues, correlation, vulnerabilities, plugin/filter signals, OCR/media lanes, and the final `Reporter Brief`.
+
+Recent report/runtime improvements also include:
+
+- live enrichment sections in HTML output when profile pipeline signals are captured
+- relationship and graph-backed sections for fusion-style analysis
+- persistent knowledge-base storage at `output/silica_x_kb.db`
+- richer `doctor` visibility for OCR, Tor, Docker, engines, and output/runtime state
 
 In prompt mode, attachables can be configured as session defaults with commands like:
 
@@ -108,6 +139,7 @@ config
 - [Media Intelligence](docs/media-intelligence.md)
 - [Reporter](docs/reporter.md)
 - [Development](docs/development.md)
+- [Docker Guide](docs/docker.md)
 - [Website](docs/website/README.md)
 
 ## Website and Pages
@@ -135,6 +167,7 @@ python -m mypy
 python -m compileall -q core filters modules plugins tests silica-x.py
 python scripts/smoke_suite.py
 silica-x doctor
+silica-x --help
 ```
 
 Core package naming:

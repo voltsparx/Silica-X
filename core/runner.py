@@ -5844,7 +5844,7 @@ async def run(argv: Sequence[str] | None = None) -> int:
         print(
             c(
                 "Global flags --about/--explain cannot be combined with a command. "
-                "Run them alone (example: python silica-x.py --about).",
+                "Run them alone (example: silica-x --about).",
                 Colors.RED,
             )
         )
