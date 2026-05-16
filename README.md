@@ -1,10 +1,10 @@
-# Silica-X v11.2.0
+# Silinosic-X v11.2.0
 
 > Theme: Ember  
 > OSINT orchestration, media intelligence, and Reporter-grade artifacts for profile, surface, fusion, and OCR-led investigations.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/voltsparx/Silica-X/refs/heads/main/docs/images/illustration/silica-x-icon.png" alt="Silica-X logo" width="420">
+  <img src="https://raw.githubusercontent.com/voltsparx/Silinosic-X/refs/heads/main/docs/images/illustration/silinosic-x-icon.png" alt="Silinosic-X logo" width="420">
 </p>
 
 <p align="center">
@@ -14,12 +14,12 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/package-silica--x-CB6D1E?style=for-the-badge" alt="PyPI package name">
-  <img src="https://img.shields.io/badge/import-silica__x-784421?style=for-the-badge" alt="Python import name">
+  <img src="https://img.shields.io/badge/package-silinosic--x-CB6D1E?style=for-the-badge" alt="PyPI package name">
+  <img src="https://img.shields.io/badge/import-silinosic__x-784421?style=for-the-badge" alt="Python import name">
   <img src="https://img.shields.io/badge/license-Proprietary-8B0000?style=for-the-badge" alt="License Proprietary">
 </p>
 
-Silica-X is a Python intelligence framework for authorized OSINT work. It combines profile reconnaissance, domain-surface analysis, fusion scoring, public-media reconnaissance, and OCR image scanning into one runtime with plugins, filters, engine policies, and categorized artifacts.
+Silinosic-X is a Python intelligence framework for authorized OSINT work. It combines profile reconnaissance, domain-surface analysis, fusion scoring, public-media reconnaissance, and OCR image scanning into one runtime with plugins, filters, engine policies, and categorized artifacts.
 
 ## What v11.2.0 includes
 
@@ -34,7 +34,7 @@ Silica-X is a Python intelligence framework for authorized OSINT work. It combin
 - Profile scanning can emit live pipeline events as platforms resolve, allowing downstream enrichment to start before the full scan ends.
 - Live enrichment now hunts contact and credential signals from `FOUND` profile rows during the scan itself.
 - A persistent SQLite knowledge base tracks targets, found profiles, contact signals, fingerprints, and risk indicators across runs.
-- `silica-x doctor` now reports engine health, knowledge-base status, and Docker runtime status.
+- `silinosic-x doctor` now reports engine health, knowledge-base status, and Docker runtime status.
 - Docker is now a first-class execution path through `--docker`, with runtime detection, image build support, and mounted output persistence.
 - Tor runtime management now has a higher-level setup layer that can deploy `torrc`, check readiness, and coordinate startup.
 
@@ -50,24 +50,24 @@ Silica-X is a Python intelligence framework for authorized OSINT work. It combin
 ## Install, run, import
 
 ```bash
-pip install silica-x
-silica-x
-silica-x doctor
+pip install silinosic-x
+silinosic-x
+silinosic-x doctor
 ```
 
 ```python
-import silica_x
+import silinosic_x
 
-print(silica_x.__version__)
+print(silinosic_x.__version__)
 ```
 
 From source:
 
 ```bash
-git clone https://github.com/voltsparx/Silica-X.git
-cd Silica-X
+git clone https://github.com/voltsparx/Silinosic-X.git
+cd Silinosic-X
 pip install -e .
-silica-x --help
+silinosic-x --help
 ```
 
 Optional extras:
@@ -77,36 +77,36 @@ pip install ".[reports]"
 pip install ".[ocr]"
 ```
 
-`pytesseract` is a Python wrapper, but OCR still depends on a reachable `tesseract` binary. Silica-X now reports which OCR/image backends were actually available during the run, and `silica-x doctor` gives a quick local diagnostic pass for OCR, Tor, Reporter backends, output settings, and runtime inventory.
+`pytesseract` is a Python wrapper, but OCR still depends on a reachable `tesseract` binary. Silinosic-X now reports which OCR/image backends were actually available during the run, and `silinosic-x doctor` gives a quick local diagnostic pass for OCR, Tor, Reporter backends, output settings, and runtime inventory.
 
 Docker runtime:
 
 ```bash
-silica-x --docker
-silica-x prompt --docker
-silica-x profile alice --docker
-silica-x surface example.com --docker
-silica-x prompt --docker --tor
+silinosic-x --docker
+silinosic-x prompt --docker
+silinosic-x profile alice --docker
+silinosic-x surface example.com --docker
+silinosic-x prompt --docker --tor
 ```
 
-On first use, Silica-X can check Docker, install it when supported and approved, build the image, and then launch the requested command inside the container.
+On first use, Silinosic-X can check Docker, install it when supported and approved, build the image, and then launch the requested command inside the container.
 
 ## Quick examples
 
 ```bash
-silica-x profile alice --html
-silica-x surface example.com --html
-silica-x fusion alice example.com --html
-silica-x ocr ./captures/poster.png --url https://example.com/image.png --html
-silica-x profile alice --plugin media_recon_engine --plugin post_signal_intel --plugin stego_signal_probe --html
-silica-x prompt
-silica-x prompt --docker
-silica-x doctor
+silinosic-x profile alice --html
+silinosic-x surface example.com --html
+silinosic-x fusion alice example.com --html
+silinosic-x ocr ./captures/poster.png --url https://example.com/image.png --html
+silinosic-x profile alice --plugin media_recon_engine --plugin post_signal_intel --plugin stego_signal_probe --html
+silinosic-x prompt
+silinosic-x prompt --docker
+silinosic-x doctor
 ```
 
 ## Reporter outputs
 
-Silica-X writes artifacts under `output/` and can emit:
+Silinosic-X writes artifacts under `output/` and can emit:
 
 - CLI summaries
 - JSON payloads
@@ -123,7 +123,7 @@ Recent report/runtime improvements also include:
 
 - live enrichment sections in HTML output when profile pipeline signals are captured
 - relationship and graph-backed sections for fusion-style analysis
-- persistent knowledge-base storage at `output/silica_x_kb.db`
+- persistent knowledge-base storage at `output/silinosic_x_kb.db`
 - richer `doctor` visibility for OCR, Tor, Docker, engines, and output/runtime state
 
 In prompt mode, attachables can be configured as session defaults with commands like:
@@ -151,15 +151,15 @@ config
 
 Primary Pages URL:
 
-- `https://voltsparx.github.io/Silica-X/`
+- `https://voltsparx.github.io/Silinosic-X/`
 
-If that direct URL shows GitHub's "site not found" page, the usual cause is not the website files themselves. It usually means GitHub Pages is not currently serving the project site yet. For this repository, Pages must be enabled with `GitHub Actions` as the source, and the `Silica-X Pages` workflow must complete successfully on `main` or `master`.
+If that direct URL shows GitHub's "site not found" page, the usual cause is not the website files themselves. It usually means GitHub Pages is not currently serving the project site yet. For this repository, Pages must be enabled with `GitHub Actions` as the source, and the `Silinosic-X Pages` workflow must complete successfully on `main` or `master`.
 
 ## Safety
 
 - Legal and authorized use only
 - Respect platform terms, privacy, and local law
-- Do not use Silica-X for stalking, harassment, or unauthorized surveillance
+- Do not use Silinosic-X for stalking, harassment, or unauthorized surveillance
 
 ## Developer notes
 
@@ -169,20 +169,20 @@ Useful local checks:
 python -m pytest -q
 python -m ruff check .
 python -m mypy
-python -m compileall -q core filters modules plugins tests silica-x.py
+python -m compileall -q core filters modules plugins tests silinosic-x.py
 python scripts/smoke_suite.py
-silica-x doctor
-silica-x --help
+silinosic-x doctor
+silinosic-x --help
 ```
 
 Core package naming:
 
-- package install name: `silica-x`
-- CLI entrypoint: `silica-x`
-- Python import path: `silica_x`
+- package install name: `silinosic-x`
+- CLI entrypoint: `silinosic-x`
+- Python import path: `silinosic_x`
 
 ## Author
 
 - Author: voltsparx
 - Contact: voltsparx@gmail.com
-- Repository: https://github.com/voltsparx/Silica-X
+- Repository: https://github.com/voltsparx/Silinosic-X
