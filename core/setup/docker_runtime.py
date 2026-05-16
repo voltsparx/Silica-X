@@ -1,19 +1,19 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Silica-X Intelligence Framework
+# Silinosic-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Silica-X
+# Repository : https://github.com/voltsparx/Silinosic-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root
 #
-# This file is part of Silica-X and is subject to the terms
+# This file is part of Silinosic-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
-"""Docker runtime manager for Silica-X.
+"""Docker runtime manager for Silinosic-X.
 
 Handles Docker detection, installation, image management, and container
 launch for the --docker flag. Works on Linux (apt/dnf/pacman), macOS
@@ -37,9 +37,9 @@ DOCKER_INSTALL_URLS: dict[str, str] = {
     "darwin": "https://desktop.docker.com/mac/main/amd64/Docker.dmg",
 }
 
-SILICA_X_IMAGE_NAME = "silica-x"
-SILICA_X_IMAGE_TAG = "latest"
-SILICA_X_IMAGE = f"{SILICA_X_IMAGE_NAME}:{SILICA_X_IMAGE_TAG}"
+SILINOSIC_X_IMAGE_NAME = "silinosic-x"
+SILINOSIC_X_IMAGE_TAG = "latest"
+SILINOSIC_X_IMAGE = f"{SILINOSIC_X_IMAGE_NAME}:{SILINOSIC_X_IMAGE_TAG}"
 
 DOCKER_COMPOSE_RELATIVE = "docker/docker-compose.yml"
 DOCKERFILE_RELATIVE = "docker/Dockerfile"
@@ -113,7 +113,7 @@ def docker_daemon_running() -> bool:
         return False
 
 
-def docker_image_exists(image: str = SILICA_X_IMAGE) -> bool:
+def docker_image_exists(image: str = SILINOSIC_X_IMAGE) -> bool:
     binary = find_docker_binary()
     if not binary:
         return False
@@ -143,7 +143,7 @@ def docker_status() -> dict[str, Any]:
         "compose_found": compose is not None,
         "daemon_running": running,
         "image_built": image_built,
-        "image_name": SILICA_X_IMAGE,
+        "image_name": SILINOSIC_X_IMAGE,
     }
 
 
@@ -163,10 +163,10 @@ def install_docker(*, prompt_user: bool = True) -> tuple[bool, str]:
     os_name = detect_os()
     if prompt_user:
         if not _prompt_yes_no(
-            f"[Silica-X] Docker is not installed. Install Docker automatically on {os_name}?"
+            f"[Silinosic-X] Docker is not installed. Install Docker automatically on {os_name}?"
         ):
             return False, "Docker installation declined by user."
-    print("[Silica-X] Installing Docker...")
+    print("[Silinosic-X] Installing Docker...")
     if os_name == "linux":
         return _install_docker_linux()
     if os_name == "darwin":
@@ -183,7 +183,7 @@ def _install_docker_linux() -> tuple[bool, str]:
     curl = shutil.which("curl")
     if curl:
         try:
-            print("[Silica-X] Downloading Docker install script...")
+            print("[Silinosic-X] Downloading Docker install script...")
             result = subprocess.run(
                 "curl -fsSL https://get.docker.com | sh",
                 shell=True,
@@ -225,7 +225,7 @@ def _install_docker_macos() -> tuple[bool, str]:
     brew = shutil.which("brew")
     if brew:
         try:
-            print("[Silica-X] Installing Docker Desktop via Homebrew...")
+            print("[Silinosic-X] Installing Docker Desktop via Homebrew...")
             result = subprocess.run([brew, "install", "--cask", "docker"], check=False, timeout=300)
             if result.returncode == 0:
                 return True, "Docker Desktop installed via Homebrew. Open Docker Desktop app to start the daemon."
@@ -238,7 +238,7 @@ def _install_docker_windows() -> tuple[bool, str]:
     winget = shutil.which("winget")
     if winget:
         try:
-            print("[Silica-X] Installing Docker Desktop via winget...")
+            print("[Silinosic-X] Installing Docker Desktop via winget...")
             result = subprocess.run(
                 [winget, "install", "--id", "Docker.DockerDesktop", "-e", "--silent"],
                 check=False,
@@ -249,7 +249,7 @@ def _install_docker_windows() -> tuple[bool, str]:
         except Exception:
             pass
     try:
-        print("[Silica-X] Downloading Docker Desktop installer...")
+        print("[Silinosic-X] Downloading Docker Desktop installer...")
         url = DOCKER_INSTALL_URLS["windows"]
         tmp_path = os.path.join(tempfile.gettempdir(), "DockerDesktopInstaller.exe")
 
@@ -273,7 +273,7 @@ def ensure_daemon_running(*, prompt_user: bool = True) -> tuple[bool, str]:
     if docker_daemon_running():
         return True, "Docker daemon is already running."
     os_name = detect_os()
-    print("[Silica-X] Docker daemon is not running.")
+    print("[Silinosic-X] Docker daemon is not running.")
     if os_name == "linux":
         try:
             result = subprocess.run(["systemctl", "start", "docker"], check=False, capture_output=True, timeout=30)
@@ -288,7 +288,7 @@ def ensure_daemon_running(*, prompt_user: bool = True) -> tuple[bool, str]:
     if os_name == "darwin":
         try:
             subprocess.run(["open", "-a", "Docker"], check=False, timeout=10)
-            print("[Silica-X] Opening Docker Desktop... waiting up to 30 seconds.")
+            print("[Silinosic-X] Opening Docker Desktop... waiting up to 30 seconds.")
             import time
 
             for _ in range(15):
@@ -301,7 +301,7 @@ def ensure_daemon_running(*, prompt_user: bool = True) -> tuple[bool, str]:
     if os_name == "windows":
         try:
             subprocess.run(["C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe"], check=False, timeout=10)
-            print("[Silica-X] Starting Docker Desktop... waiting up to 30 seconds.")
+            print("[Silinosic-X] Starting Docker Desktop... waiting up to 30 seconds.")
             import time
 
             for _ in range(15):
@@ -327,23 +327,23 @@ def build_image(*, force_rebuild: bool = False) -> tuple[bool, str]:
     if not binary:
         return False, "Docker binary not found."
     if not force_rebuild and docker_image_exists():
-        return True, f"Image {SILICA_X_IMAGE} already exists. Use force_rebuild=True to rebuild."
+        return True, f"Image {SILINOSIC_X_IMAGE} already exists. Use force_rebuild=True to rebuild."
     repo_root = _find_repo_root()
     dockerfile = repo_root / DOCKERFILE_RELATIVE
     if not dockerfile.exists():
         return False, f"Dockerfile not found at {dockerfile}."
-    print(f"[Silica-X] Building Docker image {SILICA_X_IMAGE}...")
-    print(f"[Silica-X] Build context: {repo_root}")
-    print(f"[Silica-X] Dockerfile: {dockerfile}")
-    print("[Silica-X] This may take several minutes on first build...")
+    print(f"[Silinosic-X] Building Docker image {SILINOSIC_X_IMAGE}...")
+    print(f"[Silinosic-X] Build context: {repo_root}")
+    print(f"[Silinosic-X] Dockerfile: {dockerfile}")
+    print("[Silinosic-X] This may take several minutes on first build...")
     try:
         result = subprocess.run(
-            [binary, "build", "-f", str(dockerfile), "-t", SILICA_X_IMAGE, str(repo_root)],
+            [binary, "build", "-f", str(dockerfile), "-t", SILINOSIC_X_IMAGE, str(repo_root)],
             check=False,
             timeout=900,
         )
         if result.returncode == 0:
-            return True, f"Image {SILICA_X_IMAGE} built successfully."
+            return True, f"Image {SILINOSIC_X_IMAGE} built successfully."
         return False, f"Docker build failed with exit code {result.returncode}."
     except subprocess.TimeoutExpired:
         return False, "Docker build timed out after 15 minutes."
@@ -362,16 +362,16 @@ def launch_container(
 ) -> int:
     binary = find_docker_binary()
     if not binary:
-        print("[Silica-X] Docker binary not found. Cannot launch container.")
+        print("[Silinosic-X] Docker binary not found. Cannot launch container.")
         return 1
     repo_root = _find_repo_root()
     output_dir = repo_root / "output"
     output_dir.mkdir(parents=True, exist_ok=True)
-    env_vars: dict[str, str] = {"SILICA_X_DOCKER": "1"}
+    env_vars: dict[str, str] = {"SILINOSIC_X_DOCKER": "1"}
     if use_tor:
-        env_vars["SILICA_X_TOR"] = "1"
+        env_vars["SILINOSIC_X_TOR"] = "1"
     if use_proxy:
-        env_vars["SILICA_X_PROXY"] = "1"
+        env_vars["SILINOSIC_X_PROXY"] = "1"
     if extra_env:
         env_vars.update(extra_env)
     docker_cmd = [binary, "run", "--rm"]
@@ -384,20 +384,20 @@ def launch_container(
         docker_cmd += ["-p", f"{host_port}:{container_port}"]
     if use_tor:
         docker_cmd += ["--entrypoint", "/bin/bash"]
-        docker_cmd += [SILICA_X_IMAGE]
-        tor_command = " ".join(["silica-x"] + command)
+        docker_cmd += [SILINOSIC_X_IMAGE]
+        tor_command = " ".join(["silinosic-x"] + command)
         docker_cmd += ["-c", f"service tor start && sleep 2 && {tor_command}"]
     else:
-        docker_cmd += [SILICA_X_IMAGE]
+        docker_cmd += [SILINOSIC_X_IMAGE]
         docker_cmd += command
     try:
         result = subprocess.run(docker_cmd, check=False)
         return result.returncode
     except KeyboardInterrupt:
-        print("\n[Silica-X] Container interrupted.")
+        print("\n[Silinosic-X] Container interrupted.")
         return 130
     except Exception as exc:
-        print(f"[Silica-X] Container launch failed: {exc}")
+        print(f"[Silinosic-X] Container launch failed: {exc}")
         return 1
 
 
@@ -414,9 +414,9 @@ def ensure_docker_ready(*, prompt_user: bool = True) -> tuple[bool, str]:
     if not ok:
         return False, msg
     if not docker_image_exists():
-        print(f"[Silica-X] Image {SILICA_X_IMAGE} not found locally. Building now...")
+        print(f"[Silinosic-X] Image {SILINOSIC_X_IMAGE} not found locally. Building now...")
         ok, msg = build_image()
         if not ok:
             return False, f"Image build failed: {msg}"
-        print(f"[Silica-X] {msg}")
+        print(f"[Silinosic-X] {msg}")
     return True, "Docker is ready."
