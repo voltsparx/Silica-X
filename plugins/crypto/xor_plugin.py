@@ -1,15 +1,15 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Silica-X Intelligence Framework
+# Silinosic-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Silica-X
+# Repository : https://github.com/voltsparx/Silinosic-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root 
 #
-# This file is part of Silica-X and is subject to the terms
+# This file is part of Silinosic-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
@@ -58,7 +58,7 @@ def run(context: dict[str, Any]) -> dict[str, Any]:
         source_fields=list(config.get("source_fields", [])),
         max_items=int(config.get("max_items", 12)),
     )
-    key_text = str(context.get("crypto_key") or "silica-x").strip() or "silica-x"
+    key_text = str(context.get("crypto_key") or "silinosic-x").strip() or "silinosic-x"
     key_bytes = key_text.encode("utf-8")
 
     payloads: list[str] = []
