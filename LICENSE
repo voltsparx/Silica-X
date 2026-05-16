@@ -5,9 +5,9 @@ SPDX-License-Identifier: Proprietary
 Copyright (c) 2026 voltsparx
 All rights reserved.
 
-Silica-X is proprietary software.
+Silinosic-X is proprietary software.
 
-Permission is granted to use Silica-X solely for personal, educational, or
+Permission is granted to use Silinosic-X solely for personal, educational, or
 internal security purposes on systems you own or are explicitly authorized to
 monitor.
 
@@ -18,16 +18,16 @@ written permission from the copyright holder.
 You may not:
 
 1. Remove, alter, or obscure copyright, license, or attribution notices.
-2. Claim authorship or ownership of Silica-X or its derivative works.
-3. Redistribute Silica-X, in whole or in part, in source or binary form,
+2. Claim authorship or ownership of Silinosic-X or its derivative works.
+3. Redistribute Silinosic-X, in whole or in part, in source or binary form,
    without prior written permission.
-4. Use Silica-X for unauthorized penetration testing, hacking, stalking,
+4. Use Silinosic-X for unauthorized penetration testing, hacking, stalking,
    harassment, or any illegal activity.
 
 Attribution must be retained in any permitted use:
 
-    "Silica-X v10.0 © 2026 voltsparx. All rights reserved.
-    Original project: https://github.com/voltsparx/Silica-X"
+    "Silinosic-X v10.0 © 2026 voltsparx. All rights reserved.
+    Original project: https://github.com/voltsparx/Silinosic-X"
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -40,4 +40,4 @@ For permissions beyond personal or internal use, contact:
 
 voltsparx
 Email: voltsparx@gmail.com
-Repository: https://github.com/voltsparx/Silica-X
+Repository: https://github.com/voltsparx/Silinosic-X
