@@ -1,19 +1,19 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Silica-X Intelligence Framework
+# Silinosic-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Silica-X
+# Repository : https://github.com/voltsparx/Silinosic-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root 
 #
-# This file is part of Silica-X and is subject to the terms
+# This file is part of Silinosic-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
-"""silica_x connector orchestration with normalized multi-source signal extraction."""
+"""silinosic_x connector orchestration with normalized multi-source signal extraction."""
 
 from __future__ import annotations
 
@@ -157,7 +157,7 @@ def _find_source_entry(source_entrypoints: tuple[str, ...]) -> str | None:
 
 
 def detect_connector_runtimes() -> list[ConnectorRuntime]:
-    """Detect runtime availability for known silica_x connector specs."""
+    """Detect runtime availability for known silinosic_x connector specs."""
 
     runtimes: list[ConnectorRuntime] = []
     for spec in CONNECTOR_REGISTRY:
@@ -417,7 +417,7 @@ def collect_source_fusion_intel(
     timeout_seconds: int = DEFAULT_TIMEOUT_SECONDS,
     max_connectors: int = DEFAULT_MAX_CONNECTORS,
 ) -> dict[str, Any]:
-    """Collect normalized intelligence from available silica_x connector runtimes."""
+    """Collect normalized intelligence from available silinosic_x connector runtimes."""
 
     normalized_mode = str(mode or "").strip().lower()
     if normalized_mode not in {"profile", "surface", "fusion"}:
@@ -459,7 +459,7 @@ def collect_source_fusion_intel(
     runs: list[dict[str, Any]] = []
     if plans:
         pool_size = max(1, min(4, len(plans)))
-        with ThreadPoolExecutor(max_workers=pool_size, thread_name_prefix="silica_x-fusion") as executor:
+        with ThreadPoolExecutor(max_workers=pool_size, thread_name_prefix="silinosic_x-fusion") as executor:
             futures = [
                 executor.submit(
                     _run_connector_command,
