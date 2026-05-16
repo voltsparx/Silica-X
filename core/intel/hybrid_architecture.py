@@ -1,19 +1,19 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Silica-X Intelligence Framework
+# Silinosic-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Silica-X
+# Repository : https://github.com/voltsparx/Silinosic-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root
 #
-# This file is part of Silica-X and is subject to the terms
+# This file is part of Silinosic-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
-"""Silica-X hybrid architecture descriptors for runtime inventory and docs."""
+"""Silinosic-X hybrid architecture descriptors for runtime inventory and docs."""
 
 from __future__ import annotations
 
@@ -23,11 +23,11 @@ from core.foundation.metadata import PROJECT_NAME, VERSION, VERSION_THEME
 
 
 _HYBRID_ARCHITECTURE: dict[str, object] = {
-    "identity": "silica-x-hybrid",
+    "identity": "silinosic-x-hybrid",
     "project": PROJECT_NAME,
     "version": VERSION,
     "theme": VERSION_THEME,
-    "tagline": "Silica-X native console, registry, event-flow, and fusion architecture.",
+    "tagline": "Silinosic-X native console, registry, event-flow, and fusion architecture.",
     "engines": ("async", "thread", "process", "hybrid", "fusion"),
     "lanes": (
         {
@@ -109,7 +109,7 @@ _HYBRID_ARCHITECTURE: dict[str, object] = {
 
 
 def build_hybrid_architecture_snapshot() -> dict[str, object]:
-    """Return the Silica-X hybrid architecture snapshot."""
+    """Return the Silinosic-X hybrid architecture snapshot."""
 
     return deepcopy(_HYBRID_ARCHITECTURE)
 
