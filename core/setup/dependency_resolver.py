@@ -39,14 +39,14 @@ def _run_install_command(command: list[str]) -> bool:
     try:
         subprocess.run(command, check=True)
     except Exception as exc:
-        print(f"[Silica-X] Automatic install failed: {exc}. Please install tesseract manually.")
+        print(f"[Silinosic-X] Automatic install failed: {exc}. Please install tesseract manually.")
         return False
     return True
 
 
 def _print_manual_linux_message() -> None:
     print(
-        "[Silica-X] Unsupported Linux distribution. Please install tesseract-ocr manually: "
+        "[Silinosic-X] Unsupported Linux distribution. Please install tesseract-ocr manually: "
         f"{MANUAL_TESSERACT_URL}"
     )
 
@@ -69,18 +69,18 @@ def _install_linux() -> bool:
 
 def _install_macos() -> bool:
     if shutil.which("brew") is None:
-        print("[Silica-X] Homebrew is required to install tesseract automatically: https://brew.sh")
+        print("[Silinosic-X] Homebrew is required to install tesseract automatically: https://brew.sh")
         return False
     return _run_install_command(["brew", "install", "tesseract"])
 
 
 def _download_progress(block_count: int, block_size: int, total_size: int) -> None:
     if total_size <= 0:
-        print("[Silica-X] Downloading Tesseract installer...", flush=True)
+        print("[Silinosic-X] Downloading Tesseract installer...", flush=True)
         return
     downloaded = min(block_count * block_size, total_size)
     percent = int((downloaded / total_size) * 100)
-    print(f"\r[Silica-X] Downloading Tesseract installer... {percent}%", end="", flush=True)
+    print(f"\r[Silinosic-X] Downloading Tesseract installer... {percent}%", end="", flush=True)
     if downloaded >= total_size:
         print("", flush=True)
 
@@ -93,7 +93,7 @@ def _install_windows() -> bool:
         if os.path.exists(installer_path):
             print("", flush=True)
     except Exception as exc:
-        print(f"[Silica-X] Automatic install failed: {exc}. Please install tesseract manually.")
+        print(f"[Silinosic-X] Automatic install failed: {exc}. Please install tesseract manually.")
         try:
             if os.path.exists(installer_path):
                 os.remove(installer_path)
@@ -128,7 +128,7 @@ def resolve_tesseract() -> None:
     if not sys.stdin.isatty() or not sys.stdout.isatty():
         return
 
-    print("[Silica-X] Tesseract OCR binary not found. Install it automatically? (y/n): ", end="", flush=True)
+    print("[Silinosic-X] Tesseract OCR binary not found. Install it automatically? (y/n): ", end="", flush=True)
     try:
         response = input().strip().lower()
     except (EOFError, KeyboardInterrupt, OSError):
@@ -136,7 +136,7 @@ def resolve_tesseract() -> None:
         response = ""
 
     if response not in {"y", "yes"}:
-        print("[Silica-X] Skipping tesseract install. OCR features will be unavailable.")
+        print("[Silinosic-X] Skipping tesseract install. OCR features will be unavailable.")
         return
 
     system_name = platform.system()
@@ -149,17 +149,17 @@ def resolve_tesseract() -> None:
     elif system_name == "Windows":
         installed = _install_windows()
     else:
-        print(f"[Silica-X] Unsupported operating system. Please install tesseract manually: {MANUAL_TESSERACT_URL}")
+        print(f"[Silinosic-X] Unsupported operating system. Please install tesseract manually: {MANUAL_TESSERACT_URL}")
         return
 
     if not installed:
         return
 
     if shutil.which("tesseract") is not None:
-        print("[Silica-X] Tesseract installed and verified successfully.")
+        print("[Silinosic-X] Tesseract installed and verified successfully.")
         return
 
     print(
-        "[Silica-X] Install completed but tesseract is still not on PATH. "
+        "[Silinosic-X] Install completed but tesseract is still not on PATH. "
         "You may need to restart your terminal or add it to PATH manually."
     )
