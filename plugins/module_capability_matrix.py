@@ -1,19 +1,19 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Silica-X Intelligence Framework
+# Silinosic-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Silica-X
+# Repository : https://github.com/voltsparx/Silinosic-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root 
 #
-# This file is part of Silica-X and is subject to the terms
+# This file is part of Silinosic-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
-"""Plugin: module capability matrix derived from silica_x source-intel catalogs."""
+"""Plugin: module capability matrix derived from silinosic_x source-intel catalogs."""
 
 from __future__ import annotations
 
@@ -46,7 +46,7 @@ def run(context: dict) -> dict:
             "severity": "INFO",
             "summary": (
                 "No plugin-aligned source entries are cataloged yet. "
-                "Run `python silica-x.py modules --sync` to build the catalog."
+                "Run `python silinosic-x.py modules --sync` to build the catalog."
             ),
             "highlights": [f"scope={scope}", "catalog=empty", "catalog_kind=plugin"],
             "data": {
