@@ -1,15 +1,15 @@
 # ──────────────────────────────────────────────────────────────
 # SPDX-License-Identifier: Proprietary
 #
-# Silica-X Intelligence Framework
+# Silinosic-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Silica-X
+# Repository : https://github.com/voltsparx/Silinosic-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root
 #
-# This file is part of Silica-X and is subject to the terms
+# This file is part of Silinosic-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ──────────────────────────────────────────────────────────────
 
@@ -27,7 +27,7 @@ from core.runner import (
 def test_doctor_snapshot_has_required_keys():
     snapshot = _build_doctor_snapshot()
     for key in [
-        "silica_x",
+        "silinosic_x",
         "runtime_inventory",
         "ocr_tooling",
         "tor",
