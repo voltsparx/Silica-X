@@ -1,11 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modes | Silica-X</title>
-<meta name="description" content="Prompt mode, wizard mode, live dashboard mode, and source-study runtime flows in Silica-X.">
-<link rel="canonical" href="https://voltsparx.github.io/Silica-X/modes.html">
+<title>Modes | Silinosic-X</title>
+<meta name="description" content="Prompt mode, wizard mode, live dashboard mode, and source-study runtime flows in Silinosic-X.">
+<link rel="canonical" href="https://voltsparx.github.io/Silinosic-X/modes.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -17,14 +17,14 @@
 <link rel="stylesheet" href="css/components/modules.css">
 <link rel="stylesheet" href="css/components/development.css">
 <link rel="stylesheet" href="css/layout/responsive.css">
-<link rel="icon" href="web_assets/media/silica-x-favicon.ico" sizes="any">
+<link rel="icon" href="web_assets/media/silinosic-x-favicon.ico" sizes="any">
 </head>
 <body data-page="modes.html" data-default-section="prompt-mode">
 <header id="topbar">
-  <button id="topbar-brand" type="button" aria-label="Silica-X brand console trigger">
-    <img src="web_assets/media/silica-x-web.png" alt="Silica-X logo">
+  <button id="topbar-brand" type="button" aria-label="Silinosic-X brand console trigger">
+    <img src="web_assets/media/silinosic-x-web.png" alt="Silinosic-X logo">
     <span id="topbar-brand-text">
-      <span id="topbar-name">Silica-X</span>
+      <span id="topbar-name">Silinosic-X</span>
       <span id="topbar-tagline">OSINT orchestration and correlation framework</span>
     </span>
   </button>
@@ -37,7 +37,7 @@
     <a href="cli-reference.html#commands">Commands</a>
     <a href="reporting.html#outputs">Outputs</a>
     <a href="development.html#development-home">Development</a>
-    <a href="https://github.com/voltsparx/Silica-X" target="_blank" rel="noreferrer">GitHub</a>
+    <a href="https://github.com/voltsparx/Silinosic-X" target="_blank" rel="noreferrer">GitHub</a>
     <div class="contact-wrap">
       <button id="contact-toggle" class="contact-toggle" type="button" aria-expanded="false">Contact</button>
       <div id="contact-popover" class="contact-popover" hidden>
@@ -53,7 +53,7 @@
   <div class="sidebar-panel-head">
     <div class="sidebar-kicker">Runtime</div>
     <h2 class="sidebar-title">Modes and Operator Flows</h2>
-    <p class="sidebar-note">Silica-X can be used as a scripted CLI, an interactive prompt, a guided wizard, a live result viewer, or a source-study bridge.</p>
+    <p class="sidebar-note">Silinosic-X can be used as a scripted CLI, an interactive prompt, a guided wizard, a live result viewer, or a source-study bridge.</p>
   </div>
   <div id="sidebar-tabs" class="sidebar-tabs"></div>
   <div id="sidebar-nav"></div>
@@ -90,7 +90,7 @@
           <span class="code-dot"></span>
           <span class="code-lang">shell</span>
         </div>
-        <pre class="code-body"><span class="cmd">silica-x</span>
+        <pre class="code-body"><span class="cmd">silinosic-x</span>
 help
 show plugins
 show filters
@@ -104,7 +104,7 @@ history</pre>
     </div>
     <div class="callout callout-info section-block">
       <div class="callout-title">Prompt runs now pause for configuration review</div>
-      When you launch a scan from prompt mode, Silica-X prints the resolved configuration first. Press Enter to start or press <span class="mono">c</span> to stop that configured command without leaving the console.
+      When you launch a scan from prompt mode, Silinosic-X prints the resolved configuration first. Press Enter to start or press <span class="mono">c</span> to stop that configured command without leaving the console.
     </div>
   </section>
 
@@ -126,7 +126,7 @@ history</pre>
       </article>
       <article class="card">
         <h3 class="card-title">How to launch</h3>
-        <div class="command-snippet mono">silica-x wizard</div>
+        <div class="command-snippet mono">silinosic-x wizard</div>
       </article>
     </div>
   </section>
@@ -191,7 +191,7 @@ Press Enter to start...</pre>
         <h3 class="panel-title">How it fits</h3>
         <div class="card-copy">
           <p>Think of this as a viewing mode, not a separate collection engine. The live layer sits on top of previously generated results and output directories.</p>
-          <div class="command-snippet mono">silica-x live</div>
+          <div class="command-snippet mono">silinosic-x live</div>
         </div>
       </article>
     </div>
@@ -209,14 +209,14 @@ Press Enter to start...</pre>
         <h3 class="panel-title">Frameworks</h3>
         <div class="card-copy">
           <p>The <span class="mono">frameworks</span> command inspects local source profiles under <span class="mono">temp/</span>. This is a study and translation layer, not an embedded copy of foreign tools.</p>
-          <div class="command-snippet mono">silica-x frameworks --framework graph-registry --commands</div>
+          <div class="command-snippet mono">silinosic-x frameworks --framework graph-registry --commands</div>
         </div>
       </article>
       <article class="panel">
         <h3 class="panel-title">Surface-kit</h3>
         <div class="card-copy">
-          <p><span class="mono">surface-kit</span> turns some source-derived presets into native Silica-X execution plans or direct runs. That keeps the project opinionated about architecture without bundling external engines wholesale.</p>
-          <div class="command-snippet mono">silica-x surface-kit example.com --preset subdomain-enum --dry-run</div>
+          <p><span class="mono">surface-kit</span> turns some source-derived presets into native Silinosic-X execution plans or direct runs. That keeps the project opinionated about architecture without bundling external engines wholesale.</p>
+          <div class="command-snippet mono">silinosic-x surface-kit example.com --preset subdomain-enum --dry-run</div>
         </div>
       </article>
     </div>
@@ -229,7 +229,7 @@ Press Enter to start...</pre>
 
 <footer class="footer shell">
   <div class="footer-grid">
-    <div><div class="footer-title">Silica-X</div><div>Prompt, wizard, live, and source-study docs.</div></div>
+    <div><div class="footer-title">Silinosic-X</div><div>Prompt, wizard, live, and source-study docs.</div></div>
     <div><div class="footer-title">Next</div><a class="footer-link" href="reporting.html#outputs">Outputs</a></div>
     <div><div class="footer-title">CLI</div><a class="footer-link" href="cli-reference.html#flags">Flags</a></div>
     <div><div class="footer-title">Project</div><a class="footer-link" href="project.html#author">Project context</a></div>
