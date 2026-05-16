@@ -1,15 +1,15 @@
 # ------------------------------------------------------------------------------
 # SPDX-License-Identifier: Proprietary
 #
-# Silica-X Intelligence Framework
+# Silinosic-X Intelligence Framework
 # Copyright (c) 2026 voltsparx
 #
 # Author     : voltsparx
-# Repository : https://github.com/voltsparx/Silica-X
+# Repository : https://github.com/voltsparx/Silinosic-X
 # Contact    : voltsparx@gmail.com
 # License    : See LICENSE file in the project root
 #
-# This file is part of Silica-X and is subject to the terms
+# This file is part of Silinosic-X and is subject to the terms
 # and conditions defined in the LICENSE file.
 # ------------------------------------------------------------------------------
 
@@ -24,7 +24,7 @@ from typing import Iterable
 
 AUTHORIZED_RESEARCH_NOTICE: tuple[str, ...] = (
     "Authorized research only. Investigate public data or explicitly approved targets.",
-    "Silica-X avoids exploitation, evasion, brute force, and target modification.",
+    "Silinosic-X avoids exploitation, evasion, brute force, and target modification.",
 )
 
 FORBIDDEN_CAPABILITIES: tuple[str, ...] = (
@@ -125,7 +125,7 @@ class ScopeBoundary:
 
 @dataclass(frozen=True)
 class ResearchPolicy:
-    """Capture the equal-weight research rules that govern Silica-X behavior."""
+    """Capture the equal-weight research rules that govern Silinosic-X behavior."""
 
     allowed_capabilities: tuple[str, ...] = SUPPORTED_RESEARCH_CAPABILITIES
     forbidden_capabilities: tuple[str, ...] = FORBIDDEN_CAPABILITIES
@@ -145,7 +145,7 @@ class ResearchPolicy:
         )
         if forbidden_requested:
             raise ValueError(
-                "Requested capabilities are explicitly forbidden in Silica-X: "
+                "Requested capabilities are explicitly forbidden in Silinosic-X: "
                 + ", ".join(forbidden_requested)
             )
 
@@ -165,7 +165,7 @@ class ResearchPolicy:
 
         return (
             "All assessment documents are equal-weight framework requirements.",
-            "Silica-X is an authorized research framework for passive and active reconnaissance.",
+            "Silinosic-X is an authorized research framework for passive and active reconnaissance.",
             "Outputs must remain typed, entity-centric, source-aware, and confidence-aware.",
             "Active collection must stay scope-validated, timeout-aware, and delay-aware.",
             "Exploit delivery, evasion, brute force, auth bypass, and target modification stay outside the framework.",
