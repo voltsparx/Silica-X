@@ -1,57 +1,57 @@
-# Silica-X Docker Compose
-# Usage: docker compose -f docker/docker-compose.yml up silica-x
+# Silinosic-X Docker Compose
+# Usage: docker compose -f docker/docker-compose.yml up silinosic-x
 
 services:
 
-  silica-x:
+  silinosic-x:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    image: silica-x:latest
-    container_name: silica-x
+    image: silinosic-x:latest
+    container_name: silinosic-x
     stdin_open: true
     tty: true
     volumes:
       - ../output:/app/output
     environment:
-      - SILICA_X_DOCKER=1
-    entrypoint: ["silica-x"]
+      - SILINOSIC_X_DOCKER=1
+    entrypoint: ["silinosic-x"]
     command: ["prompt"]
 
-  silica-x-tor:
+  silinosic-x-tor:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    image: silica-x:latest
-    container_name: silica-x-tor
+    image: silinosic-x:latest
+    container_name: silinosic-x-tor
     stdin_open: true
     tty: true
     volumes:
       - ../output:/app/output
     environment:
-      - SILICA_X_DOCKER=1
-      - SILICA_X_TOR=1
+      - SILINOSIC_X_DOCKER=1
+      - SILINOSIC_X_TOR=1
     entrypoint: ["/bin/bash", "-c"]
     command:
       - |
-        service tor start && sleep 2 && silica-x prompt --tor
+        service tor start && sleep 2 && silinosic-x prompt --tor
 
-  silica-x-full:
+  silinosic-x-full:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    image: silica-x:latest
-    container_name: silica-x-full
+    image: silinosic-x:latest
+    container_name: silinosic-x-full
     stdin_open: true
     tty: true
     volumes:
       - ../output:/app/output
     environment:
-      - SILICA_X_DOCKER=1
-      - SILICA_X_TOR=1
+      - SILINOSIC_X_DOCKER=1
+      - SILINOSIC_X_TOR=1
     ports:
       - "8000:8000"
     entrypoint: ["/bin/bash", "-c"]
     command:
       - |
-        service tor start && sleep 2 && silica-x prompt --tor
+        service tor start && sleep 2 && silinosic-x prompt --tor
