@@ -521,12 +521,14 @@ def resolve_extension_control(
     plugin_budget = MODE_PLUGIN_BUDGET[normalized_mode]
     filter_budget = MODE_FILTER_BUDGET[normalized_mode]
     if len(resolved_plugins) > plugin_budget and normalized_control in {"manual", "hybrid"}:
-        errors.append(
-            f"Mode '{normalized_mode}' allows at most {plugin_budget} plugins, got {len(resolved_plugins)}."
+        warnings.append(
+            f"Mode '{normalized_mode}' recommends at most {plugin_budget} plugins, "
+            f"but explicit selection kept {len(resolved_plugins)}."
         )
     if len(resolved_filters) > filter_budget and normalized_control in {"manual", "hybrid"}:
-        errors.append(
-            f"Mode '{normalized_mode}' allows at most {filter_budget} filters, got {len(resolved_filters)}."
+        warnings.append(
+            f"Mode '{normalized_mode}' recommends at most {filter_budget} filters, "
+            f"but explicit selection kept {len(resolved_filters)}."
         )
 
     return ExtensionControlPlan(

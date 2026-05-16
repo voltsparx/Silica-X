@@ -933,6 +933,51 @@ def _add_orchestrate_args(parser: argparse.ArgumentParser) -> None:
     _add_extension_control_args(parser, default_mode="auto")
 
 
+def _add_investigate_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("usernames", nargs="+", help="One or more usernames to investigate.")
+    parser.add_argument(
+        "--domain",
+        action="append",
+        default=[],
+        help="Optional related domain target (repeatable).",
+    )
+    _add_toggle_flags(parser, "tor", "Tor routing")
+    _add_toggle_flags(parser, "proxy", "HTTP proxy routing")
+    parser.add_argument(
+        "--timeout",
+        type=positive_int,
+        default=20,
+        help="Per-request timeout in seconds for investigation lanes.",
+    )
+    parser.add_argument(
+        "--max-concurrency",
+        type=positive_int,
+        default=25,
+        help="Maximum concurrent username probes during investigation.",
+    )
+    mode_group = parser.add_mutually_exclusive_group()
+    mode_group.add_argument(
+        "--brief",
+        action="store_true",
+        help="Executive summary only (HIGH-tier focus).",
+    )
+    mode_group.add_argument(
+        "--analyst",
+        action="store_true",
+        help="Full evidence report with confidence scores.",
+    )
+    mode_group.add_argument(
+        "--raw",
+        action="store_true",
+        help="Include raw artifacts in the rendered report.",
+    )
+    parser.add_argument(
+        "--no-media",
+        action="store_true",
+        help="Disable media reconnaissance during investigation.",
+    )
+
+
 def _add_wizard_args(parser: argparse.ArgumentParser) -> None:
     _add_toggle_flags(parser, "tor", "Tor routing")
     _add_toggle_flags(parser, "proxy", "HTTP proxy routing")
@@ -1075,6 +1120,12 @@ def build_root_parser(
         help="Run profile + surface intelligence as one workflow.",
     )
     _add_fusion_args(fusion_parser)
+
+    investigate_parser = subparsers.add_parser(
+        "investigate",
+        help="Run the progressive investigation pipeline across profile and optional domain targets.",
+    )
+    _add_investigate_args(investigate_parser)
 
     ocr_parser = subparsers.add_parser(
         OCR_COMMAND_ALIASES[0],
@@ -1235,6 +1286,10 @@ def build_prompt_parser(*, default_dashboard_port: int) -> InteractiveArgumentPa
     )
     _add_prompt_help_flag(fusion_parser)
     _add_fusion_args(fusion_parser)
+
+    investigate_parser = subparsers.add_parser("investigate", add_help=False)
+    _add_prompt_help_flag(investigate_parser)
+    _add_investigate_args(investigate_parser)
 
     ocr_parser = subparsers.add_parser(
         OCR_COMMAND_ALIASES[0],

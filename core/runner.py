@@ -170,6 +170,7 @@ def _prompt_command_catalog() -> list[str]:
         "help",
         "history",
         "intel",
+        "investigate",
         "keywords",
         "live",
         "modules",
@@ -1364,6 +1365,41 @@ def _build_doctor_snapshot() -> dict[str, Any]:
         "reportlab": {"available": _module_available("reportlab")},
         "sqlite3": {"available": True},
     }
+    try:
+        from core.kb import GraphKnowledgeBase
+
+        kb_entity_count = GraphKnowledgeBase().count_entities()
+        kb_entity_error = ""
+    except Exception as exc:
+        kb_entity_count = 0
+        kb_entity_error = str(exc)
+
+    try:
+        from core.signal_layer import HIGH_THRESHOLD, LOW_THRESHOLD, MEDIUM_THRESHOLD, NOISE_THRESHOLD
+
+        signal_layer_snapshot = {
+            "available": True,
+            "thresholds": {
+                "noise": NOISE_THRESHOLD,
+                "low": LOW_THRESHOLD,
+                "medium": MEDIUM_THRESHOLD,
+                "high": HIGH_THRESHOLD,
+            },
+        }
+    except Exception as exc:
+        signal_layer_snapshot = {"available": False, "error": str(exc)}
+
+    try:
+        from modules.media_recon import HAS_EXIF, HAS_HTTP, HAS_OCR, HAS_PIL
+
+        media_backends = {
+            "aiohttp": {"available": bool(HAS_HTTP)},
+            "pillow_imagehash": {"available": bool(HAS_PIL)},
+            "piexif": {"available": bool(HAS_EXIF)},
+            "pytesseract": {"available": bool(HAS_OCR)},
+        }
+    except Exception as exc:
+        media_backends = {"available": False, "error": str(exc)}
 
     warnings: list[str] = []
     errors: list[str] = []
@@ -1388,6 +1424,13 @@ def _build_doctor_snapshot() -> dict[str, Any]:
         warnings.append("reportlab is unavailable; PDF output will be unavailable.")
     if not tor_status.binary_found:
         warnings.append("Tor binary is not installed on this machine.")
+    if isinstance(media_backends, dict) and media_backends.get("available") is False:
+        warnings.append(f"Media backend inspection failed: {media_backends.get('error', 'unknown error')}")
+    elif isinstance(media_backends, dict):
+        if not bool((media_backends.get("pillow_imagehash") or {}).get("available")):
+            warnings.append("Pillow/imagehash media analysis backend is unavailable.")
+        if not bool((media_backends.get("piexif") or {}).get("available")):
+            warnings.append("piexif is unavailable; EXIF extraction will be reduced.")
     for engine_name, engine_status in engine_health.items():
         if isinstance(engine_status, dict) and not engine_status.get("available"):
             warnings.append(
@@ -1422,6 +1465,13 @@ def _build_doctor_snapshot() -> dict[str, Any]:
             "config_path": str(output_settings.get("config_path") or ""),
         },
         "ocr_tooling": ocr_tooling,
+        "signal_layer": signal_layer_snapshot,
+        "entity_resolver": {
+            "available": True,
+            "kb_entity_count": kb_entity_count,
+            "kb_error": kb_entity_error,
+        },
+        "media_backends": media_backends,
         "engine_health": engine_health,
         "knowledge_base": knowledge_base,
         "docker": docker_snapshot,
@@ -5525,6 +5575,59 @@ async def _handle_capability_pack_command() -> int:
     return EXIT_SUCCESS
 
 
+async def _handle_investigate_command(
+    args: argparse.Namespace,
+    state: RunnerState,
+    prompt_mode: bool = False,
+) -> int:
+    effective_state = compute_effective_state(state, getattr(args, "tor", None), getattr(args, "proxy", None))
+    ok, error = _validate_network_settings(effective_state, prompt_user=prompt_mode)
+    if not ok:
+        print(c(f"{symbol('warn')} {error}", Colors.RED))
+        return EXIT_FAILURE
+
+    usernames = [item.strip() for item in list(getattr(args, "usernames", []) or []) if item.strip()]
+    domains = [normalize_domain(item) for item in list(getattr(args, "domain", []) or []) if normalize_domain(item)]
+    if not usernames:
+        print(c(f"{symbol('warn')} Provide at least one username.", Colors.RED))
+        return EXIT_USAGE
+
+    report_mode = "raw" if bool(getattr(args, "raw", False)) else "brief" if bool(getattr(args, "brief", False)) else "analyst"
+
+    try:
+        proxy_url = get_network_settings(effective_state.use_proxy, effective_state.use_tor)
+    except RuntimeError as exc:
+        print(c(f"{symbol('warn')} {exc}", Colors.RED))
+        return EXIT_FAILURE
+
+    print(c(f"\n{symbol('action')} Investigation targets: {', '.join(usernames)}", Colors.CYAN))
+    if domains:
+        print(c(f"{symbol('bullet')} Related domains: {', '.join(domains)}", Colors.CYAN))
+    print(c(f"{symbol('bullet')} Report mode: {report_mode}", Colors.CYAN))
+
+    from core.pipeline import PipelineConfig, run_full_pipeline
+
+    report = await run_full_pipeline(
+        PipelineConfig(
+            target_usernames=usernames,
+            target_domains=domains,
+            mode=report_mode,
+            run_media_recon=not bool(getattr(args, "no_media", False)),
+            run_ocr=True,
+            use_tor=effective_state.use_tor,
+            proxy_url=proxy_url,
+            timeout_seconds=int(getattr(args, "timeout", 20) or 20),
+            max_concurrency=int(getattr(args, "max_concurrency", 25) or 25),
+        )
+    )
+    print(report)
+    append_framework_log(
+        "investigation_pipeline_done",
+        f"usernames={','.join(usernames)} domains={','.join(domains) if domains else '-'} mode={report_mode}",
+    )
+    return EXIT_SUCCESS
+
+
 async def _dispatch(args: argparse.Namespace, state: RunnerState, prompt_mode: bool) -> int:
     if args.command in {"profile", "scan", "persona", "social"}:
         return await _handle_profile_command(args, state=state, prompt_mode=prompt_mode)
@@ -5532,6 +5635,8 @@ async def _dispatch(args: argparse.Namespace, state: RunnerState, prompt_mode: b
         return await _handle_surface_command(args, state=state, prompt_mode=prompt_mode)
     if args.command in {"fusion", "full", "combo"}:
         return await _handle_fusion_command(args, state=state, prompt_mode=prompt_mode)
+    if args.command == "investigate":
+        return await _handle_investigate_command(args, state=state, prompt_mode=prompt_mode)
     if args.command in set(OCR_COMMAND_ALIASES):
         return await _handle_ocr_command(args, state=state, prompt_mode=prompt_mode)
     if args.command in {"orchestrate", "orch"}:

@@ -35,7 +35,7 @@ class TestPromptHandlers(unittest.TestCase):
             filter_names=["delta"],
         )
         prompt = session.module_prompt()
-        self.assertEqual(prompt, "sx(fusion*)>")
+        self.assertEqual(prompt, "(fusion*)>")
 
     def test_context_summary_format(self):
         session = PromptSessionState(
@@ -384,6 +384,49 @@ class TestPromptHandlers(unittest.TestCase):
             on_message=lambda _message, _color: None,
         )
         self.assertEqual(session.attached_module_names, ["source-pack-01-module-1"])
+
+    def test_handle_prompt_control_command_enable_plugins_and_filters_warns_but_keeps_multiple(self):
+        session = PromptSessionState(
+            module="profile",
+            profile_preset="fast",
+            profile_extension_control="manual",
+        )
+        events: list[tuple[str, str]] = []
+        handle_prompt_control_command(
+            "enable plugins threat_conductor,contact_lattice,orbit_link_matrix",
+            session,
+            on_message=lambda message, color: events.append((message, color)),
+        )
+        self.assertEqual(
+            session.plugin_names,
+            ["threat_conductor", "contact_lattice", "orbit_link_matrix"],
+        )
+        self.assertTrue(any("recommends at most 2 plugins" in message for message, _ in events))
+
+        handle_prompt_control_command(
+            "enable filters noise_suppression_filter,contact_canonicalizer,entity_name_resolver",
+            session,
+            on_message=lambda message, color: events.append((message, color)),
+        )
+        self.assertEqual(
+            session.filter_names,
+            ["noise_suppression_filter", "contact_canonicalizer", "entity_name_resolver"],
+        )
+        self.assertTrue(any("recommends at most 2 filters" in message for message, _ in events))
+
+    def test_handle_prompt_control_command_warns_on_hybrid_conflicts(self):
+        session = PromptSessionState(
+            module="fusion",
+            fusion_extension_control="hybrid",
+        )
+        events: list[tuple[str, str]] = []
+        handle_prompt_control_command(
+            "enable plugins signal_fusion_core,identity_fusion_core",
+            session,
+            on_message=lambda message, color: events.append((message, color)),
+        )
+        self.assertEqual(session.plugin_names, ["signal_fusion_core"])
+        self.assertTrue(any("Plugin conflict resolved" in message for message, _ in events))
 
     def test_handle_prompt_control_command_blocks_mutation_in_auto_mode(self):
         session = PromptSessionState(module="profile", profile_extension_control="auto")

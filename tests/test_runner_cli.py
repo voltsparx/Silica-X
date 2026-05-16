@@ -134,6 +134,30 @@ class TestRunnerCli(unittest.TestCase):
         self.assertEqual(args.command, "doctor")
         self.assertTrue(args.json)
 
+    def test_root_investigate_parser_parses_flags(self):
+        parser = build_root_parser()
+        args = parser.parse_args(
+            [
+                "investigate",
+                "alice",
+                "--domain",
+                "example.com",
+                "--brief",
+                "--no-media",
+                "--timeout",
+                "15",
+                "--max-concurrency",
+                "8",
+            ]
+        )
+        self.assertEqual(args.command, "investigate")
+        self.assertEqual(args.usernames, ["alice"])
+        self.assertEqual(args.domain, ["example.com"])
+        self.assertTrue(args.brief)
+        self.assertTrue(args.no_media)
+        self.assertEqual(args.timeout, 15)
+        self.assertEqual(args.max_concurrency, 8)
+
     def test_root_surface_parser_parses_flags(self):
         parser = build_root_parser()
         args = parser.parse_args(

@@ -133,23 +133,27 @@ def _scan_mode_for_scope(session: PromptSessionState, scope: str) -> str:
     return session.profile_preset
 
 
-def _validate_extension_combo(
+def _resolve_extension_combo(
     *,
     scope: str,
     session: PromptSessionState,
     plugins: list[str],
     filters: list[str],
-) -> list[str]:
+) -> tuple[list[str], list[str], list[str], list[str]]:
+    requested_plugins = _dedupe_names(plugins)
+    requested_filters = _dedupe_names(filters)
     plan = resolve_extension_control(
         scope=scope,
         scan_mode=_scan_mode_for_scope(session, scope),
-        control_mode="manual",
-        requested_plugins=plugins,
-        requested_filters=filters,
+        control_mode=session.extension_control_for_module(scope),
+        requested_plugins=requested_plugins,
+        requested_filters=requested_filters,
         include_all_plugins=False,
         include_all_filters=False,
     )
-    return list(plan.errors)
+    resolved_plugins = [item for item in plan.plugins if item in requested_plugins]
+    resolved_filters = [item for item in plan.filters if item in requested_filters]
+    return resolved_plugins, resolved_filters, list(plan.errors), list(plan.warnings)
 
 
 def _descriptor_lookup(descriptors: list[dict[str, object]]) -> dict[str, str]:
@@ -264,17 +268,19 @@ def _mutate_selection(
         else:
             remove_set = set(_dedupe_names(selected))
             updated = [item for item in current if item not in remove_set]
-        errors = _validate_extension_combo(
+        resolved_plugins, _, errors, warnings = _resolve_extension_combo(
             scope=scope,
             session=session,
             plugins=updated,
             filters=session.filter_names,
         )
+        for item in warnings:
+            emit(f"Plugin selection warning: {item}", Colors.EMBER)
         if errors:
             for item in errors:
                 emit(f"Plugin selection blocked: {item}", Colors.RED)
             return True
-        session.plugin_names = updated
+        session.plugin_names = resolved_plugins
         emit(f"Plugins set to: {session.plugins_label()} (module={scope})", Colors.GREEN)
         return True
 
@@ -320,17 +326,19 @@ def _mutate_selection(
     else:
         remove_set = set(_dedupe_names(selected))
         updated = [item for item in current if item not in remove_set]
-    errors = _validate_extension_combo(
+    _, resolved_filters, errors, warnings = _resolve_extension_combo(
         scope=scope,
         session=session,
         plugins=session.plugin_names,
         filters=updated,
     )
+    for item in warnings:
+        emit(f"Filter selection warning: {item}", Colors.EMBER)
     if errors:
         for item in errors:
             emit(f"Filter selection blocked: {item}", Colors.RED)
         return True
-    session.filter_names = updated
+    session.filter_names = resolved_filters
     emit(f"Filters set to: {session.filters_label()} (module={scope})", Colors.GREEN)
     return True
 
@@ -431,21 +439,23 @@ def handle_prompt_set_command(
             return True
         template_plugins = list(template.get("plugins", ()))
         template_filters = list(template.get("filters", ()))
-        errors = _validate_extension_combo(
+        resolved_plugins, resolved_filters, errors, warnings = _resolve_extension_combo(
             scope=scope,
             session=session,
             plugins=template_plugins,
             filters=template_filters,
         )
+        for item in warnings:
+            _emit(f"Template selection warning: {item}", Colors.EMBER)
         if errors:
             for item in errors:
                 _emit(f"Template selection blocked: {item}", Colors.RED)
             return True
-        session.plugin_names = template_plugins
-        session.filter_names = template_filters
+        session.plugin_names = resolved_plugins
+        session.filter_names = resolved_filters
         _emit(
             f"Template applied: {template.get('id')} "
-            f"(plugins={len(template_plugins)} filters={len(template_filters)}) (module={scope})",
+            f"(plugins={len(session.plugin_names)} filters={len(session.filter_names)}) (module={scope})",
             Colors.GREEN,
         )
         module_tags = template.get("module_tags", ())
@@ -489,17 +499,19 @@ def handle_prompt_set_command(
         if not selected:
             _emit(f"No compatible plugins selected for module '{scope}'.", Colors.RED)
             return True
-        errors = _validate_extension_combo(
+        resolved_plugins, _, errors, warnings = _resolve_extension_combo(
             scope=scope,
             session=session,
             plugins=selected,
             filters=session.filter_names,
         )
+        for item in warnings:
+            _emit(f"Plugin selection warning: {item}", Colors.EMBER)
         if errors:
             for item in errors:
                 _emit(f"Plugin selection blocked: {item}", Colors.RED)
             return True
-        session.plugin_names = selected
+        session.plugin_names = resolved_plugins
         _emit(f"Plugins set to: {session.plugins_label()} (module={scope})", Colors.GREEN)
         return True
 
@@ -538,17 +550,19 @@ def handle_prompt_set_command(
         if not selected:
             _emit(f"No compatible filters selected for module '{scope}'.", Colors.RED)
             return True
-        errors = _validate_extension_combo(
+        _, resolved_filters, errors, warnings = _resolve_extension_combo(
             scope=scope,
             session=session,
             plugins=session.plugin_names,
             filters=selected,
         )
+        for item in warnings:
+            _emit(f"Filter selection warning: {item}", Colors.EMBER)
         if errors:
             for item in errors:
                 _emit(f"Filter selection blocked: {item}", Colors.RED)
             return True
-        session.filter_names = selected
+        session.filter_names = resolved_filters
         _emit(f"Filters set to: {session.filters_label()} (module={scope})", Colors.GREEN)
         return True
 

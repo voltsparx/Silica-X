@@ -74,6 +74,19 @@ def _sanitize_entry(entry: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _fallback_entry(module_id: str, scope: str) -> dict[str, Any]:
+    return {
+        "id": module_id,
+        "framework": "",
+        "file": "",
+        "kind": "catalog-fallback",
+        "scopes": [scope],
+        "capabilities": [],
+        "power_score": 0,
+        "confidence_score": 0,
+    }
+
+
 def resolve_module_attachments(
     *,
     scope: str,
@@ -144,6 +157,7 @@ def resolve_module_attachments(
     selected: list[dict[str, Any]] = []
     selected_ids: list[str] = []
     errors: list[str] = []
+    warnings: list[str] = []
     seen: set[str] = set()
 
     for raw in requested:
@@ -159,7 +173,14 @@ def resolve_module_attachments(
                     "Use `modules --scope ...` to inspect compatible module entries."
                 )
             else:
-                errors.append(f"Unknown module selector: {raw}")
+                fallback_id = str(raw).strip().lower()
+                if fallback_id and fallback_id not in seen:
+                    seen.add(fallback_id)
+                    selected.append(_fallback_entry(fallback_id, normalized_scope))
+                    selected_ids.append(fallback_id)
+                    warnings.append(
+                        f"Module selector '{raw}' is not present in the catalog; attached in fallback mode."
+                    )
             continue
 
         entry_id = str(matched.get("id", "")).strip().lower()
@@ -175,10 +196,9 @@ def resolve_module_attachments(
             f"Select at most {MAX_ATTACHED_MODULES} module entries."
         )
 
-    warnings: tuple[str, ...] = ()
     if selected_ids:
-        warnings = (
-            "Attached modules are catalog-backed research context. They are tracked in configuration and reports, but they do not execute directly like plugins or filters.",
+        warnings.append(
+            "Attached modules are catalog-backed research context. They are tracked in configuration and reports, but they do not execute directly like plugins or filters."
         )
 
     return ModuleAttachmentPlan(
@@ -186,5 +206,5 @@ def resolve_module_attachments(
         module_ids=tuple(selected_ids),
         entries=tuple(selected),
         errors=tuple(errors),
-        warnings=warnings,
+        warnings=tuple(warnings),
     )

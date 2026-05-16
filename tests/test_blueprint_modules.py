@@ -27,6 +27,7 @@ from core.engines.fusion_engine import FusionEngine
 from core.intel.advisor import IntelligenceAdvisor
 from core.engines.parallel_engine import ParallelEngine
 from core.extensions.plugin_manager import PluginManager
+from core.extensions.signal_sieve import execute_filters
 from core.intel.prompt_engine import PromptEngine
 from core.artifacts.reporting import ReportGenerator
 from core.intel.capability_matrix import (
@@ -200,6 +201,68 @@ class TestBlueprintModules(unittest.TestCase):
         self.assertIn("threat_conductor", result_ids)
         self.assertEqual([], [item for item in errors if "failed" in item.lower()])
 
+    def test_plugin_and_filter_results_use_structured_payloads(self):
+        manager = PluginManager()
+        plugin_results, plugin_errors = asyncio.run(
+            manager.run_plugins(
+                {
+                    "target": "alice",
+                    "mode": "profile",
+                    "results": [
+                        {
+                            "status": "FOUND",
+                            "platform": "GitHub",
+                            "contacts": {"emails": ["alice@example.com"]},
+                        }
+                    ],
+                    "correlation": {"identity_overlap_score": 15},
+                },
+                scope="profile",
+                requested_plugins=["threat_conductor", "contact_lattice"],
+                chain=True,
+            )
+        )
+        self.assertFalse([item for item in plugin_errors if "failed" in item.lower()])
+        self.assertGreaterEqual(len(plugin_results), 2)
+        for row in plugin_results:
+            self.assertEqual(
+                set(row.keys()),
+                {"id", "title", "description", "scope", "summary", "severity", "highlights", "data"},
+            )
+            self.assertIsInstance(row["summary"], str)
+            self.assertIsInstance(row["severity"], str)
+            self.assertIsInstance(row["highlights"], list)
+            self.assertIsInstance(row["data"], dict)
+
+        filter_results, filter_errors = execute_filters(
+            scope="profile",
+            requested_filters=["contact_canonicalizer", "contact_quality_filter"],
+            include_all=False,
+            context={
+                "target": "alice",
+                "results": [
+                    {
+                        "platform": "GitHub",
+                        "contacts": {
+                            "emails": ["Alice@example.com", "alice@example.com "],
+                            "phones": ["+1 555-000-1111", "5550001111"],
+                        },
+                    }
+                ],
+            },
+        )
+        self.assertFalse([item for item in filter_errors if "failed" in item.lower()])
+        self.assertGreaterEqual(len(filter_results), 2)
+        for row in filter_results:
+            self.assertEqual(
+                set(row.keys()),
+                {"id", "title", "description", "scope", "summary", "severity", "highlights", "data"},
+            )
+            self.assertIsInstance(row["summary"], str)
+            self.assertIsInstance(row["severity"], str)
+            self.assertIsInstance(row["highlights"], list)
+            self.assertIsInstance(row["data"], dict)
+
     def test_prompt_engine_and_advisor_recommendations(self):
         prompt = PromptEngine(history=["profile alice", "surface example.com", "fusion alice example.com"])
         suggestions = prompt.suggest_next(limit=3)
@@ -361,5 +424,4 @@ class TestBlueprintModules(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
 

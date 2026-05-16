@@ -98,6 +98,32 @@ class TestExtensionControlPlane(unittest.TestCase):
         self.assertTrue(any("Plugin conflict resolved" in item for item in plan.warnings))
         self.assertNotIn("identity_fusion_core", plan.plugins)
 
+    def test_manual_over_budget_selection_warns_but_keeps_explicit_extensions(self):
+        plan = resolve_extension_control(
+            scope="profile",
+            scan_mode="fast",
+            control_mode="manual",
+            requested_plugins=["threat_conductor", "contact_lattice", "orbit_link_matrix"],
+            requested_filters=[
+                "noise_suppression_filter",
+                "contact_canonicalizer",
+                "entity_name_resolver",
+            ],
+            include_all_plugins=False,
+            include_all_filters=False,
+        )
+        self.assertEqual(plan.errors, ())
+        self.assertEqual(
+            plan.plugins,
+            ("threat_conductor", "contact_lattice", "orbit_link_matrix"),
+        )
+        self.assertEqual(
+            plan.filters,
+            ("noise_suppression_filter", "contact_canonicalizer", "entity_name_resolver"),
+        )
+        self.assertTrue(any("recommends at most 2 plugins" in item for item in plan.warnings))
+        self.assertTrue(any("recommends at most 2 filters" in item for item in plan.warnings))
+
     def test_merge_scan_modes(self):
         self.assertEqual(merge_scan_modes("quick", "balanced"), "balanced")
         self.assertEqual(merge_scan_modes("deep", "max"), "max")
