@@ -1,6 +1,6 @@
 # Media Intelligence
 
-Silica-X v10.0 treats public-media reconnaissance as a first-class intelligence lane.
+Silinosic-X v10.0 treats public-media reconnaissance as a first-class intelligence lane.
 
 ## Included capabilities
 
