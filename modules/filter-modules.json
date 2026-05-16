@@ -1,6 +1,6 @@
 {
-  "silica_x": {
-    "project": "Silica-X",
+  "silinosic_x": {
+    "project": "Silinosic-X",
     "version": "11.2.0",
     "theme": "Ember",
     "component": "module_catalog"
